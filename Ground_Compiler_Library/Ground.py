@@ -353,13 +353,3 @@ if __name__ ==  '__main__':
 	problem_file = 'domains/ark-problem.pddl'
 
 	operators, objects, object_types, initAction, goalAction = parseDomAndProb(domain_file, problem_file)
-
-	from Planner import preprocessDomain, obTypesDict
-	FlawLib.non_static_preds = preprocessDomain(operators)
-	obtypes = obTypesDict(object_types)
-
-	print("creating ground actions......\n")
-	GL = GLib(operators, objects, obtypes, initAction, goalAction)
-
-	print('\n')
-	print(GL)
