@@ -5,8 +5,8 @@ import copy
 from heapq import heappush, heappop
 from clockdeco import clock
 import time
-LOG = 0
-REPORT = 0
+LOG = 1
+REPORT = 1
 RRP = 0
 from collections import Counter
 
@@ -447,7 +447,7 @@ if __name__ == '__main__':
 	uploadable_ground_step_library_name = 'Ground_Compiler_Library//' + d_name + '.' + p_name
 
 
-	RELOAD = 0
+	RELOAD = 1
 	if RELOAD:
 		ground_steps = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
 
