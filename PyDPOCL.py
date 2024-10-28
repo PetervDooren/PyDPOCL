@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from GPlan import GPlan, math
 from Flaws import OPF, TCLF
 from uuid import uuid4
@@ -5,7 +7,7 @@ import copy
 from heapq import heappush, heappop
 from clockdeco import clock
 import time
-LOG = 1
+LOG = 0
 REPORT = 1
 RRP = 0
 from collections import Counter
@@ -388,7 +390,7 @@ def upload(GL, name):
 
 def just_compile(domain_file, problem_file, pickle_names):
 	GL = Ground.GLib(domain_file, problem_file)
-	with open('ground_steps.txt', 'w') as gs:
+	with open('compiled/ground_steps.txt', 'w') as gs:
 		for step in GL:
 			gs.write(str(step))
 			gs.write('\n\tpreconditions:')
@@ -399,7 +401,7 @@ def just_compile(domain_file, problem_file, pickle_names):
 				gs.write('\n\t\t' + str(eff))
 			gs.write('\n\n')
 	ground_step_list = precompile.deelementize_ground_library(GL)
-	with open('ground_steps_stripped.txt', 'w') as gs:
+	with open('compiled/ground_steps_stripped.txt', 'w') as gs:
 		# gs.write('\n\n')
 		for i, step in enumerate(ground_step_list):
 			gs.write('\n')
@@ -439,16 +441,18 @@ if __name__ == '__main__':
 			problem_file = sys.argv[2]
 	else:
 		# domain_file = 'Ground_Compiler_Library//domains/travel_domain_primitive_only.pddl'
-		domain_file = 'Ground_Compiler_Library//domains/travel_domain.pddl'
-		problem_file = 'Ground_Compiler_Library//domains/travel-to-la.pddl'
+		domain_file = 'Ground_Compiler_Library//domains/ark-domain.pddl'
+		problem_file = 'Ground_Compiler_Library//domains/ark-problem.pddl'
 		# problem_file = 'Ground_Compiler_Library//domains/travel-to-la.pddl'
 	d_name = domain_file.split('/')[-1].split('.')[0]
 	p_name = problem_file.split('/')[-1].split('.')[0]
-	uploadable_ground_step_library_name = 'Ground_Compiler_Library//' + d_name + '.' + p_name
+	uploadable_ground_step_library_name = 'compiled/' + d_name +'/' + d_name + '.' + p_name
 
-
-	RELOAD = 1
-	if RELOAD:
+	RELOAD = 0
+	if RELOAD or not os.path.exists(uploadable_ground_step_library_name):
+		# create folder if it does not exist yet
+		file = Path(uploadable_ground_step_library_name)
+		file.parent.mkdir(parents=True, exist_ok=True)
 		ground_steps = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
 
 	PLAN = 1
