@@ -721,8 +721,15 @@ def parse_decomp_stmt(it):
 	return DecompStmt(varList, parse_formula(ni))
 
 	
-def parse_agents_stmt(it):
-	return _parse_precondition_or_effect(it, ':agents', AgentsStmt)
+def parse_agents_stmt(iter):
+	ni = next(iter)
+	if ni.empty():
+		return None
+	cond = parse_formula(ni)
+	return type(cond)
+
+	# does not work due to calling try_match, which advances the iterator
+	# return _parse_precondition_or_effect(it, ':agents', AgentsStmt)
 
 
 def parse_axiom_stmt(iter):
