@@ -469,12 +469,5 @@ if __name__ == '__main__':
 				break
 		print('finished uploading')
 
-
-
 		planner = GPlanner(ground_steps)
 		planner.solve(k=1)
-
-
-
-		# planner2 = GPlanner()
-		# planner2.solve(k=1)
