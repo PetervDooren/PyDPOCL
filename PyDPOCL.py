@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 from GPlan import GPlan, math
-from Flaws import OPF, TCLF
+from Ground_Compiler_Library.GElm import GLiteral, GStep
+from Flaws import Flaw, OPF, TCLF
 from uuid import uuid4
 import copy
 from heapq import heappush, heappop
@@ -48,15 +49,58 @@ class Frontier:
 class GPlanner:
 	"""
 	Plan space planner, only instantiate once per planner, starts with ground steps
+    ...
+
+    Attributes
+    ----------
+    gsteps : set(Gstep)
+        Grounded steps of the planning problem. The last two are the initial state and goal state respectively.
+    ID : uuid
+        unique identifier of the planner
+    h_step_dict : dict(?,?)
+        ???
+	h_lit_dict : dict(GLiteral: float)
+		cached mapping between predicates and their heuristic cost
+	frontier : Frontier
+		frontier of partial plans to be explored
+	_h_visited : List(GLiteral)
+		list of predicates that have been visited by the heurisitic function
+	plan_num : int
+		number of plans opened
+	max_height : int
+		maximum height of the operators in the planner
+
+    Methods
+    -------
+    pop():
+	insert(plan):
+	solve():
+	add_step():
+	reuse_step():
+	resolve_threat():
+	
+	Heuristic Methods
+	-------
+	h_condition():
+	h_step():
+	h_plan():
+	h_subplan():
 	"""
 
-	def __init__(self, gsteps):
-		self.gsteps = gsteps
+	def __init__(self, operators: set[GStep], init_stat: GStep, goal: GStep):
+		"""construct planner
+
+		Args:
+			operators (set(Gstep)): operators to be used in planning
+			init_stat (Gstep): action representing the initial state
+			goal (Gstep): action representing the goal state
+		"""		
+		self.gsteps = operators
 		self.ID = uuid4()
 		self.h_step_dict = dict()
 		self.h_lit_dict = dict()
 
-		root_plan = GPlan(gsteps[-2], gsteps[-1])
+		root_plan = GPlan(init_stat, goal)
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.final)
 		for p in root_plan.dummy.final.open_preconds:
 			root_plan.flaws.insert(root_plan, OPF(root_plan.dummy.final, p, 100000))
@@ -65,7 +109,7 @@ class GPlanner:
 		self.insert(root_plan)
 		self._h_visited = []
 		self.plan_num = 0
-		self.max_height = gsteps[-3].height
+		self.max_height = operators[-3].height
 
 	# Private Hooks #
 
@@ -77,16 +121,16 @@ class GPlanner:
 
 	# Methods #
 
-	def pop(self):
+	def pop(self) -> GPlan:
 		return self._frontier.pop()
 
-	def insert(self, plan):
+	def insert(self, plan: GPlan) -> None:
 		plan.heuristic = self.h_plan(plan)
 		log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		self._frontier.insert(plan)
 
 	# @clock
-	def solve(self, k=4, cutoff=6000):
+	def solve(self, k: int=4, cutoff: int=6000) -> list[GPlan]:
 		# find k solutions to problem
 
 		completed = []
@@ -165,7 +209,7 @@ class GPlanner:
 
 		raise ValueError('FAIL: No more plans to visit with {} nodes expanded'.format(expanded))
 
-	def add_step(self, plan, flaw):
+	def add_step(self, plan: GPlan, flaw: Flaw) -> None:
 		s_need, p = flaw.flaw
 		cndts = s_need.cndt_map[p.ID]
 
@@ -216,7 +260,7 @@ class GPlanner:
 			self.insert(new_plan)
 
 
-	def reuse_step(self, plan, flaw):
+	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
 		s_need, p = flaw.flaw
 
 		choices = [step for step in plan.steps
@@ -250,7 +294,7 @@ class GPlanner:
 			# insert mutated plan into frontier
 			self.insert(new_plan)
 
-	def resolve_threat(self, plan, tclf):
+	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)
 		src_index = plan.index(tclf.link.source)
 		snk_index = plan.index(tclf.link.sink)
@@ -286,7 +330,7 @@ class GPlanner:
 
 	# Heuristic Methods #
 
-	def h_condition(self, plan, stepnum, precond):
+	def h_condition(self, plan: GPlan, stepnum: int, precond: GLiteral) -> float:
 		if precond.is_static:
 			return 0
 		if precond in plan.init:
@@ -315,7 +359,7 @@ class GPlanner:
 		self.h_lit_dict[precond] = min_so_far
 		return min_so_far
 
-	def h_step(self, plan, stepnum):
+	def h_step(self, plan: GPlan, stepnum: int) -> float:
 		if stepnum in self.h_step_dict.keys():
 			return self.h_step_dict[stepnum]
 		if stepnum == plan.dummy.init.stepnum:
@@ -334,7 +378,7 @@ class GPlanner:
 		self.h_step_dict[stepnum] = sumo
 		return sumo
 
-	def h_plan(self, plan):
+	def h_plan(self, plan: GPlan) -> float:
 		sumo = 0
 
 		self._h_visited = []
@@ -368,7 +412,7 @@ class GPlanner:
 import sys
 import pickle
 # import Ground_Compiler_Library
-from Ground_Compiler_Library import Ground, precompile
+from Ground_Compiler_Library import Ground, UnGround, precompile
 # import json
 # import jsonpickle
 #
@@ -389,48 +433,48 @@ def upload(GL, name):
 # 	ground_step_list = precompile.deelementize_ground_library(GL)
 
 def just_compile(domain_file, problem_file, pickle_names):
-	GL = Ground.GLib(domain_file, problem_file)
-	with open('compiled/ground_steps.txt', 'w') as gs:
-		for step in GL:
-			gs.write(str(step))
-			gs.write('\n\tpreconditions:')
-			for pre in step.Preconditions:
-				gs.write('\n\t\t' + str(pre))
-			gs.write('\n\teffects:')
-			for eff in step.Effects:
-				gs.write('\n\t\t' + str(eff))
-			gs.write('\n\n')
+	GL = UnGround.UGLib(domain_file, problem_file)
+	# with open('compiled/ground_steps.txt', 'w') as gs:
+	# 	for step in GL:
+	# 		gs.write(str(step))
+	# 		gs.write('\n\tpreconditions:')
+	# 		for pre in step.Preconditions:
+	# 			gs.write('\n\t\t' + str(pre))
+	# 		gs.write('\n\teffects:')
+	# 		for eff in step.Effects:
+	# 			gs.write('\n\t\t' + str(eff))
+	# 		gs.write('\n\n')
 	ground_step_list = precompile.deelementize_ground_library(GL)
-	with open('compiled/ground_steps_stripped.txt', 'w') as gs:
-		# gs.write('\n\n')
-		for i, step in enumerate(ground_step_list):
-			gs.write('\n')
-			gs.write(str(i) + '\n')
-			gs.write(str(step))
-			gs.write('\n\tpreconditions:')
-			for pre in step.preconds:
-				gs.write('\n\t\t' + str(pre))
-				if step.cndt_map is not None:
-					if pre.ID in step.cndt_map.keys():
-						gs.write('\n\t\t\tcndts:\t{}'.format(str(step.cndt_map[pre.ID])))
-				if step.threat_map is not None:
-					if pre.ID in step.threat_map.keys():
-						gs.write('\n\t\t\trisks:\t{}'.format(str(step.threat_map[pre.ID])))
+	# with open('compiled/ground_steps_stripped.txt', 'w') as gs:
+	# 	# gs.write('\n\n')
+	# 	for i, step in enumerate(ground_step_list):
+	# 		gs.write('\n')
+	# 		gs.write(str(i) + '\n')
+	# 		gs.write(str(step))
+	# 		gs.write('\n\tpreconditions:')
+	# 		for pre in step.preconds:
+	# 			gs.write('\n\t\t' + str(pre))
+	# 			if step.cndt_map is not None:
+	# 				if pre.ID in step.cndt_map.keys():
+	# 					gs.write('\n\t\t\tcndts:\t{}'.format(str(step.cndt_map[pre.ID])))
+	# 			if step.threat_map is not None:
+	# 				if pre.ID in step.threat_map.keys():
+	# 					gs.write('\n\t\t\trisks:\t{}'.format(str(step.threat_map[pre.ID])))
 
-			if step.height > 0:
-				gs.write('\n\tsub_steps:')
-				for sub in step.sub_steps:
-					gs.write('\n\t\t{}'.format(str(sub)))
-				gs.write('\n\tsub_orderings:')
-				for ord in step.sub_orderings.edges:
-					gs.write('\n\t\t{}'.format(str(ord.source) + ' < ' + str(ord.sink)))
-				for link in step.sub_links.edges:
-					gs.write('\n\t\t{}'.format(str(link)))
-			gs.write('\n\n')
+	# 		if step.height > 0:
+	# 			gs.write('\n\tsub_steps:')
+	# 			for sub in step.sub_steps:
+	# 				gs.write('\n\t\t{}'.format(str(sub)))
+	# 			gs.write('\n\tsub_orderings:')
+	# 			for ord in step.sub_orderings.edges:
+	# 				gs.write('\n\t\t{}'.format(str(ord.source) + ' < ' + str(ord.sink)))
+	# 			for link in step.sub_links.edges:
+	# 				gs.write('\n\t\t{}'.format(str(link)))
+	# 		gs.write('\n\n')
 
-	for i, gstep in enumerate(ground_step_list):
-		with open(pickle_names + str(i), 'wb') as ugly:
-			pickle.dump(gstep, ugly)
+	# for i, gstep in enumerate(ground_step_list):
+	# 	with open(pickle_names + str(i), 'wb') as ugly:
+	# 		pickle.dump(gstep, ugly)
 	return ground_step_list
 
 if __name__ == '__main__':
@@ -448,15 +492,13 @@ if __name__ == '__main__':
 	p_name = problem_file.split('/')[-1].split('.')[0]
 	uploadable_ground_step_library_name = 'compiled/' + d_name +'/' + d_name + '.' + p_name
 
-	RELOAD = 0
+	RELOAD = 1
 	if RELOAD or not os.path.exists(uploadable_ground_step_library_name):
 		# create folder if it does not exist yet
 		file = Path(uploadable_ground_step_library_name)
 		file.parent.mkdir(parents=True, exist_ok=True)
 		ground_steps = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
-
-	PLAN = 1
-	if PLAN:
+	else:
 		ground_steps = []
 		i = 0
 		while True:
@@ -469,5 +511,7 @@ if __name__ == '__main__':
 				break
 		print('finished uploading')
 
-		planner = GPlanner(ground_steps)
+	PLAN = 1
+	if PLAN:
+		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1])
 		planner.solve(k=1)
