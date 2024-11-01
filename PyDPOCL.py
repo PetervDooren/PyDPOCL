@@ -1,4 +1,5 @@
 import os
+from typing import Set, List
 from pathlib import Path
 from GPlan import GPlan, math
 from Ground_Compiler_Library.GElm import GLiteral, GStep
@@ -53,7 +54,7 @@ class GPlanner:
 
     Attributes
     ----------
-    gsteps : set(Gstep)
+    gsteps : set(GStep)
         Grounded steps of the planning problem. The last two are the initial state and goal state respectively.
     ID : uuid
         unique identifier of the planner
@@ -87,7 +88,7 @@ class GPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, operators: set[GStep], init_stat: GStep, goal: GStep):
+	def __init__(self, operators: Set[GStep], init_stat: GStep, goal: GStep):
 		"""construct planner
 
 		Args:
@@ -130,7 +131,7 @@ class GPlanner:
 		self._frontier.insert(plan)
 
 	# @clock
-	def solve(self, k: int=4, cutoff: int=6000) -> list[GPlan]:
+	def solve(self, k: int=4, cutoff: int=6000) -> List[GPlan]:
 		# find k solutions to problem
 
 		completed = []
@@ -433,7 +434,7 @@ def upload(GL, name):
 # 	ground_step_list = precompile.deelementize_ground_library(GL)
 
 def just_compile(domain_file, problem_file, pickle_names):
-	GL = UnGround.UGLib(domain_file, problem_file)
+	GL = Ground.GLib(domain_file, problem_file)
 	# with open('compiled/ground_steps.txt', 'w') as gs:
 	# 	for step in GL:
 	# 		gs.write(str(step))

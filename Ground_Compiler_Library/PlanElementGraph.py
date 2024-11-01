@@ -10,6 +10,33 @@ from clockdeco import clock
 
 
 class Action(ElementGraph):
+	""" a class to represent an action which can be taken in a planning problem
+
+	 Attributes
+    ----------
+	nonequals : set(?)
+		?
+	is_decomp : bool
+		true if the action is decomposable
+	height : int
+		?
+	sub_dummy_init : ?
+		?
+	sub_dummy_goal : ?
+		?
+	replaced_ID : ?
+		?
+	is_cndt : bool
+		always true?
+	has_cndt : bool
+		always true?
+	edges : Set(?)
+		?
+	effects : List(Literal)
+		?
+	preconditions : List(Literal)
+		?
+	"""
 	# stepnumber = 2
 	def __init__(self, ID=None, type_graph=None, name=None, Elements=None, root_element=None, Edges=None):
 

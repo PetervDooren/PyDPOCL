@@ -1,11 +1,12 @@
 import sys
+from typing import List
 
 from Ground_Compiler_Library.Ground import GLib, upload
 from Ground_Compiler_Library.GElm import GLiteral, GStep
 
 
 
-def deelementize_ground_library(GL):
+def deelementize_ground_library(GL: GLib) -> List[GStep]:
 	g_steps = []
 	for step in GL._gsteps[0:-2]:
 		preconds = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in step.Preconditions]

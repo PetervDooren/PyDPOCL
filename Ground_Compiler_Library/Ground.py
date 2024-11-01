@@ -1,5 +1,6 @@
 
 import itertools
+from typing import Set, List
 import copy
 import pickle
 from collections import namedtuple, defaultdict
@@ -16,7 +17,7 @@ import hashlib
 Antestep = namedtuple('Antestep', 'action eff_link')
 
 
-def groundStoryList(operators, objects, obtypes):
+def groundStoryList(operators: Set[Action], objects, obtypes) -> List[Action]:
 	"""
 
 	:param operators: non-ground operator schemas
@@ -181,7 +182,37 @@ def reload(name):
 
 
 class GLib:
+	""" a class to represent and configure a planning problem
 
+	 Attributes
+    ----------
+    operators : set(Action)
+        unground operators
+	non_static_preds : set(Tuple)
+		?
+	object_types : defaultdict(str: set(str))
+		?
+	objects : set(Argument)
+		?
+	_gsteps : List(Action)
+		fully ground operators
+	ante_dict : defaultdict(int : set(int))
+		dictionary mapping a step A to the set of their antecedents B. i.e. step A has a precondition which is an effect of B.
+		Where steps are represented by their stepnumber in g_steps
+	threat_dict : defaultdict(int: set(int))
+		dictionary mapping a step A to the set of steps which pose a threat to their preconditions
+		Where steps are represented by their stepnumber in g_steps
+	flaw_threat_dict : defaultdict(uuid: set(int))
+		dictionary mapping a precondition(pre.replaced_ID) to the set of steps which pose a threat to it.
+		the threatening step represented by their stepnumber in g_steps
+	id_dict : defaultdict(uuid: set(int))s
+		dictionary mapping preconditions (pre.replaced_ID) to the set of steps which have that condition as an effect. i.e. their providers/antecedents
+	eff_dict : defaultdict(uuid: set(uuid))
+		dictionary mapping preconditions (pre.replaced_ID) to the set of effects which can act as their providers
+	name : str
+		name of the domain+problem
+
+	"""
 	def __init__(self, domain, problem):
 		operators, dops, objects, obtypes, init_action, goal_action = parseDomAndProb(domain, problem)
 		self.non_static_preds = FlawLib.non_static_preds
@@ -236,8 +267,8 @@ class GLib:
 
 		print('{} ground steps created'.format(len(self)))
 		print('uploading')
-		d_name = domain.split('/')[1].split('.')[0]
-		p_name = problem.split('/')[1].split('.')[0]
+		d_name = domain.split('/')[-1].split('.')[0]
+		p_name = problem.split('/')[-1].split('.')[0]
 		self.name = d_name + '.' + p_name
 
 	def insert(self, _pre, antestep, eff):
@@ -263,7 +294,14 @@ class GLib:
 				print('... Processing antecedents for {} \t\tof step {}'.format(pre, ante))
 				self._loadAntecedentPerConsequent(consequents, ante, pre)
 
-	def _loadAntecedentPerConsequent(self, antecedents, _step, _pre):
+	def _loadAntecedentPerConsequent(self, antecedents: Set[Action], _step: Action, _pre) -> None:
+		"""check if the steps in antecedents are antecedents to a step with a certain precondition
+
+		Args:
+			antecedents (_type_): _description_
+			_step (_type_): _description_
+			_pre (_type_): _description_
+		"""
 		for gstep in antecedents:
 			# skip steps which cannever be a candidate (such as goal)
 			if not gstep.is_cndt:
@@ -272,27 +310,29 @@ class GLib:
 				self.ante_dict[_step.stepnumber].add(gstep.stepnumber)
 
 	def _parseEffects(self, gstep, _step, _pre):
+		"""process the effects that the condition pre from step 1 has on step2
+
+		Args:
+			gstep (_type_): _description_
+			_step (_type_): _description_
+			_pre (_type_): _description_
+
+		Returns:
+			_type_: _description_
+		"""
 		count = 0
 		for Eff in gstep.Effects:
 			if Eff.name != _pre.name:
-				continue
+				continue # effect is not based on the same predicate as the precondition
 			if False in [ea.name == pa.name for ea, pa in zip(Eff.Args, _pre.Args)]:
-				continue
-			if Eff.truth != _pre.truth:
+				continue # arguments of the conditions are not identical
+			if Eff.truth != _pre.truth: # the effect undoes the precondition. Add to threat list
 				self.threat_dict[_step.stepnumber].add(gstep.stepnumber)
 				self.flaw_threat_dict[_pre.replaced_ID].add(gstep.stepnumber)
-			else:
+			else: # the effect is identical and therefore fulfills the precondition
 				self.insert(_pre, gstep.deepcopy(replace_internals=True), Eff)
 				count += 1
 		return count
-
-	# def getPotentialLinkConditions(self, src, snk):
-	# 	cndts = []
-	# 	for pre in self[snk.stepnumber].preconditions:
-	# 		if src.stepnumber not in self.id_dict[pre.replaced_ID]:
-	# 			continue
-	# 		cndts.append(Edge(src,snk, copy.deepcopy(pre)))
-	# 	return cndts
 
 	def getPotentialEffectLinkConditions(self, src, snk):
 		"""

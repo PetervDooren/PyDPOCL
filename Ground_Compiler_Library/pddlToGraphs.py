@@ -319,6 +319,18 @@ def evalActionParams(params, op_graph):
 
 @clock
 def domainToOperatorGraphs(domain, obj_types):
+	"""_summary_
+
+	Args:
+		domain (_type_): _description_
+		obj_types (_type_): _description_
+
+	Returns:
+		Tuple(
+			set(Action) : operators
+		 	set(Action) : decomposable operators?
+			 )
+	"""
 	opGraphs = set()
 	dopGraphs = set()
 	for action in domain.actions:
@@ -363,10 +375,17 @@ def domainToOperatorGraphs(domain, obj_types):
 
 @clock
 def problemToGraphs(problem):
-	"""
-		Returns a dictionary:
-		Keys: 'arg', 'init', 'goal'
-		Values: arg dictionary, (elements, edges), (elements, edges)
+	"""_summary_
+
+	Args:
+		problem (_type_): _description_
+
+	Returns:
+		Tuple(
+			dict(string?: Argument): Args
+			Action: init_graph
+			Action: goal_graph
+		)
 	"""
 
 	Args = {object.name: Argument(name=object.name, typ=object.typeName) for object in problem.objects if
@@ -440,6 +459,22 @@ def domainAxiomsToGraphs(domain):
 
 
 def parseDomAndProb(domain_file, problem_file):
+	"""_summary_
+
+	Args:
+		domain_file (string): _description_
+		problem_file (string): _description_
+
+	Returns:
+		Tuple(
+			set(Action): operators
+			set(Action): decomposable operators
+			set(?): objects
+			_type_: object types
+			_type_: initial state
+			_type_: goal state
+		)
+	"""
 
 	parser = Parser(domain_file, problem_file)
 	domain, dom = parser.parse_domain_drw()

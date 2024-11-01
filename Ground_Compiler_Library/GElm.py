@@ -21,6 +21,63 @@ dummyTuple = namedtuple('dummyTuple', ['init', 'final'])
 class GStep:
 	"""
 	Read-Only Ground Step
+	...
+
+    Attributes
+    ----------
+    schema : string
+        name of the operator
+	Args : list(Argument)
+        ?
+	ID : uuid
+        unique identifier of the step
+	preconds : list(GLiteral)
+        ?
+	stepnum : int
+        step number
+	stepnumber : int
+        step number (identical to stepnum?)
+	height : int
+        ?
+	sub_steps : list(?)
+		?
+	sub_orderings : OrderingGraph
+        ?
+	sub_links : CausalLinkGraph
+        ?
+	dummy : dummyTuple(GStep, GStep)
+        ?
+	depth : int
+        ?
+	cndts : list(int)
+        list of antecedents of this step. given in terms of stepnumber
+	condt_map : dict(uuid: list(int))
+        mapping between preconditions of this step and the steps which can provide that. 
+	threat_map : dict(uuid: list(int))
+        mapping between preconditions of this step and the steps which threaten that precondition
+	threats : list(int)
+        list of steps which threaten this step
+	instantiable : bool
+        ?
+	risks : list(?)
+        ?
+	choices : list(?)
+        ?
+	choice_map : dict(?:?)
+        ?
+	open_preconds : list(GLiteral)
+        ?
+	
+    Methods
+    -------
+    setup():
+	swap_setup(plan):
+	swap_substeps():
+	instantiate():
+	fulfill():
+	update_choices():
+	is_cndt():
+	is_threat():
 	"""
 
 	def __init__(self, operator, args, preconditions, stepnum, height):
