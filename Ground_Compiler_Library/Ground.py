@@ -30,42 +30,42 @@ def groundStoryList(operators: Set[Action], objects, obtypes) -> List[Action]:
 	print('...Creating Primitive Ground Steps')
 	for op in operators:
 		op.updateArgs()
-		cndts = [[obj for obj in objects if arg.typ == obj.typ or arg.typ in obtypes[obj.typ]] for arg in op.Args]
-		tuples = itertools.product(*cndts)
-		for t in tuples:
+		# cndts = [[obj for obj in objects if arg.typ == obj.typ or arg.typ in obtypes[obj.typ]] for arg in op.Args]
+		# tuples = itertools.product(*cndts)
+		# for t in tuples:
 
-			# check for inconsistent tuple of arg types
-			legaltuple = True
-			for (u,v) in op.nonequals:
-				if t[u] == t[v]:
-					legaltuple = False
-					break
-			if not legaltuple:
-				continue
+		# 	# check for inconsistent tuple of arg types
+		# 	legaltuple = True
+		# 	for (u,v) in op.nonequals:
+		# 		if t[u] == t[v]:
+		# 			legaltuple = False
+		# 			break
+		# 	if not legaltuple:
+		# 		continue
 
-			gstep = copy.deepcopy(op)
-			print('Creating ground step {}'.format(gstep))
+		gstep = copy.deepcopy(op)
+		print('Creating ground step {}'.format(gstep))
 
-			# replace the ID of the internal elements
-			gstep._replaceInternals()
+		# replace the ID of the internal elements
+		gstep._replaceInternals()
 
-			# assign the step number (only one of the following should be necessary)
-			gstep.root.stepnumber = stepnum
-			gstep.root.arg_name = stepnum
-			stepnum += 1
+		# assign the step number (only one of the following should be necessary)
+		gstep.root.stepnumber = stepnum
+		gstep.root.arg_name = stepnum
+		stepnum += 1
 
-			# swap the leaves of the step with the objects in tuple "t"
-			gstep.replaceArgs(t)
+		# swap the leaves of the step with the objects in tuple "t"
+		#gstep.replaceArgs(t)
 
-			# append the step to our growin glist
-			gsteps.append(gstep)
+		# append the step to our growin glist
+		gsteps.append(gstep)
 
-			# not sure why one would need the following:
-			# gstep.replaceInternals()
+		# not sure why one would need the following:
+		# gstep.replaceInternals()
 
-			# assign height of the step to the root element and
-			gstep.height = 0
-			gstep.root.height = 0
+		# assign height of the step to the root element and
+		gstep.height = 0
+		gstep.root.height = 0
 
 	return gsteps
 
@@ -325,7 +325,7 @@ class GLib:
 			if Eff.name != _pre.name:
 				continue # effect is not based on the same predicate as the precondition
 			if False in [ea.name == pa.name for ea, pa in zip(Eff.Args, _pre.Args)]:
-				continue # arguments of the conditions are not identical
+				pass # arguments of the conditions are not identical
 			if Eff.truth != _pre.truth: # the effect undoes the precondition. Add to threat list
 				self.threat_dict[_step.stepnumber].add(gstep.stepnumber)
 				self.flaw_threat_dict[_pre.replaced_ID].add(gstep.stepnumber)

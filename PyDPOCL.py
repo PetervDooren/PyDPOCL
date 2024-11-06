@@ -202,7 +202,7 @@ class GPlanner:
 			if isinstance(flaw, TCLF):
 				tclf_visits += 1
 				self.resolve_threat(plan, flaw)
-			else:
+			else: # must be open precondition flaw (OPF)
 				# only count expanded nodes as those that resolve open conditions
 				expanded += 1
 				self.add_step(plan, flaw)
@@ -413,7 +413,7 @@ class GPlanner:
 import sys
 import pickle
 # import Ground_Compiler_Library
-from Ground_Compiler_Library import Ground, UnGround, precompile
+from Ground_Compiler_Library import Ground, precompile
 # import json
 # import jsonpickle
 #
