@@ -1,8 +1,21 @@
 class VariableBindings:
     def __init__(self):
         self.const = {}
+        self.variables = []
         self.codesignations = {}
         self.non_codesignations = {}
+
+    def register_variable(self, var):
+        if var in self.codesignations or var in self.non_codesignations:
+            print(f"Warning variable {var} is already registered")
+            return
+        self.variables.append(var)
+        self.const[var] = None
+        self.codesignations[var] = []
+        self.non_codesignations[var] = []
+
+    def set_const(self, var, const) -> bool:
+        self.const[var] = const
     
     def is_codesignated(self, varA, varB) -> bool:
         """check if A and B are codesignated
@@ -43,16 +56,6 @@ class VariableBindings:
             bool: False if the codesignation is inconsistent with the existing bindings
         """
 
-        # intialise lists if they dont exist
-        if varA not in self.codesignations:
-            self.codesignations[varA] = []
-        if varB not in self.codesignations:
-            self.codesignations[varB] = []
-        if varA not in self.non_codesignations:
-            self.non_codesignations[varA] = []
-        if varB not in self.non_codesignations:
-            self.non_codesignations[varB] = []
-
         #TODO check if either A or B are constants
 
         # check if they cannot codesignate. Only need to check one list since they are symmetrical.
@@ -78,16 +81,6 @@ class VariableBindings:
         Returns:
             bool: False if the non codesignation is inconsistent with the existing bindings
         """
-
-        # intialise lists if they dont exist
-        if varA not in self.codesignations:
-            self.codesignations[varA] = []
-        if varB not in self.codesignations:
-            self.codesignations[varB] = []
-        if varA not in self.non_codesignations:
-            self.non_codesignations[varA] = []
-        if varB not in self.non_codesignations:
-            self.non_codesignations[varB] = []
 
         #TODO check if either A or B are constants
         # check if they cannot codesignate. Only need to check one list since they are symmetrical.

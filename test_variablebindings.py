@@ -11,6 +11,10 @@ class TestVariableBindings(unittest.TestCase):
                      "B": uuid4(),
                      "C": uuid4()}
         
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+        
         self.assertFalse(vb.is_codesignated(variables["A"], variables["B"]), "A and B are codesignated from instantiation")
         self.assertTrue(vb.add_codesignation(variables["A"], variables["B"]), "codesignation between A and B could not be instantiated")
         self.assertTrue(vb.is_codesignated(variables["A"], variables["B"]), "A and B are not codesignated after codesignation")
@@ -20,6 +24,10 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
+        
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
         
         self.assertTrue(vb.can_codesignate(variables["A"], variables["B"]), "A and B cannot codesignated from instantiation")
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["B"]), "non codesignation between A and B could not be instantiated")
@@ -31,6 +39,10 @@ class TestVariableBindings(unittest.TestCase):
                      "B": uuid4(),
                      "C": uuid4()}
         
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_codesignation(variables["A"], variables["B"]), "initial codesignation between A and B could not be instantiated")
         self.assertTrue(vb.add_codesignation(variables["B"], variables["C"]), "second codesignation between B and C could not be instantiated")
         self.assertTrue(vb.add_codesignation(variables["A"], variables["C"]), "third codesignation between A and C could not be instantiated")
@@ -40,7 +52,11 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
-        
+
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["B"]), "initial non codesignation between A and B could not be instantiated")
         self.assertTrue(vb.add_non_codesignation(variables["B"], variables["C"]), "second non codesignation between B and C could not be instantiated")
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["C"]), "third non codesignation between A and C could not be instantiated")
@@ -51,6 +67,10 @@ class TestVariableBindings(unittest.TestCase):
                      "B": uuid4(),
                      "C": uuid4()}
         
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_codesignation(variables["A"], variables["B"]), "initial codesignation between A and B could not be instantiated")
         self.assertFalse(vb.add_non_codesignation(variables["A"], variables["B"]), "non codesignation between A and B can be instantiated, which it should not")
 
@@ -59,7 +79,11 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
-        
+
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["B"]), "initial codesignation between A and B could not be instantiated")
         self.assertFalse(vb.add_codesignation(variables["A"], variables["B"]), "non codesignation between A and B can be instantiated, which it should not")
 
@@ -69,6 +93,10 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
+
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
         
         self.assertTrue(vb.add_codesignation(variables["A"], variables["B"]), "initial codesignation between A and B could not be instantiated")
         self.assertTrue(vb.add_codesignation(variables["B"], variables["C"]), "codesignation between B and C could not be instantiated")
@@ -79,7 +107,11 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
-        
+
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["B"]), "initial non codesignation between A and B could not be instantiated")
         self.assertTrue(vb.add_non_codesignation(variables["B"], variables["C"]), "non codesignation between B and C could not be instantiated")
         self.assertTrue(vb.add_codesignation(variables["A"], variables["C"]), "codesignation between A and C could not be instantiated")
@@ -89,7 +121,11 @@ class TestVariableBindings(unittest.TestCase):
         variables = {"A": uuid4(),
                      "B": uuid4(),
                      "C": uuid4()}
-        
+
+        vb.register_variable(variables["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(variables["C"])
+
         self.assertTrue(vb.add_codesignation(variables["A"], variables["B"]))
         self.assertTrue(vb.add_non_codesignation(variables["B"], variables["C"]))
         self.assertFalse(vb.add_codesignation(variables["A"], variables["C"]))
