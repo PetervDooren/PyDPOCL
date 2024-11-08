@@ -101,10 +101,7 @@ class GPlanner:
 		self.h_step_dict = dict()
 		self.h_lit_dict = dict()
 
-		root_plan = GPlan(init_stat, goal)
-		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.final)
-		for p in root_plan.dummy.final.open_preconds:
-			root_plan.flaws.insert(root_plan, OPF(root_plan.dummy.final, p, 100000))
+		root_plan = GPlan.make_root_plan(init_stat, goal)
 
 		self._frontier = Frontier()
 		self.insert(root_plan)

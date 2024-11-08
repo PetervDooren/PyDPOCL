@@ -1,7 +1,9 @@
+from __future__ import annotations
 from Ground_Compiler_Library.GElm import GLiteral, GStep
 from uuid import uuid4
 from Flaws import FlawLib, OPF, TCLF
 from Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
+from Ground_Compiler_Library.VariableBindings import VariableBindings
 import copy
 from collections import namedtuple, defaultdict
 import math
@@ -12,11 +14,65 @@ dummyTuple = namedtuple('dummyTuple', ['init', 'final'])
 # 		self.final = final
 
 class GPlan:
+	"""
+	Plan in plan space
+    ...
+
+    Attributes
+    ----------
+    ID : uuid
+        unique identifier of the plan
+    OrderingGraph : OrderingGraph
+        ???
+	CausalLinkGraph: CausalLinkGraph
+		???
+	variableBindings: VariableBindings
+		structure to solve the constraint satisfaction problem of variable bindings
+	flaws: FlawLib
+		list of open flaws
+	solved: bool
+		true if the plan is without flaws
+	dummy: dummyTuple
+		tuple containing the steps representing the initial state and the goal
+	init: List(GLiteral)
+		list of conditions present in the initial state
+	goal: List(GLiteral)
+		list of goal conditions
+	steps: List(Gstep)
+		list of steps that make the plan
+	cndt_map: ???
+		???
+	threat_map: ???
+		???
+	heuristic: float
+		heuristic estimating the cost to complete the plan
+	name: string
+		???
+    cost: float
+		cost of the plan thus far
+	depth: int
+		???
+
+	Methods
+    -------
+	__init__(?, ?)
+    make_root_plan():
+	index():
+	instantiate():
+	isInternallyConsistent():
+	insert():
+	insert_primitive():
+	insert_decomp():
+	resolve():
+	resolve_with_primitive():
+	resolve_with_decomp():
+	"""
 
 	def __init__(self, dummy_init_constructor, dummy_goal_constructor):
 		self.ID = uuid4()
 		self.OrderingGraph = OrderingGraph()
 		self.CausalLinkGraph = CausalLinkGraph()
+		self.variableBindings = VariableBindings()
 		# self.HierarchyGraph = HierarchyGraph()
 		self.flaws = FlawLib()
 		self.solved = False
@@ -48,6 +104,32 @@ class GPlan:
 
 	def __setitem__(self, item, pos):
 		self.steps[pos] = item
+
+	@staticmethod
+	def make_root_plan(dummy_init_constructor, dummy_goal_constructor) -> GPlan:
+		"""Helper function to create a root plan at the start of planning
+
+		Args:
+			dummy_init_constructor (_type_): _description_
+			dummy_goal_constructor (_type_): _description_
+		"""
+		root_plan = GPlan(dummy_init_constructor, dummy_goal_constructor)
+		# add required orderings
+		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.final)
+
+		# register parameters
+		# for condition in root_plan.init:
+		# 	for a in condition.Args:
+		# 		root_plan.variableBindings.register_variable(a)
+		# for condition in root_plan.goal:
+		# 	for a in condition.Args:
+		# 		root_plan.variableBindings.register_variable(a)
+
+		# add open precondition flaws for the goal
+		for p in root_plan.dummy.final.open_preconds:
+			root_plan.flaws.insert(root_plan, OPF(root_plan.dummy.final, p, 100000))
+
+		return root_plan
 
 	def index(self, step):
 		for i, s in enumerate(self.steps):
