@@ -1,9 +1,17 @@
+from collections import defaultdict
+
 class VariableBindings:
     def __init__(self):
+        self.objects = set()
+        self.object_types = defaultdict(set)
         self.const = {}
         self.variables = []
         self.codesignations = {}
         self.non_codesignations = {}
+
+    def set_objects(self, objects, object_types):
+        self.objects =objects
+        self.obj_types = object_types
 
     def register_variable(self, var):
         if var in self.codesignations or var in self.non_codesignations:

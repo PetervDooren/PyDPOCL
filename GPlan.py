@@ -106,18 +106,21 @@ class GPlan:
 		self.steps[pos] = item
 
 	@staticmethod
-	def make_root_plan(dummy_init_constructor, dummy_goal_constructor) -> GPlan:
+	def make_root_plan(dummy_init_constructor, dummy_goal_constructor, objects, object_types) -> GPlan:
 		"""Helper function to create a root plan at the start of planning
 
 		Args:
 			dummy_init_constructor (_type_): _description_
 			dummy_goal_constructor (_type_): _description_
+			objects (set(Argument)): list of objects in the world
+			object_types(defaultdict(str, set(str)))
 		"""
 		root_plan = GPlan(dummy_init_constructor, dummy_goal_constructor)
 		# add required orderings
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.final)
 
 		# register parameters
+		root_plan.variableBindings.set_objects(objects, object_types)
 		# for condition in root_plan.init:
 		# 	for a in condition.Args:
 		# 		root_plan.variableBindings.register_variable(a)

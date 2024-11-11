@@ -88,20 +88,22 @@ class GPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, operators: Set[GStep], init_stat: GStep, goal: GStep):
+	def __init__(self, operators: Set[GStep], init_stat: GStep, goal: GStep, objects, object_types):
 		"""construct planner
 
 		Args:
 			operators (set(Gstep)): operators to be used in planning
 			init_stat (Gstep): action representing the initial state
 			goal (Gstep): action representing the goal state
+			objects (?): list of objects in the world
+			object_types(?): list of object types
 		"""		
 		self.gsteps = operators
 		self.ID = uuid4()
 		self.h_step_dict = dict()
 		self.h_lit_dict = dict()
 
-		root_plan = GPlan.make_root_plan(init_stat, goal)
+		root_plan = GPlan.make_root_plan(init_stat, goal, objects, object_types)
 
 		self._frontier = Frontier()
 		self.insert(root_plan)
@@ -473,7 +475,7 @@ def just_compile(domain_file, problem_file, pickle_names):
 	# for i, gstep in enumerate(ground_step_list):
 	# 	with open(pickle_names + str(i), 'wb') as ugly:
 	# 		pickle.dump(gstep, ugly)
-	return ground_step_list
+	return ground_step_list, GL.objects, GL.object_types
 
 if __name__ == '__main__':
 	num_args = len(sys.argv)
@@ -495,7 +497,7 @@ if __name__ == '__main__':
 		# create folder if it does not exist yet
 		file = Path(uploadable_ground_step_library_name)
 		file.parent.mkdir(parents=True, exist_ok=True)
-		ground_steps = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
+		ground_steps, objects, object_types = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
 	else:
 		ground_steps = []
 		i = 0
@@ -511,5 +513,5 @@ if __name__ == '__main__':
 
 	PLAN = 1
 	if PLAN:
-		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1])
+		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)
 		planner.solve(k=1)
