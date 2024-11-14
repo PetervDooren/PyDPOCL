@@ -8,19 +8,24 @@ class VariableBindings:
         self.variables = []
         self.codesignations = {}
         self.non_codesignations = {}
+    
+    def isInternallyConsistent():
+        return True        
 
     def set_objects(self, objects, object_types):
         self.objects =objects
         self.obj_types = object_types
 
     def register_variable(self, var):
-        if var in self.codesignations or var in self.non_codesignations:
+        if var in self.variables:
             print(f"Warning variable {var} is already registered")
             return
         self.variables.append(var)
         self.const[var] = None
         self.codesignations[var] = []
         self.non_codesignations[var] = []
+        if var in self.objects:
+            self.const[var] = var
 
     def set_const(self, var, const) -> bool:
         self.const[var] = const
@@ -49,8 +54,14 @@ class VariableBindings:
         Returns:
             bool: _description_
         """
-        if varB not in self.non_codesignations:
-            return True
+        # check if either or both are constants
+        if self.const[varA] is not None and self.const[varB] is not None:
+            return self.const[varA] == self.const[varB]
+        elif self.const[varA] is not None:
+            return not varA in self.non_codesignations[varB]
+        elif self.const[varB] is not None:
+            return not varA in self.non_codesignations[varB]
+        #TODO check if types of A and B match
         return not varA in self.non_codesignations[varB]
 
     def add_codesignation(self, varA, varB) -> bool:
@@ -65,6 +76,16 @@ class VariableBindings:
         """
 
         #TODO check if either A or B are constants
+        if self.const[varA] is not None:
+            self.const[varB] = self.const[varA]
+            for v in self.codesignations[varB]:
+                self.const[v] = self.const[varA]
+            return True
+        elif self.const[varB] is not None:
+            self.const[varA] = self.const[varB]
+            for v in self.codesignations[varA]:
+                self.const[v] = self.const[varB]
+            return True
 
         # check if they cannot codesignate. Only need to check one list since they are symmetrical.
         if varA in self.non_codesignations[varB]:

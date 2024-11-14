@@ -248,6 +248,29 @@ class GPlanner:
 			new_plan.insert(new_step)
 			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
 
+			## find matching condition #TODO make more efficient
+			matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name]
+			if len(matching_conditions) < 1:
+				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
+				continue
+			if len(matching_conditions) > 1:
+				print(f"Warning, step: {new_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
+			provider_condition = matching_conditions[0]
+
+			# check that provided condition can be codesignated with the required(consumed) condition
+			provider_args = provider_condition.Args
+			consumer_args = mutable_p.Args
+			if not len(provider_args) == len(consumer_args):
+				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+			consistent = True
+			for i in range(len(provider_args)):
+				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
+					consistent = False
+					break
+				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+			if not consistent:
+				continue
+
 			# resolve s_need with the new step
 			new_plan.resolve(new_step, mutable_s_need, mutable_p)
 

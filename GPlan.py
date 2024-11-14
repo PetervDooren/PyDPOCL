@@ -317,26 +317,11 @@ class GPlan:
 			mutable_s_need (_type_): _description_
 			mutable_p (_type_): _description_
 		"""
-
-		matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name]
-		if len(matching_conditions) < 1:
-			print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
-		if len(matching_conditions) > 1:
-			print(f"Warning, step: {new_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
-		provider_condition = matching_conditions[0]
-
 		# operate on cloned plan
 		mutable_s_need.fulfill(mutable_p)
 
 		# add orderings
 		self.OrderingGraph.addEdge(new_step, mutable_s_need)
-		# add variable bindings
-		provider_args = provider_condition.Args
-		consumer_args = mutable_p.Args
-		if not len(provider_args) == len(consumer_args):
-			print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-		for i in range(len(provider_args)):
-			self.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
 
 		# add causal link
 		#TODO uniquely identify the provider condition in the causal link
