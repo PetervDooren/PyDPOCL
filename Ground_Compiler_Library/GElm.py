@@ -33,6 +33,8 @@ class GStep:
         unique identifier of the step
 	preconds : list(GLiteral)
         ?
+	effects : list(GLiteral)
+		?
 	stepnum : int
         step number
 	stepnumber : int
@@ -80,7 +82,7 @@ class GStep:
 	is_threat():
 	"""
 
-	def __init__(self, operator, args, preconditions, stepnum, height):
+	def __init__(self, operator, args, preconditions, effects, stepnum, height):
 
 		# READ-ONLY ATTRIBUTES #
 		# schema refers to the name of the operator
@@ -91,6 +93,7 @@ class GStep:
 		self.ID = uuid4()
 		# preconds is a list of GCond
 		self.preconds = preconditions
+		self.effects = effects
 		# stepnum is the ground step constructor type
 		self.stepnum = stepnum
 		self.stepnumber = stepnum

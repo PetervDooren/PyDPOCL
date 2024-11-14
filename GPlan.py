@@ -121,12 +121,12 @@ class GPlan:
 
 		# register parameters
 		root_plan.variableBindings.set_objects(objects, object_types)
-		# for condition in root_plan.init:
-		# 	for a in condition.Args:
-		# 		root_plan.variableBindings.register_variable(a)
-		# for condition in root_plan.goal:
-		# 	for a in condition.Args:
-		# 		root_plan.variableBindings.register_variable(a)
+		for condition in root_plan.init:
+			for a in condition.Args:
+				root_plan.variableBindings.register_variable(a)
+		for condition in root_plan.goal:
+			for a in condition.Args:
+				root_plan.variableBindings.register_variable(a)
 
 		# add open precondition flaws for the goal
 		for p in root_plan.dummy.final.open_preconds:
@@ -175,6 +175,10 @@ class GPlan:
 		# global orderings
 		self.OrderingGraph.addEdge(self.dummy.init, new_step)
 		self.OrderingGraph.addEdge(new_step, self.dummy.final)
+
+		# add variables of the new step
+		for a in new_step.Args:
+			self.variableBindings.register_variable(a)
 
 		# add open conditions for new step
 		for pre in new_step.open_preconds:
@@ -306,13 +310,36 @@ class GPlan:
 			self.resolve_with_primitive(new_step, s_need, p)
 
 	def resolve_with_primitive(self, new_step, mutable_s_need, mutable_p):
+		"""resolve required precondition 'mutable_p' of step 'mutable_s_need' using step 'new_step' 
+
+		Args:
+			new_step (_type_): _description_
+			mutable_s_need (_type_): _description_
+			mutable_p (_type_): _description_
+		"""
+
+		matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name]
+		if len(matching_conditions) < 1:
+			print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
+		if len(matching_conditions) > 1:
+			print(f"Warning, step: {new_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
+		provider_condition = matching_conditions[0]
 
 		# operate on cloned plan
 		mutable_s_need.fulfill(mutable_p)
 
 		# add orderings
 		self.OrderingGraph.addEdge(new_step, mutable_s_need)
+		# add variable bindings
+		provider_args = provider_condition.Args
+		consumer_args = mutable_p.Args
+		if not len(provider_args) == len(consumer_args):
+			print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+		for i in range(len(provider_args)):
+			self.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+
 		# add causal link
+		#TODO uniquely identify the provider condition in the causal link
 		c_link = self.CausalLinkGraph.addEdge(new_step, mutable_s_need, mutable_p)
 
 		mutable_s_need.update_choices(self)
