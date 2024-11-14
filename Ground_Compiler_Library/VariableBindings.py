@@ -1,6 +1,23 @@
 from collections import defaultdict
 
 class VariableBindings:
+    """class to manage variablebindings
+
+    Attributes
+    ----------
+    objects : list(Argument)
+        instances of objects
+    object_types : defaultdict
+        ???
+    const : dict(Argument:list(Argument))
+        mapping between variables and a constant
+    variables : list(Argument)
+        list of variables in the plan
+    codesignations : dict(Argument:list(Argument))
+        mapping between variables and other variables that must share the same value
+    non_codesignations : dict(Argument:list(Argument))
+        mapping between variables and other variables that cannot share the same value
+    """
     def __init__(self):
         self.objects = set()
         self.object_types = defaultdict(set)

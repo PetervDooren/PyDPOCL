@@ -253,7 +253,7 @@ class GStep:
 		return self.ID == other.ID
 
 	def __str__(self):
-		args = str([arg.name if not isinstance(arg, ElementGraph) else arg for arg in self.Args])
+		args = str([arg.arg_name if arg.name is None else arg.name if not isinstance(arg, ElementGraph) else arg for arg in self.Args])
 		return str(self.schema) + args + '_{}'.format(str(self.ID)[-4:])
 
 	def __repr__(self):

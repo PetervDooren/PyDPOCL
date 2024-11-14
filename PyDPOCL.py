@@ -210,6 +210,13 @@ class GPlanner:
 		raise ValueError('FAIL: No more plans to visit with {} nodes expanded'.format(expanded))
 
 	def add_step(self, plan: GPlan, flaw: Flaw) -> None:
+		"""add a new step to resolve a flaw in the plan. Will add one or more plans to the
+
+		Args:
+			plan (GPlan): plan which is incremented
+			flaw (Flaw): flaw of that plan to be resolved (must be open precondition)
+		"""
+
 		s_need, p = flaw.flaw
 		cndts = s_need.cndt_map[p.ID]
 
