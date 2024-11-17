@@ -256,38 +256,38 @@ class GPlanner:
 			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
 
 			## find matching condition #TODO make more efficient
-			matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name]
+			matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name and e.truth == mutable_p.truth]
 			if len(matching_conditions) < 1:
 				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
 				continue
 			if len(matching_conditions) > 1:
 				print(f"Warning, step: {new_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
-			provider_condition = matching_conditions[0]
+			for provider_condition in matching_conditions:
+				# check that provided condition can be codesignated with the required(consumed) condition
+				provider_args = provider_condition.Args
+				consumer_args = mutable_p.Args
+				if not len(provider_args) == len(consumer_args):
+					print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+				consistent = True
+				for i in range(len(provider_args)):
+					if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
+						consistent = False
+						break
+					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+				if not consistent:
+					print(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+					continue
 
-			# check that provided condition can be codesignated with the required(consumed) condition
-			provider_args = provider_condition.Args
-			consumer_args = mutable_p.Args
-			if not len(provider_args) == len(consumer_args):
-				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-			consistent = True
-			for i in range(len(provider_args)):
-				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
-					consistent = False
-					break
-				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
-			if not consistent:
-				continue
+				# resolve s_need with the new step
+				new_plan.resolve(new_step, mutable_s_need, mutable_p)
 
-			# resolve s_need with the new step
-			new_plan.resolve(new_step, mutable_s_need, mutable_p)
+				new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
+				# new_plan.cost += self.max_height + 1 - new_step.height
+				# new_plan.cost += 1
+				# self.max_height + 1 - new_step.height
 
-			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
-			# new_plan.cost += self.max_height + 1 - new_step.height
-			# new_plan.cost += 1
-			# self.max_height + 1 - new_step.height
-
-			# insert our new mutated plan into the frontier
-			self.insert(new_plan)
+				# insert our new mutated plan into the frontier
+				self.insert(new_plan)
 
 
 	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
@@ -318,11 +318,34 @@ class GPlanner:
 			old_step = new_plan.steps[plan.index(choice)]
 			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan.name))
 
-			# resolve open condition with old step
-			new_plan.resolve(old_step, mutable_s_need, mutable_p)
+			## find matching condition #TODO make more efficient
+			matching_conditions = [e for e in old_step.effects if e.name == mutable_p.name]
+			if len(matching_conditions) < 1:
+				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
+				continue
+			if len(matching_conditions) > 1:
+				print(f"Warning, step: {old_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
+			for provider_condition in matching_conditions:
+				# check that provided condition can be codesignated with the required(consumed) condition
+				provider_args = provider_condition.Args
+				consumer_args = mutable_p.Args
+				if not len(provider_args) == len(consumer_args):
+					print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+				consistent = True
+				for i in range(len(provider_args)):
+					if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
+						consistent = False
+						break
+					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+				if not consistent:
+					print(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+					continue
 
-			# insert mutated plan into frontier
-			self.insert(new_plan)
+				# resolve open condition with old step
+				new_plan.resolve(old_step, mutable_s_need, mutable_p)
+
+				# insert mutated plan into frontier
+				self.insert(new_plan)
 
 	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)
