@@ -130,6 +130,30 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(vb.add_non_codesignation(variables["B"], variables["C"]))
         self.assertFalse(vb.add_codesignation(variables["A"], variables["C"]))
 
+    def test_const_assigning(self):
+        vb = VariableBindings()
+        variables = {"A": uuid4(),
+                     "B": uuid4(),
+                     "C": uuid4()}
+        
+        objects = {"A": uuid4(),
+                   "B": uuid4(),
+                   "C": uuid4()}
+        vb.set_objects(objects.values(), None)
+
+        vb.register_variable(objects["A"])
+        vb.register_variable(variables["B"])
+        vb.register_variable(objects["C"])
+
+        self.assertIsNotNone(vb.const[objects["A"]], "A is not recognised as a constant")
+        self.assertTrue(vb.can_codesignate(objects["A"], variables["B"]))
+        self.assertTrue(vb.add_codesignation(objects["A"], variables["B"]))
+        self.assertTrue(vb.can_codesignate(objects["A"], variables["B"]))
+        self.assertIsNotNone(vb.const[variables["B"]], "B is not recognised as grounded")
+
+        self.assertFalse(vb.can_codesignate(objects["A"], objects["C"]), "two unidentical constants can codesignate")
+        self.assertFalse(vb.can_codesignate(objects["C"], variables["B"]), "two unidentical constants can codesignate")
+
 
 if __name__ == '__main__':
     unittest.main()
