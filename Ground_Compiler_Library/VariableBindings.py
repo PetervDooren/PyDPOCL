@@ -141,3 +141,11 @@ class VariableBindings:
         self.non_codesignations[varB].extend(self.codesignations[varA])
 
         return True
+    
+    def print_var(self, var):
+        print(f"variable: {var}")
+        if self.const[var] is not None:
+            print(f"ground as {self.const[var]}")
+        else:
+            print(f"codesignations: {self.codesignations[var]}")
+            print(f"non_codesignations: {self.non_codesignations[var]}")
