@@ -426,6 +426,15 @@ class GPlan:
 			return sum([step.stepnum for step in self]) < sum([step.stepnum for step in other])
 		else:
 			return self.OrderingGraph < other.OrderingGraph
+		
+	def print(self):
+		"""Display the plan steps in a human readable format. Substitute constants where possible"""
+		print(f"Plan: {self}")
+
+		for step in self.OrderingGraph.topoSort():
+			args = str([self.variableBindings.const[arg] if self.variableBindings.const[arg] is not None else arg.arg_name for arg in step.Args])
+			print(str(step.schema) + args + '_{}'.format(str(step.ID)[-4:]))
+		print('\n')
 
 	def __str__(self):
 		return self.name

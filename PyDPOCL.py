@@ -176,10 +176,7 @@ class GPlanner:
 				print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
 				if REPORT:
 					print(success_message.format(plan.name, expanded, len(self)+expanded, leaves))
-
-					for step in plan.OrderingGraph.topoSort():
-						print(step)
-					print('\n')
+					plan.print()
 
 				if len(completed) == k:
 					return completed
