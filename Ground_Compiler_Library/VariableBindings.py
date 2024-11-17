@@ -27,7 +27,7 @@ class VariableBindings:
         self.non_codesignations = {}
     
     def isInternallyConsistent():
-        return True        
+        return True
 
     def set_objects(self, objects, object_types):
         self.objects =objects
@@ -45,8 +45,13 @@ class VariableBindings:
             self.const[var] = var
 
     def set_const(self, var, const) -> bool:
+        #TODO check if consistent
         self.const[var] = const
-    
+        return True
+
+    def is_fully_ground(self) -> bool:
+        return not any([v is None for v in self.const.values()])
+
     def is_codesignated(self, varA, varB) -> bool:
         """check if A and B are codesignated
 

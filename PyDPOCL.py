@@ -167,22 +167,25 @@ class GPlanner:
 
 
 			if len(plan.flaws) == 0:
-				# success
-				elapsed = time.time() - t0
-				delay = str('%0.8f' % elapsed)
-				completed.append(plan)
+				if plan.variableBindings.is_fully_ground() or True:
+					# success
+					elapsed = time.time() - t0
+					delay = str('%0.8f' % elapsed)
+					completed.append(plan)
 
-				trace = math.floor(len(plan.name.split('['))/2)
-				print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
-				if REPORT:
-					print(success_message.format(plan.name, expanded, len(self)+expanded, leaves))
-					plan.print()
+					trace = math.floor(len(plan.name.split('['))/2)
+					print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
+					if REPORT:
+						print(success_message.format(plan.name, expanded, len(self)+expanded, leaves))
+						plan.print()
 
-				if len(completed) == k:
-					return completed
-				# if len(completed) == 6:
-				# 	print('check here')
-				continue
+					if len(completed) == k:
+						return completed
+					# if len(completed) == 6:
+					# 	print('check here')
+					continue
+				else: # variables are not fully ground
+					self.ground_variable(plan)
 
 			if time.time() - t0 > cutoff:
 				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
@@ -355,6 +358,8 @@ class GPlanner:
 		self.insert(new_plan)
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 
+	def ground_variable(self, plan: GPlan):
+		pass
 	# Heuristic Methods #
 
 	def h_condition(self, plan: GPlan, stepnum: int, precond: GLiteral) -> float:
