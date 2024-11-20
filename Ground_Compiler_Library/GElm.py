@@ -18,9 +18,9 @@ dummyTuple = namedtuple('dummyTuple', ['init', 'final'])
 # 		self.init = init
 # 		self.final = final
 
-class GStep:
+class Operator:
 	"""
-	Read-Only Ground Step
+	Read-Only Operator
 	...
 
     Attributes
@@ -28,7 +28,7 @@ class GStep:
     schema : string
         name of the operator
 	Args : list(Argument)
-        ?
+        arguments of the operator of the action
 	ID : uuid
         unique identifier of the step
 	preconds : list(GLiteral)
@@ -47,7 +47,7 @@ class GStep:
         ?
 	sub_links : CausalLinkGraph
         ?
-	dummy : dummyTuple(GStep, GStep)
+	dummy : dummyTuple(Operator, Operator)
         ?
 	depth : int
         ?
@@ -140,9 +140,9 @@ class GStep:
 
 	def setup(self, step_to_cndt, precond_to_cndt, step_to_threat, precond_to_threat):
 		"""
-		:param step_to_cndt: dict of form GStep -> GStep^k such as D[stepnum] -> [cndt antecedent step nums]
-		:param precond_to_cndt: dict of form GLiteral -> GStep^k such as D[pre.ID] -> [cndt antecedent step nums]
-		:param step_to_threat: dict of form GLiteral -> Gstep^k such as D[stepnum] -> [cndt threat step nums]
+		:param step_to_cndt: dict of form Operator -> Operator^k such as D[stepnum] -> [cndt antecedent step nums]
+		:param precond_to_cndt: dict of form GLiteral -> Operator^k such as D[pre.ID] -> [cndt antecedent step nums]
+		:param step_to_threat: dict of form GLiteral -> Operator^k such as D[stepnum] -> [cndt threat step nums]
 		"""
 		self.cndts = list(step_to_cndt[self.stepnum])
 		self.cndt_map = {pre.ID: list(precond_to_cndt[pre.ID]) for pre in self.preconds}

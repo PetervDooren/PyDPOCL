@@ -1,5 +1,5 @@
 from __future__ import annotations
-from Ground_Compiler_Library.GElm import GLiteral, GStep
+from Ground_Compiler_Library.GElm import GLiteral, Operator
 from uuid import uuid4
 from Flaws import FlawLib, OPF, TCLF
 from Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
@@ -38,7 +38,7 @@ class GPlan:
 		list of conditions present in the initial state
 	goal: List(GLiteral)
 		list of goal conditions
-	steps: List(Gstep)
+	steps: List(Operator)
 		list of steps that make the plan
 	cndt_map: ???
 		???
@@ -451,7 +451,7 @@ def topoSort(ordering_graph):
 	L =[]
 	# ogr = copy.deepcopy(ordering_graph)
 	ogr = OrderingGraph()
-	init_dummy = GStep(name='init_dummy')
+	init_dummy = Operator(name='init_dummy')
 	ogr.elements.add(init_dummy)
 	for elm in list(ordering_graph.elements):
 		ogr.addOrdering(init_dummy, elm)

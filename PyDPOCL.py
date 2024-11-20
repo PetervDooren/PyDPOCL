@@ -2,7 +2,7 @@ import os
 from typing import Set, List
 from pathlib import Path
 from GPlan import GPlan, math
-from Ground_Compiler_Library.GElm import GLiteral, GStep
+from Ground_Compiler_Library.GElm import GLiteral, Operator
 from Flaws import Flaw, OPF, TCLF
 from uuid import uuid4
 import copy
@@ -54,7 +54,7 @@ class GPlanner:
 
     Attributes
     ----------
-    gsteps : set(GStep)
+    gsteps : set(Operator)
         Grounded steps of the planning problem. The last two are the initial state and goal state respectively.
     ID : uuid
         unique identifier of the planner
@@ -88,13 +88,13 @@ class GPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, operators: Set[GStep], init_stat: GStep, goal: GStep, objects, object_types):
+	def __init__(self, operators: Set[Operator], init_stat: Operator, goal: Operator, objects, object_types):
 		"""construct planner
 
 		Args:
-			operators (set(Gstep)): operators to be used in planning
-			init_stat (Gstep): action representing the initial state
-			goal (Gstep): action representing the goal state
+			operators (set(Operator)): operators to be used in planning
+			init_stat (Operator): action representing the initial state
+			goal (Operator): action representing the goal state
 			objects (?): list of objects in the world
 			object_types(?): list of object types
 		"""		
