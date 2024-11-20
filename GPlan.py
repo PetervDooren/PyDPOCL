@@ -199,6 +199,7 @@ class GPlan:
 				self.flaws.insert(self, TCLF(new_step, edge))
 
 	def insert_decomp(self, new_step):
+		raise DeprecationWarning("decomposition is no longer supported")
 		# magic happens here
 		swap_dict = dict()
 
@@ -357,6 +358,7 @@ class GPlan:
 		# 	self.flaws.insert(self, TCLF(new_step, cl))
 
 	def resolve_with_decomp(self, new_step, mutable_s_need, mutable_p):
+		raise DeprecationWarning("decomposition is no longer supported")
 		d_i, d_f = new_step.dummy
 
 		# operate on cloned plan
