@@ -260,8 +260,6 @@ class GPlanner:
 			if len(matching_conditions) < 1:
 				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
 				continue
-			if len(matching_conditions) > 1:
-				print(f"Warning, step: {new_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
 			for provider_condition in matching_conditions:
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args
@@ -323,8 +321,6 @@ class GPlanner:
 			if len(matching_conditions) < 1:
 				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
 				continue
-			if len(matching_conditions) > 1:
-				print(f"Warning, step: {old_step} contains more than one condition matching {mutable_p}, namely {matching_conditions}. Taking the first")
 			for provider_condition in matching_conditions:
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args

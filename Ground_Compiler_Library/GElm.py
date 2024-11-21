@@ -201,6 +201,12 @@ class Operator:
 	def instantiate(self, default_refresh=None, default_None_is_to_refresh_open_preconds=None):
 		new_self = copy.deepcopy(self)
 		new_self.ID = uuid4()
+		arg_mapping = dict()
+		for a in self.Args:
+			arg_mapping[a.ID] = uuid4()
+		# give args new ids. Due to linking will also change refs in preconds and effects
+		for a in new_self.Args:
+			a.ID = arg_mapping[a.ID]
 		self.choice_map = dict()
 
 		if default_refresh is None:

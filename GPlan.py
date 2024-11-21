@@ -76,7 +76,7 @@ class GPlan:
 		# self.HierarchyGraph = HierarchyGraph()
 		self.flaws = FlawLib()
 		self.solved = False
-		self.dummy = dummyTuple(dummy_init_constructor.instantiate(), dummy_goal_constructor.instantiate())
+		self.dummy = dummyTuple(dummy_init_constructor, dummy_goal_constructor)
 
 		self.init = self.dummy.init.preconds
 		self.goal = self.dummy.final.preconds
