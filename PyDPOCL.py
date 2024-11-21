@@ -317,7 +317,7 @@ class GPlanner:
 			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan_temp.name))
 
 			## find matching condition #TODO make more efficient
-			matching_conditions = [e for e in old_step.effects if e.name == mutable_p.name]
+			matching_conditions = [e for e in old_step.effects if e.name == mutable_p.name and e.truth == mutable_p.truth]
 			if len(matching_conditions) < 1:
 				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
 				continue
