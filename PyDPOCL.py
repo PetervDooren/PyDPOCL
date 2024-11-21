@@ -238,11 +238,11 @@ class GPlanner:
 				continue
 			# clone plan and new step
 
-			new_plan = plan.instantiate(str(self.plan_num) + '[a] ')
+			new_plan_temp = plan.instantiate(str(self.plan_num) + '[a] ')
 			self.plan_num += 1
 
 			# use indices befoer inserting new steps
-			mutable_s_need = new_plan[s_index]
+			mutable_s_need = new_plan_temp[s_index]
 			mutable_p = mutable_s_need.preconds[p_index]
 
 			# instantiate new step
@@ -252,8 +252,8 @@ class GPlanner:
 			new_step.depth = mutable_s_need.depth
 
 			# recursively insert new step and substeps into plan, adding orderings and flaws
-			new_plan.insert(new_step)
-			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
+			new_plan_temp.insert(new_step)
+			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan_temp.name))
 
 			## find matching condition #TODO make more efficient
 			matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name and e.truth == mutable_p.truth]
@@ -261,6 +261,7 @@ class GPlanner:
 				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
 				continue
 			for provider_condition in matching_conditions:
+				new_plan = copy.deepcopy(new_plan_temp)
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args
 				consumer_args = mutable_p.Args
@@ -305,16 +306,16 @@ class GPlanner:
 		p_index = s_need.preconds.index(p)
 		for choice in choices:
 			# clone plan and new step
-			new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
+			new_plan_temp = plan.instantiate(str(self.plan_num) + '[r] ')
 			self.plan_num += 1
 
 			# use indices before inserting new steps
-			mutable_s_need = new_plan[s_index]
+			mutable_s_need = new_plan_temp[s_index]
 			mutable_p = mutable_s_need.preconds[p_index]
 
 			# use index to find old step
-			old_step = new_plan.steps[plan.index(choice)]
-			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan.name))
+			old_step = new_plan_temp.steps[plan.index(choice)]
+			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan_temp.name))
 
 			## find matching condition #TODO make more efficient
 			matching_conditions = [e for e in old_step.effects if e.name == mutable_p.name]
@@ -322,11 +323,13 @@ class GPlanner:
 				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
 				continue
 			for provider_condition in matching_conditions:
+				new_plan = copy.deepcopy(new_plan_temp)
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args
 				consumer_args = mutable_p.Args
 				if not len(provider_args) == len(consumer_args):
 					print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+					continue
 				consistent = True
 				for i in range(len(provider_args)):
 					if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
@@ -334,9 +337,9 @@ class GPlanner:
 						break
 					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
 				if not consistent:
-					print(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+					log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
 					continue
-
+				log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {old_step}")
 				# resolve open condition with old step
 				new_plan.resolve(old_step, mutable_s_need, mutable_p)
 
