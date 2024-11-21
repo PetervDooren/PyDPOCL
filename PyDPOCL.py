@@ -162,9 +162,7 @@ class GPlanner:
 			# 	print('check here')
 
 			log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
-			for step in plan.OrderingGraph.topoSort():
-				log_message('\t\t {}\n'.format(str(step)))
-
+			plan.print()
 
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.is_fully_ground() or True:
@@ -274,8 +272,9 @@ class GPlanner:
 						break
 					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
 				if not consistent:
-					print(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+					#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
 					continue
+				log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {new_step}")
 
 				# resolve s_need with the new step
 				new_plan.resolve(new_step, mutable_s_need, mutable_p)
@@ -337,9 +336,10 @@ class GPlanner:
 						break
 					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
 				if not consistent:
-					log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+					#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
 					continue
-				log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {old_step}")
+				if len(matching_conditions) > 1: # if only one condition matches this message is not usefull
+					log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {old_step}")
 				# resolve open condition with old step
 				new_plan.resolve(old_step, mutable_s_need, mutable_p)
 
