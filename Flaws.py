@@ -353,9 +353,9 @@ class FlawLib:
 				continue
 			if plan.OrderingGraph.isPath(s_need, step):
 				continue
-			if step.stepnum in s_need.cndt_map[pre.ID]:
+			if step.stepnum in [tup[0] for tup in s_need.cndt_map[pre.ID]]:
 				flaw.cndts += 1
-			if step.stepnum in s_need.threat_map[pre.ID]:
+			if step.stepnum in [tup[0] for tup in s_need.threat_map[pre.ID]]:
 				flaw.risks += 1
 
 		if pre in plan.init:

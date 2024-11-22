@@ -197,7 +197,7 @@ class GPlan:
 				continue
 			if self.OrderingGraph.isPath(edge.sink, new_step):
 				continue
-			if new_step.stepnum in edge.sink.threat_map[edge.label.ID]:
+			if new_step.stepnum in [tup[0] for tup in edge.sink.threat_map[edge.label.ID]]:
 				self.potential_tclf.append(TCLF(new_step, edge))
 
 	def insert_decomp(self, new_step):
@@ -338,7 +338,7 @@ class GPlan:
 		for step in self.steps:
 			if step.ID in ignore_these:
 				continue
-			if step.stepnum not in mutable_s_need.threat_map[mutable_p.ID]:
+			if step.stepnum not in [tup[0] for tup in mutable_s_need.threat_map[mutable_p.ID]]:
 				continue
 			if self.OrderingGraph.isPath(mutable_s_need, step):
 				continue
