@@ -1,4 +1,7 @@
+import copy
+from uuid import uuid4
 from collections import defaultdict
+from Ground_Compiler_Library.Element import Argument
 
 class VariableBindings:
     """class to manage variablebindings
@@ -13,6 +16,10 @@ class VariableBindings:
         mapping between variables and a constant
     variables : list(Argument)
         list of variables in the plan
+    unique_parameters : list(Argument)
+        list of arguments where the properties of its codesignations are collected
+    variable_mapping : dict(argument:argument)
+        mapping between variables and unique paramters
     codesignations : dict(Argument:list(Argument))
         mapping between variables and other variables that must share the same value
     non_codesignations : dict(Argument:list(Argument))
@@ -23,6 +30,8 @@ class VariableBindings:
         self.object_types = defaultdict(set)
         self.const = {}
         self.variables = []
+        self.unique_parameters = []
+        self.variable_mapping = {}
         self.codesignations = {}
         self.non_codesignations = {}
     
@@ -43,8 +52,15 @@ class VariableBindings:
         self.non_codesignations[var] = []
         if var in self.objects:
             self.const[var] = var
+        else:
+            # add unique parameter to track properties
+            param = copy.deepcopy(var)
+            param.arg_name = "?param"
+            param.ID == uuid4()
+            self.unique_parameters.append(param)
+            self.variable_mapping[var] = param
 
-    def set_const(self, var, const) -> bool:
+    def set_const(self, var: Argument, const) -> bool:
         #TODO check if consistent
         self.const[var] = const
         return True
@@ -80,11 +96,23 @@ class VariableBindings:
         if self.const[varA] is not None and self.const[varB] is not None:
             return self.const[varA] == self.const[varB]
         elif self.const[varA] is not None:
-            return not varA in self.non_codesignations[varB]
+            if varA in self.non_codesignations[varB]:
+                return False
+            parA = self.const[varA]
+            parB = self.variable_mapping[varB]
+            return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
         elif self.const[varB] is not None:
-            return not varA in self.non_codesignations[varB]
+            if varA in self.non_codesignations[varB]:
+                return False
+            parA = self.variable_mapping[varA]
+            parB = self.const[varB]
+            return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
+        if varA in self.non_codesignations[varB]:
+            return False
         #TODO check if types of A and B match
-        return not varA in self.non_codesignations[varB]
+        parA = self.variable_mapping[varA]
+        parB = self.variable_mapping[varB]
+        return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
 
     def add_codesignation(self, varA, varB) -> bool:
         """add a variable binding stating that variable A must equal variable B
@@ -120,6 +148,13 @@ class VariableBindings:
         self.codesignations[varB].append(varA)
         self.codesignations[varB].extend(self.codesignations[varA])
 
+        # merge properties of this unique parameter
+        self.variable_mapping[varA].merge(self.variable_mapping[varB])
+        
+        self.unique_parameters.remove(self.variable_mapping[varB])
+        self.variable_mapping[varB] = self.variable_mapping[varA]
+        for v in self.codesignations[varB]:
+            self.variable_mapping[v] = self.variable_mapping[varA]
         return True
 
     def add_non_codesignation(self, varA, varB) -> bool:
