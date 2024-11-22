@@ -196,7 +196,8 @@ class GPlan:
 			if self.OrderingGraph.isPath(edge.sink, new_step):
 				continue
 			if new_step.stepnum in edge.sink.threat_map[edge.label.ID]:
-				self.flaws.insert(self, TCLF(new_step, edge))
+				pass
+				#self.flaws.insert(self, TCLF(new_step, edge))
 
 	def insert_decomp(self, new_step):
 		raise DeprecationWarning("decomposition is no longer supported")
@@ -343,7 +344,7 @@ class GPlan:
 			# only for reuse case, otherwise this check is superfluous
 			if self.OrderingGraph.isPath(step, new_step):
 				continue
-			self.flaws.insert(self, TCLF(step, c_link))
+			#self.flaws.insert(self, TCLF(step, c_link))
 
 		# # check if adding this step threatens other causal links
 		# for cl in self.CausalLinkGraph.edges:
