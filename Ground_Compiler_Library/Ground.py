@@ -202,13 +202,13 @@ class GLib:
 	threat_dict : defaultdict(int: set(int))
 		dictionary mapping a step A to the set of steps which pose a threat to their preconditions
 		Where steps are represented by their stepnumber in g_steps
-	flaw_threat_dict : defaultdict(uuid: set(int))
-		dictionary mapping a precondition(pre.replaced_ID) to the set of steps which pose a threat to it.
+	flaw_threat_dict : defaultdict(uuid: set((int, int)))
+		dictionary mapping a precondition(pre.replaced_ID) to the set of tuple(stepnr, effectnr) which pose a threat to it.
 		the threatening step represented by their stepnumber in g_steps
 	id_dict : defaultdict(uuid: set(int))s
 		dictionary mapping preconditions (pre.replaced_ID) to the set of steps which have that condition as an effect. i.e. their providers/antecedents
-	eff_dict : defaultdict(uuid: set(uuid))
-		dictionary mapping preconditions (pre.replaced_ID) to the set of effects which can act as their providers
+	eff_dict : defaultdict(uuid: set((int, int)))
+		dictionary mapping preconditions (pre.replaced_ID) to the set of tuple(stepnr, effectnr) which can act as their providers
 	name : str
 		name of the domain+problem
 
@@ -271,9 +271,9 @@ class GLib:
 		p_name = problem.split('/')[-1].split('.')[0]
 		self.name = d_name + '.' + p_name
 
-	def insert(self, _pre, antestep, eff):
+	def insert(self, _pre, antestep, eff_i):
 		self.id_dict[_pre.replaced_ID].add(antestep.stepnumber)
-		self.eff_dict[_pre.replaced_ID].add(eff.replaced_ID)
+		self.eff_dict[_pre.replaced_ID].add((antestep.stepnumber, eff_i))
 
 	def loadAll(self):
 		self.load(self._gsteps, self._gsteps)
@@ -309,28 +309,27 @@ class GLib:
 			if self._parseEffects(gstep, _step, _pre) > 0:
 				self.ante_dict[_step.stepnumber].add(gstep.stepnumber)
 
-	def _parseEffects(self, gstep, _step, _pre):
-		"""process the effects that the condition pre from step 1 has on step2
+	def _parseEffects(self, step1, step2, pre):
+		"""process the effects that the condition pre from step 1 has on step2. Assuming step1 precedes step2
 
 		Args:
-			gstep (_type_): _description_
-			_step (_type_): _description_
-			_pre (_type_): _description_
+			step1 (Action): step whose effects are to be analysed
+			step2 (Action): step which has condition pre
+			pre (GLiteral): condition of step2 which is subject to the effects of step1
 
 		Returns:
-			_type_: _description_
+			int: number of effects of step1 that fulfill pre of step2
 		"""
 		count = 0
-		for Eff in gstep.Effects:
-			if Eff.name != _pre.name:
+		for i in range(len(step1.Effects)):
+			Eff = step1.Effects[i]
+			if Eff.name != pre.name:
 				continue # effect is not based on the same predicate as the precondition
-			if False in [ea.name == pa.name for ea, pa in zip(Eff.Args, _pre.Args)]:
-				pass # arguments of the conditions are not identical
-			if Eff.truth != _pre.truth: # the effect undoes the precondition. Add to threat list
-				self.threat_dict[_step.stepnumber].add(gstep.stepnumber)
-				self.flaw_threat_dict[_pre.replaced_ID].add(gstep.stepnumber)
+			if Eff.truth != pre.truth: # the effect undoes the precondition. Add to threat list
+				self.threat_dict[step2.stepnumber].add(step1.stepnumber)
+				self.flaw_threat_dict[pre.replaced_ID].add((step1.stepnumber, i))
 			else: # the effect is identical and therefore fulfills the precondition
-				self.insert(_pre, gstep.deepcopy(replace_internals=True), Eff)
+				self.insert(pre, step1.deepcopy(replace_internals=True), i)
 				count += 1
 		return count
 

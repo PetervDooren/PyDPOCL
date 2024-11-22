@@ -245,124 +245,108 @@ class GPlanner:
 		# need indices
 		s_index = plan.index(s_need)
 		p_index = s_need.preconds.index(p)
-		for cndt in cndts:
+		for cndt_step, cndt_eff in cndts:
 
 			if RRP:
 				# the Recursive Repair Policty: only let steps with <= height repair open conditions.
-				if self.gsteps[cndt].height > flaw.level:
+				if self.gsteps[cndt_step].height > flaw.level:
 					continue
 
 			# cannot add a step which is the inital step
-			if not self.gsteps[cndt].instantiable:
+			if not self.gsteps[cndt_step].instantiable:
 				continue
 			# clone plan and new step
 
-			new_plan_temp = plan.instantiate('')
+			new_plan = plan.instantiate(str(self.plan_num) + '[a] ')
 
 			# use indices befoer inserting new steps
-			mutable_s_need = new_plan_temp[s_index]
+			mutable_s_need = new_plan[s_index]
 			mutable_p = mutable_s_need.preconds[p_index]
 
 			# instantiate new step
-			new_step = self.gsteps[cndt].instantiate()
+			new_step = self.gsteps[cndt_step].instantiate()
 
 			# pass depth to new Added step.
 			new_step.depth = mutable_s_need.depth
 
 			# recursively insert new step and substeps into plan, adding orderings and flaws
-			new_plan_temp.insert(new_step)
-			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan_temp.name))
+			new_plan.insert(new_step)
+			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
 
-			## find matching condition #TODO make more efficient
-			matching_conditions = [e for e in new_step.effects if e.name == mutable_p.name and e.truth == mutable_p.truth]
-			if len(matching_conditions) < 1:
-				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
+			# check that provided condition can be codesignated with the required(consumed) condition
+			provider_args = new_step.effects[cndt_eff].Args
+			consumer_args = mutable_p.Args
+			if not len(provider_args) == len(consumer_args):
+				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
+			consistent = True
+			for i in range(len(provider_args)):
+				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
+					consistent = False
+					break
+				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+			if not consistent:
+				#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
 				continue
-			for provider_condition in matching_conditions:
-				new_plan = new_plan_temp.instantiate(str(self.plan_num) + '[a] ')
-				# check that provided condition can be codesignated with the required(consumed) condition
-				provider_args = provider_condition.Args
-				consumer_args = mutable_p.Args
-				if not len(provider_args) == len(consumer_args):
-					print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-				consistent = True
-				for i in range(len(provider_args)):
-					if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
-						consistent = False
-						break
-					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
-				if not consistent:
-					#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
-					continue
-				log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {new_step}")
+			log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {cndt_eff} of {new_step}")
 
-				# resolve s_need with the new step
-				new_plan.resolve(new_step, mutable_s_need, mutable_p)
+			# resolve s_need with the new step
+			new_plan.resolve(new_step, mutable_s_need, mutable_p)
 
-				new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
-				# new_plan.cost += self.max_height + 1 - new_step.height
-				# new_plan.cost += 1
-				# self.max_height + 1 - new_step.height
+			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
+			# new_plan.cost += self.max_height + 1 - new_step.height
+			# new_plan.cost += 1
+			# self.max_height + 1 - new_step.height
 
-				# insert our new mutated plan into the frontier
-				self.insert(new_plan)
+			# insert our new mutated plan into the frontier
+			self.insert(new_plan)
 
 	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
 		s_need, p = flaw.flaw
 
-		choices = [step for step in plan.steps
-		           if step.stepnum in s_need.cndt_map[p.ID]
-		           and not s_need.ID == step.ID
-		           and not plan.OrderingGraph.isPath(s_need, step)]
-		           # and not plan.CausalLinkGraph.isPath(s_need, step)]
-		           # and plan.HierarchyGraph.satisfies_hierarchy(step, p, s_need)]
+		choices = []
+		for step in plan.steps:
+			if step.stepnum in [tup[0] for tup in s_need.cndt_map[p.ID]] and not s_need.ID == step.ID and not plan.OrderingGraph.isPath(s_need, step):
+				for stepnr, effnr in s_need.cndt_map[p.ID]:
+					if stepnr == step.stepnum:
+						choices.append((step, effnr))
 		if len(choices) == 0:
 			return
 
 		# need indices
 		s_index = plan.index(s_need)
 		p_index = s_need.preconds.index(p)
-		for choice in choices:
+		for choice, eff_nr in choices:
 			# clone plan and new step
-			new_plan_temp = plan.instantiate('')
+			new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
 
 			# use indices before inserting new steps
-			mutable_s_need = new_plan_temp[s_index]
+			mutable_s_need = new_plan[s_index]
 			mutable_p = mutable_s_need.preconds[p_index]
 
 			# use index to find old step
-			old_step = new_plan_temp.steps[plan.index(choice)]
-			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan_temp.name))
+			old_step = new_plan.steps[plan.index(choice)]
+			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan.name))
 
-			## find matching condition #TODO make more efficient
-			matching_conditions = [e for e in old_step.effects if e.name == mutable_p.name and e.truth == mutable_p.truth]
-			if len(matching_conditions) < 1:
-				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
+			# check that provided condition can be codesignated with the required(consumed) condition
+			provider_args = old_step.effects[eff_nr].Args
+			consumer_args = mutable_p.Args
+			if not len(provider_args) == len(consumer_args):
+				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
 				continue
-			for provider_condition in matching_conditions:
-				new_plan = new_plan_temp.instantiate(str(self.plan_num) + '[r] ')
-				# check that provided condition can be codesignated with the required(consumed) condition
-				provider_args = provider_condition.Args
-				consumer_args = mutable_p.Args
-				if not len(provider_args) == len(consumer_args):
-					print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-					continue
-				consistent = True
-				for i in range(len(provider_args)):
-					if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
-						consistent = False
-						break
-					new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
-				if not consistent:
-					#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
-					continue
-				if len(matching_conditions) > 1: # if only one condition matches this message is not usefull
-					log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {provider_condition} of {old_step}")
-				# resolve open condition with old step
-				new_plan.resolve(old_step, mutable_s_need, mutable_p)
+			consistent = True
+			for i in range(len(provider_args)):
+				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
+					consistent = False
+					break
+				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
+			if not consistent:
+				#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+				continue
+			# resolve open condition with old step
+			new_plan.resolve(old_step, mutable_s_need, mutable_p)
 
-				# insert mutated plan into frontier
-				self.insert(new_plan)
+			# insert mutated plan into frontier
+			self.insert(new_plan)
 
 	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)
@@ -417,7 +401,7 @@ class GPlanner:
 		if len(self.gsteps[stepnum].cndts) == 0:
 			stepnum += 2
 
-		for cndt in self.gsteps[stepnum].cndt_map[precond.ID]:
+		for cndt, eff in self.gsteps[stepnum].cndt_map[precond.ID]:
 			if not self.gsteps[cndt].instantiable:
 				continue
 			if not self.gsteps[cndt].height == 0:

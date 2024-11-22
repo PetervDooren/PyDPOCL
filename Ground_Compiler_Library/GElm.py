@@ -53,10 +53,10 @@ class Operator:
         ?
 	cndts : list(int)
         list of antecedents of this step. given in terms of stepnumber
-	condt_map : dict(uuid: list(int))
-        mapping between preconditions of this step and the steps which can provide that. 
-	threat_map : dict(uuid: list(int))
-        mapping between preconditions of this step and the steps which threaten that precondition
+	condt_map : dict(uuid: list(tuple(int, int)))
+        mapping between preconditions of this step and the (stepnr, effnr) in the planners steplist which can provide that. 
+	threat_map : dict(uuid: list(tuple(int, int)))
+        mapping between preconditions of this step and the (stepnr, effnr) in the planners steplist which threaten that precondition
 	threats : list(int)
         list of steps which threaten this step
 	instantiable : bool
@@ -138,14 +138,17 @@ class Operator:
 	# 			return obj.to_json()
 	# 		return json.JSONEncoder.default(self, obj)
 
-	def setup(self, step_to_cndt, precond_to_cndt, step_to_threat, precond_to_threat):
+	def setup(self, step_to_cndt, precond_to_effect, step_to_threat, precond_to_threat):
 		"""
+		setup the metadata of this operator. noting how it relates to other operators in a list.
+
+		#TODO docstring deprecated
 		:param step_to_cndt: dict of form Operator -> Operator^k such as D[stepnum] -> [cndt antecedent step nums]
-		:param precond_to_cndt: dict of form GLiteral -> Operator^k such as D[pre.ID] -> [cndt antecedent step nums]
+		:param precond_to_effect: dict of form GLiteral -> Operator^k such as D[pre.ID] -> [cndt antecedent step nums]
 		:param step_to_threat: dict of form GLiteral -> Operator^k such as D[stepnum] -> [cndt threat step nums]
 		"""
 		self.cndts = list(step_to_cndt[self.stepnum])
-		self.cndt_map = {pre.ID: list(precond_to_cndt[pre.ID]) for pre in self.preconds}
+		self.cndt_map = {pre.ID: list(precond_to_effect[pre.ID]) for pre in self.preconds}
 		self.threats = list(step_to_threat[self.stepnum])
 		self.threat_map = {pre.ID: list(precond_to_threat[pre.ID]) for pre in self.preconds}
 

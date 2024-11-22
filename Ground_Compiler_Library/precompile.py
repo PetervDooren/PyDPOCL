@@ -12,7 +12,7 @@ def deelementize_ground_library(GL: GLib) -> List[Operator]:
 		preconds = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in step.Preconditions]
 		effects = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in step.Effects]
 		gstep = Operator(step.name, step.Args, preconds, effects, step.stepnumber, step.height)
-		gstep.setup(GL.ante_dict, GL.id_dict, GL.threat_dict, GL.flaw_threat_dict)
+		gstep.setup(GL.ante_dict, GL.eff_dict, GL.threat_dict, GL.flaw_threat_dict)
 
 		# all primitive steps (except for dummies) are in _gsteps before all decomp steps, where each level is totally ordered
 		if gstep.height > 0:
@@ -28,7 +28,7 @@ def deelementize_ground_library(GL: GLib) -> List[Operator]:
 	goal_preconds = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in
 	                 GL[-1].Preconditions]
 	dummy_goal = Operator(GL[-1].name, GL[-1].Args, goal_preconds, [], GL[-1].stepnumber, GL[-1].height)
-	dummy_goal.setup(GL.ante_dict, GL.id_dict, GL.threat_dict, GL.flaw_threat_dict)
+	dummy_goal.setup(GL.ante_dict, GL.eff_dict, GL.threat_dict, GL.flaw_threat_dict)
 	dummy_goal.instantiable = False
 
 	g_steps.append(dummy_init)
