@@ -106,9 +106,9 @@ class GPlanner:
 		root_plan = GPlan.make_root_plan(init_stat, goal, objects, object_types)
 
 		self._frontier = Frontier()
+		self.plan_num = 0
 		self.insert(root_plan)
 		self._h_visited = []
-		self.plan_num = 0
 		self.max_height = operators[-3].height
 
 	# Private Hooks #
@@ -128,6 +128,7 @@ class GPlanner:
 		plan.heuristic = self.h_plan(plan)
 		log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		self._frontier.insert(plan)
+		self.plan_num += 1
 
 	# @clock
 	def solve(self, k: int=4, cutoff: int=6000) -> List[GPlan]:
@@ -162,7 +163,8 @@ class GPlanner:
 			# 	print('check here')
 
 			log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
-			plan.print()
+			if LOG:
+				plan.print()
 
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.is_fully_ground() or True:
@@ -236,8 +238,7 @@ class GPlanner:
 				continue
 			# clone plan and new step
 
-			new_plan_temp = plan.instantiate(str(self.plan_num) + '[a] ')
-			self.plan_num += 1
+			new_plan_temp = plan.instantiate('')
 
 			# use indices befoer inserting new steps
 			mutable_s_need = new_plan_temp[s_index]
@@ -259,7 +260,7 @@ class GPlanner:
 				print(f"Error, step: {new_step} contains no effect which matches {mutable_p}")
 				continue
 			for provider_condition in matching_conditions:
-				new_plan = copy.deepcopy(new_plan_temp)
+				new_plan = new_plan_temp.instantiate(str(self.plan_num) + '[a] ')
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args
 				consumer_args = mutable_p.Args
@@ -287,7 +288,6 @@ class GPlanner:
 				# insert our new mutated plan into the frontier
 				self.insert(new_plan)
 
-
 	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
 		s_need, p = flaw.flaw
 
@@ -305,8 +305,7 @@ class GPlanner:
 		p_index = s_need.preconds.index(p)
 		for choice in choices:
 			# clone plan and new step
-			new_plan_temp = plan.instantiate(str(self.plan_num) + '[r] ')
-			self.plan_num += 1
+			new_plan_temp = plan.instantiate('')
 
 			# use indices before inserting new steps
 			mutable_s_need = new_plan_temp[s_index]
@@ -322,7 +321,7 @@ class GPlanner:
 				print(f"Error, step: {old_step} contains no effect which matches {mutable_p}")
 				continue
 			for provider_condition in matching_conditions:
-				new_plan = copy.deepcopy(new_plan_temp)
+				new_plan = new_plan_temp.instantiate(str(self.plan_num) + '[r] ')
 				# check that provided condition can be codesignated with the required(consumed) condition
 				provider_args = provider_condition.Args
 				consumer_args = mutable_p.Args
@@ -353,7 +352,6 @@ class GPlanner:
 
 		# Promotion
 		new_plan = plan.instantiate(str(self.plan_num)+ '[tp] ')
-		self.plan_num += 1
 		threat = new_plan[threat_index]
 		sink = new_plan[snk_index]
 		new_plan.OrderingGraph.addEdge(sink, threat)
@@ -368,7 +366,6 @@ class GPlanner:
 
 		# Demotion
 		new_plan = plan.instantiate(str(self.plan_num) + '[td] ')
-		self.plan_num += 1
 		threat = new_plan[threat_index]
 		source = new_plan[src_index]
 		new_plan.OrderingGraph.addEdge(threat, source)
