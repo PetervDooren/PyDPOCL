@@ -78,10 +78,12 @@ class VariableBindings:
         Returns:
             bool: _description_
         """
-        if varB not in self.codesignations:
-            return False
-        return varA in self.codesignations and varB in self.codesignations[varA]
-    
+        if self.const[varA] is not None and self.const[varB] is not None:
+            return self.const[varA] == self.const[varB]
+        elif self.const[varA] is not None or self.const[varB] is not None:
+            return False # one is a constant and the other is not yet grounded
+        return varB in self.codesignations[varA]
+
     def can_codesignate(self, varA, varB) -> bool:
         """check if A and B could be codesignated
 

@@ -46,7 +46,26 @@ class OPF(Flaw):
 
 
 class TCLF(Flaw):
+	"""
+    Represents a specific type of flaw in a partial order causal link plan, namely the TCLF (Threatened Causal Link Flaw). 
+    A TCLF occurs when a step (threatening step) could potentially undo the condition established by a causal link
 
+    Attributes:
+        threat (Step): The step identified as the threatening step, which could potentially break the causal link.
+        link (CausalLink): The causal link being threatened by the threatening step.
+        criteria (int): A computed metric used for evaluating the severity of the flaw, based on the schema of the threatening step
+                        and the label of the causal link.
+        tiebreaker (int): A computed metric used to break ties between multiple TCLFs, based on the causal link's label and the
+                          sink and source of the link.
+
+    Methods:
+        __hash__(): Computes a unique hash value for the TCLF instance, combining the hash of the threat, link source, sink,
+                    and link label to ensure the uniqueness of the instance in hash-based collections.
+
+    Args:
+        threatening_step (Step): The step that threatens the validity of the causal link.
+        causal_link_edge (CausalLink): The causal link that is being threatened by the step.
+    """
 	def __init__(self, threatening_step, causal_link_edge):
 		super(TCLF, self).__init__((threatening_step, causal_link_edge), 'tclf')
 		self.threat = self.flaw[0]
