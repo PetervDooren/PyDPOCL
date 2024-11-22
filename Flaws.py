@@ -7,6 +7,35 @@ from uuid import uuid4
 """
 
 class Flaw:
+	"""
+    Represents flaw in a plan
+
+    This base class may be extended for different kinds of flaws like OPF or TCLF
+
+    Attributes:
+        name (str): The name or identifier of the flaw.
+        flaw (tuple): A tuple representing the flaw's components, interpretation varies by flaw type.
+        cndts (int): Number of steps in the plan which could provide the condition in this flaw.
+        risks (int): Number of steps in the plan which may threaten the condition in this flaw.
+        criteria (int): A value used for comparing the severity of the flaw (higher = more severe).
+        tiebreaker (int): An arbitraty value used to resolve ties between flaws when comparing their severity (default is 0).
+        flaw_type (str or None): The type of the flaw, which could help in specific categorization (default is None).
+
+    Methods:
+        __lt__(self, other):
+            Compares this flaw with another flaw to determine its order based on risk, criteria, and tiebreaker values.
+            The comparison prioritizes the following (in order):
+                - If the flaw type is 'unsafe', the comparison is based on the 'risks' attribute.
+                - If the risk values are equal, the comparison is based on the 'criteria' attribute.
+                - If both risk and criteria are equal, the comparison is based on the 'tiebreaker' attribute.
+
+        __repr__(self):
+            Returns a string representation of the flaw instance, showing the flaw components, criteria, and tiebreaker values.
+
+    Args:
+        f (tuple): A tuple representing the components of the flaw, usually containing elements that define the flaw.
+        name (str): The name or type of the flaw, typically a descriptive label.
+    """
 	def __init__(self, f, name):
 		self.name = name
 		self.flaw = f
@@ -158,11 +187,58 @@ class FlawTypes:
 		return self._list[item]
 
 
-class FlawLib():
+class FlawLib:
+	"""
+    A container for managing and categorizing different types of flaws that arise in a plan. 
+
+    Attributes:
+        non_static_preds (set): A set of predicates that are not static.
+        statics (Flawque): A queue of OPF flaws related to static conditions (unchangeable elements).
+        inits (Flawque): A queue of OPF flaws whose condition is true in the initial state.
+        decomps (Flawque): A queue for decompositional ground subplans that need to be added.
+        threats (Flawque): A queue for TCLF flaws related to causal link dependencies that are undone.
+        unsafe (Flawque): A queue for OPF flaws whose condition may create a TCLF.
+        reusable (Flawque): A queue for OPF flaws whose condition is consistent with at least one existing effect.
+        nonreusable (Flawque): A queue for OPF flaws whose condition is inconsistent with any existing effect.
+        typs (FlawTypes): An collection of all the above flaw queues.
+        restricted_names (list): A list of flaw set names that are restricted from certain operations, e.g., 'threats' and 'decomps'.
+
+    Methods:
+        __len__(self):
+            Returns the total number of flaws across all categories in the flaw library.
+
+        __contains__(self, flaw):
+            Checks if a specific flaw exists in any of the flaw sets.
+
+        flaws(self):
+            Returns a list of all flaws from all sets, excluding restricted categories like 'threats' and 'decomps'.
+
+        counts_for_heuristic(self, flaw_set):
+            Determines whether a flaw set should be considered for heuristics based on its name and size.
+
+        OC_gen(self):
+            A generator that yields open conditions (flaws with a height of 0) for heuristic evaluation.
+
+        next(self):
+            Returns the flaw with the highest priority (i.e., the first flaw in any of the non-empty flaw sets) and removes it from the set.
+
+        addCndtsAndRisks(self, plan, action):
+            For each effect of the given action, updates the open-condition mapping by incrementing the conditions (`cndts`) 
+            or risks for corresponding flaws, based on the action's relationships with other steps in the plan.
+
+        insert(self, plan, flaw):
+            Inserts a flaw into the appropriate flaw set based on its type, adjusting its `cndts` (conditions) and `risks` (threats) 
+            based on the relationships between steps in the plan and the flaw's requirements.
+
+        __repr__(self):
+            Returns a string representation of the `FlawLib` instance, displaying the flaw sets and their contents.
+
+    Args:
+        None (this class is initialized with default flaw sets).
+    """
 	non_static_preds = set()
 
 	def __init__(self):
-
 		#static = unchangeable (should do oldest first.)
 		self.statics = Flawque('statics')
 
