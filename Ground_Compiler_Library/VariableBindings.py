@@ -40,7 +40,7 @@ class VariableBindings:
 
     def set_objects(self, objects, object_types):
         self.objects =objects
-        self.obj_types = object_types
+        self.object_types = object_types
 
     def register_variable(self, var):
         if var in self.variables:
