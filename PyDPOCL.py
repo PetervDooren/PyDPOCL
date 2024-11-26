@@ -166,6 +166,26 @@ class GPlanner:
 			if LOG:
 				plan.print()
 
+			# check if any potential TCLFs are fully initialised
+			for pot_tclf in plan.potential_tclf:
+				link_args = pot_tclf.link.label.Args
+				# hotfix. store this info in the causal link
+				## find matching condition #TODO make more efficient
+				matching_conditions = [e for e in pot_tclf.threat.effects if e.name == pot_tclf.link.label.name and e.truth != pot_tclf.link.label.truth]
+				if len(matching_conditions) < 1:
+					print(f"Error, TCLF threat: {pot_tclf.threat} contains no effect which matches {pot_tclf.link.label}")
+					continue
+				if len(matching_conditions) > 1:
+					print(f"warning more than one matching condition matching {pot_tclf.link.label}, namely: {matching_conditions}")
+				threat_args = matching_conditions[0].Args
+				for i in range(len(link_args)):
+					if not plan.variableBindings.is_codesignated(link_args[i], threat_args[i]):
+						break
+				else: # all arguments codesignate. the link is threatened
+					log_message(f"TCLF found {pot_tclf}!")
+					plan.flaws.insert(plan, pot_tclf)
+					plan.potential_tclf.remove(pot_tclf)
+
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.is_fully_ground() or True:
 					# success
@@ -205,26 +225,7 @@ class GPlanner:
 				# only count expanded nodes as those that resolve open conditions
 				expanded += 1
 				self.add_step(plan, flaw)
-				self.reuse_step(plan, flaw)
-
-			# check if any potential TCLFs are fully initialised
-			for pot_tclf in plan.potential_tclf:
-				link_args = pot_tclf.link.label.Args
-				# hotfix. store this info in the causal link
-				## find matching condition #TODO make more efficient
-				matching_conditions = [e for e in pot_tclf.threat.effects if e.name == pot_tclf.link.label.name and e.truth != pot_tclf.link.label.truth]
-				if len(matching_conditions) < 1:
-					print(f"Error, TCLF threat: {pot_tclf.threat} contains no effect which matches {pot_tclf.link.label}")
-					continue
-				if len(matching_conditions) > 1:
-					print(f"warning more than one matching condition matching {pot_tclf.link.label}, namely: {matching_conditions}")
-				threat_args = matching_conditions[0].Args
-				for i in range(len(link_args)):
-					if not plan.variableBindings.is_codesignated(link_args[i], threat_args[i]):
-						break
-				else: # all arguments codesignate. the link is threatened
-					plan.flaws.insert(plan, pot_tclf)
-					plan.potential_tclf.remove(pot_tclf)
+				self.reuse_step(plan, flaw)			
 
 		raise ValueError('FAIL: No more plans to visit with {} nodes expanded'.format(expanded))
 
