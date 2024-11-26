@@ -145,6 +145,7 @@ class GPlanner:
 		print('time\texpanded\tvisited\tterminated\tdepth\tcost\ttrace')
 		while len(self) > 0:
 			plan = self.pop()
+			self.plan_num = 0 # reset branch counter
 
 			if not plan.isInternallyConsistent():
 				# if plan.name[-3] == 'a':
@@ -187,7 +188,7 @@ class GPlanner:
 					plan.potential_tclf.remove(pot_tclf)
 
 			if len(plan.flaws) == 0:
-				if plan.variableBindings.is_fully_ground() or True:
+				if plan.variableBindings.is_fully_ground():
 					# success
 					elapsed = time.time() - t0
 					delay = str('%0.8f' % elapsed)
@@ -206,6 +207,7 @@ class GPlanner:
 					continue
 				else: # variables are not fully ground
 					self.ground_variable(plan)
+					continue
 
 			if time.time() - t0 > cutoff:
 				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
@@ -215,8 +217,6 @@ class GPlanner:
 			flaw = plan.flaws.next()
 			plan.name += '[' + str(flaw.flaw_type)[0] + ']'
 			log_message('{} selected : {}\n'.format(flaw.name, flaw))
-
-			self.plan_num = 0
 
 			if isinstance(flaw, TCLF):
 				tclf_visits += 1
@@ -382,7 +382,19 @@ class GPlanner:
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 
 	def ground_variable(self, plan: GPlan):
-		pass
+		plan.name += '[ug]'
+
+		for var in plan.variableBindings.variables: # TODO will find codesignated groups multiple times
+			if plan.variableBindings.is_ground(var):
+				continue
+			for obj in plan.variableBindings.objects:
+				if not plan.variableBindings.can_codesignate(var,obj):
+					continue
+				# add potential plan with codesignation
+				new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+				new_plan.variableBindings.add_codesignation(var, obj)
+				self.insert(new_plan)
+
 	# Heuristic Methods #
 
 	def h_condition(self, plan: GPlan, stepnum: int, precond: GLiteral) -> float:

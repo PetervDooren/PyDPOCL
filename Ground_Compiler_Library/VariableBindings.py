@@ -64,6 +64,9 @@ class VariableBindings:
         #TODO check if consistent
         self.const[var] = const
         return True
+    
+    def is_ground(self, var) -> bool:
+        return self.const[var] is not None
 
     def is_fully_ground(self) -> bool:
         return not any([v is None for v in self.const.values()])
