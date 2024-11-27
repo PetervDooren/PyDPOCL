@@ -21,9 +21,8 @@ class VariableBindings:
         list of arguments where the properties of a group are collected
     group_mapping : dict(argument:argument)
         mapping between variables and groups
-    codesignations : dict(Argument:list(Argument))
-        #TODO Make deprecated. this functionality is taken by groups!
-        mapping between variables and other variables that must share the same value
+    group_members : dict(Argument:list(Argument))
+        mapping between groups and the variables that codesignate with it. inverse of group_mapping
     non_codesignations : dict(Argument:set(Argument))
         mapping between groups that cannot share the same value
     """
@@ -34,7 +33,7 @@ class VariableBindings:
         self.variables = []
         self.groups = []
         self.group_mapping = {}
-        self.codesignations = {}
+        self.group_members = {}
         self.non_codesignations = {}
     
     def isInternallyConsistent():
@@ -56,25 +55,19 @@ class VariableBindings:
             print(f"Warning variable {var} is already registered")
             return
         self.variables.append(var)
-        self.codesignations[var] = []
         # add unique parameter to track properties
         param = copy.deepcopy(var)
         param.arg_name = "?param"
         param.ID == uuid4()
         self.groups.append(param)
         self.group_mapping[var] = param
+        self.group_members[param] = {var}
         self.non_codesignations[param] = set()
         # if var is an object immediately map the group to the object
         if var in self.objects:
             self.const[param] = var
         else:
             self.const[param] = None
-
-    def set_const(self, var: Argument, const) -> bool:
-        raise DeprecationWarning
-        #TODO check if consistent
-        self.const[var] = const
-        return True
     
     def is_ground(self, var) -> bool:
         return self.const[self.group_mapping[var]] is not None
@@ -85,10 +78,7 @@ class VariableBindings:
     def get_var_par_group(self) -> List[Argument]:
         varlist = []
         for group in self.groups:
-            for v in self.variables:
-                if self.group_mapping[v] == group:
-                    varlist.append(v)
-                    break
+            varlist.append(next(iter(self.group_members[group])))
         return varlist
 
     def is_codesignated(self, varA, varB) -> bool:
@@ -148,15 +138,15 @@ class VariableBindings:
 
         # merge properties of this group
         self.group_mapping[varA].merge(self.group_mapping[varB])
+        self.group_members[groupA].update(self.group_members[groupB])
         self.non_codesignations[groupA].update(self.non_codesignations[groupB])
         for group in self.non_codesignations[groupB]:
             self.non_codesignations[group].add(groupA)
             self.non_codesignations[group].remove(groupB)
 
         # reasign members of groupB
-        for v in self.variables:
-            if self.group_mapping[v] == groupB:
-                self.group_mapping[v] = groupA
+        for v in self.group_members[groupB]:
+            self.group_mapping[v] = groupA
 
         del self.non_codesignations[groupB]
         del self.const[groupB]
@@ -190,7 +180,7 @@ class VariableBindings:
         if self.const[self.group_mapping[var]] is not None:
             print(f"ground as {self.const[var]}")
         else:
-            #print(f"codesignations: {self.codesignations[var]}")
+            print(f"codesignations: {self.group_members[self.group_mapping[var]]}")
             print(f"non_codesignations: {self.non_codesignations[self.group_mapping[var]]}")
     
     def repr_arg(self, var):
