@@ -152,7 +152,7 @@ class VariableBindings:
         for group in self.non_codesignations[groupB]:
             self.non_codesignations[group].add(groupA)
             self.non_codesignations[group].remove(groupB)
-        
+
         # reasign members of groupB
         for v in self.variables:
             if self.group_mapping[v] == groupB:
@@ -192,3 +192,11 @@ class VariableBindings:
         else:
             #print(f"codesignations: {self.codesignations[var]}")
             print(f"non_codesignations: {self.non_codesignations[self.group_mapping[var]]}")
+    
+    def repr_arg(self, var):
+        if self.const[self.group_mapping[var]] is not None:
+            return self.const[self.group_mapping[var]]
+        return self.group_mapping[var]
+
+    def __repr__(self):
+        return f"variablebinding set with {len(self.variables)} variables, {len(self.groups)} groups, of which {len([g for g in self.groups if self.const[g] is not None])} groups are ground"

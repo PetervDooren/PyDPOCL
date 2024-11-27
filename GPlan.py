@@ -438,7 +438,7 @@ class GPlan:
 		print(f"Plan: {self}")
 
 		for step in self.OrderingGraph.topoSort():
-			args = str([self.variableBindings.const[arg] if self.variableBindings.const[arg] is not None else arg.arg_name for arg in step.Args])
+			args = str([self.variableBindings.repr_arg(arg) for arg in step.Args])
 			print(str(step.schema) + args + '_{}'.format(str(step.ID)[-4:]))
 		print('\n')
 
