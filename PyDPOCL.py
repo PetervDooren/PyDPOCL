@@ -138,7 +138,6 @@ class GPlanner:
 		expanded = 0
 		leaves = 0
 		tclf_visits = 0
-		success_message = 'solution {} found at {} nodes expanded and {} nodes visited and {} branches terminated'
 
 		t0 = time.time()
 		print('k={}'.format(str(k)))
@@ -197,7 +196,7 @@ class GPlanner:
 					trace = math.floor(len(plan.name.split('['))/2)
 					print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
 					if REPORT:
-						print(success_message.format(plan.name, expanded, len(self)+expanded, leaves))
+						print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
 						plan.print()
 
 					if len(completed) == k:
