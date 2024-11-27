@@ -123,12 +123,12 @@ class GPlan:
 
 		# register parameters
 		root_plan.variableBindings.set_objects(objects, object_types)
-		for condition in root_plan.init:
-			for a in condition.Args:
-				root_plan.variableBindings.register_variable(a)
-		for condition in root_plan.goal:
-			for a in condition.Args:
-				root_plan.variableBindings.register_variable(a)
+		# for condition in root_plan.init:
+		# 	for a in condition.Args:
+		# 		root_plan.variableBindings.register_variable(a)
+		# for condition in root_plan.goal:
+		# 	for a in condition.Args:
+		# 		root_plan.variableBindings.register_variable(a)
 
 		# add open precondition flaws for the goal
 		for p in root_plan.dummy.final.open_preconds:

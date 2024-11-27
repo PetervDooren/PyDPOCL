@@ -143,15 +143,13 @@ class TestVariableBindings(unittest.TestCase):
                     "C": Argument()}
         vb.set_objects(objects.values(), None)
 
-        vb.register_variable(objects["A"])
         vb.register_variable(variables["B"])
-        vb.register_variable(objects["C"])
 
-        self.assertIsNotNone(vb.const[objects["A"]], "A is not recognised as a constant")
+        self.assertIsNotNone(vb.is_ground(objects["A"]), "A is not recognised as a constant")
         self.assertTrue(vb.can_codesignate(objects["A"], variables["B"]))
         self.assertTrue(vb.add_codesignation(objects["A"], variables["B"]))
         self.assertTrue(vb.can_codesignate(objects["A"], variables["B"]))
-        self.assertIsNotNone(vb.const[variables["B"]], "B is not recognised as grounded")
+        self.assertIsNotNone(vb.is_ground(variables["B"]), "B is not recognised as grounded")
 
         self.assertFalse(vb.can_codesignate(objects["A"], objects["C"]), "two unidentical constants can codesignate")
         self.assertFalse(vb.can_codesignate(objects["C"], variables["B"]), "two unidentical constants can codesignate")
@@ -175,8 +173,6 @@ class TestVariableBindings(unittest.TestCase):
 
         for var in variables.values():
             vb.register_variable(var)
-        for obj in objects.values():
-            vb.register_variable(obj)
 
         self.assertTrue(vb.can_codesignate(variables["A"], variables["B"]), "matching types cannot codesignate")
         self.assertFalse(vb.can_codesignate(variables["A"], variables["C"]), "non matching types can codesignate")
@@ -204,8 +200,6 @@ class TestVariableBindings(unittest.TestCase):
 
         for var in variables.values():
             vb.register_variable(var)
-        for obj in objects.values():
-            vb.register_variable(obj)
 
         vb.add_non_codesignation(variables["A"], variables["B"])
         self.assertTrue(vb.can_codesignate(variables["A"], objects["A"]))

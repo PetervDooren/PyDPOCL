@@ -1,5 +1,6 @@
 import copy
 from uuid import uuid4
+from typing import List
 from collections import defaultdict
 from Ground_Compiler_Library.Element import Argument
 
@@ -10,28 +11,29 @@ class VariableBindings:
     ----------
     objects : list(Argument)
         instances of objects
-    object_types : defaultdict
-        ???
+    object_types : defaultdict(str: set(str))
+        mapping types to their subtypes
     const : dict(Argument:list(Argument))
-        mapping between variables and a constant
+        mapping between groups and a constant
     variables : list(Argument)
         list of variables in the plan
-    unique_parameters : list(Argument)
-        list of arguments where the properties of its codesignations are collected
-    variable_mapping : dict(argument:argument)
-        mapping between variables and unique paramters
+    groups : list(Argument)
+        list of arguments where the properties of a group are collected
+    group_mapping : dict(argument:argument)
+        mapping between variables and groups
     codesignations : dict(Argument:list(Argument))
+        #TODO Make deprecated. this functionality is taken by groups!
         mapping between variables and other variables that must share the same value
     non_codesignations : dict(Argument:list(Argument))
-        mapping between variables and other variables that cannot share the same value
+        mapping between groups that cannot share the same value
     """
     def __init__(self):
         self.objects = set()
         self.object_types = defaultdict(set)
         self.const = {}
         self.variables = []
-        self.unique_parameters = []
-        self.variable_mapping = {}
+        self.groups = []
+        self.group_mapping = {}
         self.codesignations = {}
         self.non_codesignations = {}
     
@@ -41,35 +43,53 @@ class VariableBindings:
     def set_objects(self, objects, object_types):
         self.objects =objects
         self.object_types = object_types
+        for o in objects:
+            self.register_variable(o)
+        # no objects may codesignate
+        for i in objects:
+            for j in objects:
+                if i != j:
+                    self.add_non_codesignation(i,j)
 
     def register_variable(self, var):
         if var in self.variables:
             print(f"Warning variable {var} is already registered")
             return
         self.variables.append(var)
-        self.const[var] = None
         self.codesignations[var] = []
-        self.non_codesignations[var] = []
+        # add unique parameter to track properties
+        param = copy.deepcopy(var)
+        param.arg_name = "?param"
+        param.ID == uuid4()
+        self.groups.append(param)
+        self.group_mapping[var] = param
+        self.non_codesignations[param] = []
+        # if var is an object immediately map the group to the object
         if var in self.objects:
-            self.const[var] = var
+            self.const[param] = var
         else:
-            # add unique parameter to track properties
-            param = copy.deepcopy(var)
-            param.arg_name = "?param"
-            param.ID == uuid4()
-            self.unique_parameters.append(param)
-            self.variable_mapping[var] = param
+            self.const[param] = None
 
     def set_const(self, var: Argument, const) -> bool:
+        raise DeprecationWarning
         #TODO check if consistent
         self.const[var] = const
         return True
     
     def is_ground(self, var) -> bool:
-        return self.const[var] is not None
+        return self.const[self.group_mapping[var]] is not None
 
     def is_fully_ground(self) -> bool:
         return not any([v is None for v in self.const.values()])
+    
+    def get_var_par_group(self) -> List[Argument]:
+        varlist = []
+        for group in self.groups:
+            for v in self.variables:
+                if self.group_mapping[v] == group:
+                    varlist.append[v]
+                    break
+        return varlist
 
     def is_codesignated(self, varA, varB) -> bool:
         """check if A and B are codesignated
@@ -81,11 +101,7 @@ class VariableBindings:
         Returns:
             bool: _description_
         """
-        if self.const[varA] is not None and self.const[varB] is not None:
-            return self.const[varA] == self.const[varB]
-        elif self.const[varA] is not None or self.const[varB] is not None:
-            return False # one is a constant and the other is not yet grounded
-        return varB in self.codesignations[varA]
+        return self.group_mapping[varA] == self.group_mapping[varB]
 
     def can_codesignate(self, varA, varB) -> bool:
         """check if A and B could be codesignated
@@ -98,26 +114,13 @@ class VariableBindings:
             bool: _description_
         """
         # check if either or both are constants
-        if self.const[varA] is not None and self.const[varB] is not None:
-            return self.const[varA] == self.const[varB]
-        elif self.const[varA] is not None:
-            if varA in self.non_codesignations[varB]:
-                return False
-            parA = self.const[varA]
-            parB = self.variable_mapping[varB]
-            return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
-        elif self.const[varB] is not None:
-            if varA in self.non_codesignations[varB]:
-                return False
-            parA = self.variable_mapping[varA]
-            parB = self.const[varB]
-            return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
-        if varA in self.non_codesignations[varB]:
+        groupA = self.group_mapping[varA]
+        groupB = self.group_mapping[varB]
+        if groupA == groupB:
+            return True
+        if groupA in self.non_codesignations[groupB]:
             return False
-        #TODO check if types of A and B match
-        parA = self.variable_mapping[varA]
-        parB = self.variable_mapping[varB]
-        return parA.typ == parB.typ or parA.typ in self.object_types[parB.typ] or parB.typ in self.object_types[parA.typ] 
+        return groupA.typ == groupB.typ or groupA.typ in self.object_types[groupB.typ] or groupB.typ in self.object_types[groupA.typ] 
 
     def add_codesignation(self, varA, varB) -> bool:
         """add a variable binding stating that variable A must equal variable B
@@ -130,36 +133,35 @@ class VariableBindings:
             bool: False if the codesignation is inconsistent with the existing bindings
         """
 
-        #TODO check if either A or B are constants
-        if self.const[varA] is not None:
-            self.const[varB] = self.const[varA]
-            for v in self.codesignations[varB]:
-                self.const[v] = self.const[varA]
-            return True
-        elif self.const[varB] is not None:
-            self.const[varA] = self.const[varB]
-            for v in self.codesignations[varA]:
-                self.const[v] = self.const[varB]
-            return True
-
-        # check if they cannot codesignate. Only need to check one list since they are symmetrical.
-        if varA in self.non_codesignations[varB]:
+        if not self.can_codesignate(varA, varB):
             return False
-
-        # add codesignation
-        self.codesignations[varA].append(varB)
-        self.codesignations[varA].extend(self.codesignations[varB])
-
-        self.codesignations[varB].append(varA)
-        self.codesignations[varB].extend(self.codesignations[varA])
-
-        # merge properties of this unique parameter
-        self.variable_mapping[varA].merge(self.variable_mapping[varB])
         
-        self.unique_parameters.remove(self.variable_mapping[varB])
-        self.variable_mapping[varB] = self.variable_mapping[varA]
-        for v in self.codesignations[varB]:
-            self.variable_mapping[v] = self.variable_mapping[varA]
+        groupA = self.group_mapping[varA]
+        groupB = self.group_mapping[varB]
+
+        if groupA == groupB: # A and B are already codesignated
+            return True
+        
+        # check if B is ground. if so merge into A
+        if self.const[groupB] is not None:
+            self.const[groupA] = self.const[groupB]
+            del self.const[groupB]
+
+        # merge properties of this group
+        self.group_mapping[varA].merge(self.group_mapping[varB])
+        self.non_codesignations[groupA].extend(self.non_codesignations[groupB])
+        for group in self.non_codesignations[groupB]:
+            self.non_codesignations[group].append(groupA)
+            self.non_codesignations[group].remove(groupB)
+            self.non_codesignations[group].extend(self.non_codesignations[groupA])
+        del self.non_codesignations[groupB]
+
+        # reasign members of groupB
+        for v in self.variables:
+            if self.group_mapping[v] == groupB:
+                self.group_mapping[v] = groupA
+
+        self.groups.remove(groupB)
         return True
 
     def add_non_codesignation(self, varA, varB) -> bool:
@@ -173,24 +175,20 @@ class VariableBindings:
             bool: False if the non codesignation is inconsistent with the existing bindings
         """
 
-        #TODO check if either A or B are constants
-        # check if they cannot codesignate. Only need to check one list since they are symmetrical.
-        if varA in self.codesignations[varB]:
+        groupA = self.group_mapping[varA]
+        groupB = self.group_mapping[varB]
+
+        if groupA == groupB: # variables already codesignate
             return False
-
-        # add codesignation
-        self.non_codesignations[varA].append(varB)
-        self.non_codesignations[varA].extend(self.codesignations[varB])
-
-        self.non_codesignations[varB].append(varA)
-        self.non_codesignations[varB].extend(self.codesignations[varA])
-
+        
+        self.non_codesignations[groupA].append(groupB)
+        self.non_codesignations[groupB].append(groupA)
         return True
     
     def print_var(self, var):
         print(f"variable: {var}")
-        if self.const[var] is not None:
+        if self.const[self.group_mapping[var]] is not None:
             print(f"ground as {self.const[var]}")
         else:
-            print(f"codesignations: {self.codesignations[var]}")
-            print(f"non_codesignations: {self.non_codesignations[var]}")
+            #print(f"codesignations: {self.codesignations[var]}")
+            print(f"non_codesignations: {self.non_codesignations[self.group_mapping[var]]}")

@@ -384,7 +384,7 @@ class GPlanner:
 	def ground_variable(self, plan: GPlan):
 		plan.name += '[ug]'
 
-		for var in plan.variableBindings.variables: # TODO will find codesignated groups multiple times
+		for var in plan.variableBindings.get_var_par_group(): # TODO will find codesignated groups multiple times
 			if plan.variableBindings.is_ground(var):
 				continue
 			for obj in plan.variableBindings.objects:
