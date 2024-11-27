@@ -24,7 +24,7 @@ class VariableBindings:
     codesignations : dict(Argument:list(Argument))
         #TODO Make deprecated. this functionality is taken by groups!
         mapping between variables and other variables that must share the same value
-    non_codesignations : dict(Argument:list(Argument))
+    non_codesignations : dict(Argument:set(Argument))
         mapping between groups that cannot share the same value
     """
     def __init__(self):
@@ -63,7 +63,7 @@ class VariableBindings:
         param.ID == uuid4()
         self.groups.append(param)
         self.group_mapping[var] = param
-        self.non_codesignations[param] = []
+        self.non_codesignations[param] = set()
         # if var is an object immediately map the group to the object
         if var in self.objects:
             self.const[param] = var
@@ -87,7 +87,7 @@ class VariableBindings:
         for group in self.groups:
             for v in self.variables:
                 if self.group_mapping[v] == group:
-                    varlist.append[v]
+                    varlist.append(v)
                     break
         return varlist
 
@@ -141,27 +141,27 @@ class VariableBindings:
 
         if groupA == groupB: # A and B are already codesignated
             return True
-        
+
         # check if B is ground. if so merge into A
         if self.const[groupB] is not None:
             self.const[groupA] = self.const[groupB]
-            del self.const[groupB]
 
         # merge properties of this group
         self.group_mapping[varA].merge(self.group_mapping[varB])
-        self.non_codesignations[groupA].extend(self.non_codesignations[groupB])
+        self.non_codesignations[groupA].update(self.non_codesignations[groupB])
         for group in self.non_codesignations[groupB]:
-            self.non_codesignations[group].append(groupA)
+            self.non_codesignations[group].add(groupA)
             self.non_codesignations[group].remove(groupB)
-            self.non_codesignations[group].extend(self.non_codesignations[groupA])
-        del self.non_codesignations[groupB]
-
+        
         # reasign members of groupB
         for v in self.variables:
             if self.group_mapping[v] == groupB:
                 self.group_mapping[v] = groupA
 
+        del self.non_codesignations[groupB]
+        del self.const[groupB]
         self.groups.remove(groupB)
+
         return True
 
     def add_non_codesignation(self, varA, varB) -> bool:
@@ -181,8 +181,8 @@ class VariableBindings:
         if groupA == groupB: # variables already codesignate
             return False
         
-        self.non_codesignations[groupA].append(groupB)
-        self.non_codesignations[groupB].append(groupA)
+        self.non_codesignations[groupA].add(groupB)
+        self.non_codesignations[groupB].add(groupA)
         return True
     
     def print_var(self, var):
