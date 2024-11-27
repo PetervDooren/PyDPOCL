@@ -181,6 +181,8 @@ class GPlan:
 		# add variables of the new step
 		for a in new_step.Args:
 			self.variableBindings.register_variable(a)
+		for ne in new_step.nonequals:
+			self.variableBindings.add_non_codesignation(new_step.Args[ne[0]], new_step.Args[ne[1]])
 
 		# add open conditions for new step
 		for pre in new_step.open_preconds:

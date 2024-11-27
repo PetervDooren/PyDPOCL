@@ -39,6 +39,8 @@ class Operator:
         step number
 	stepnumber : int
         step number (identical to stepnum?)
+	nonequals : set(tuple(int, int))
+		pairs of argument indices indicating which arguments may not codesignate.
 	height : int
         ?
 	sub_steps : list(?)
@@ -82,7 +84,7 @@ class Operator:
 	is_threat():
 	"""
 
-	def __init__(self, operator, args, preconditions, effects, stepnum, height):
+	def __init__(self, operator, args, preconditions, effects, stepnum, height, nonequals):
 
 		# READ-ONLY ATTRIBUTES #
 		# schema refers to the name of the operator
@@ -97,6 +99,8 @@ class Operator:
 		# stepnum is the ground step constructor type
 		self.stepnum = stepnum
 		self.stepnumber = stepnum
+		# which arguments should be unequal
+		self.nonequals = nonequals
 		# height is 0 when primitive
 		self.height = height
 
