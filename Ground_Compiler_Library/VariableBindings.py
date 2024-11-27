@@ -185,7 +185,7 @@ class VariableBindings:
     
     def repr_arg(self, var):
         if self.const[self.group_mapping[var]] is not None:
-            return self.const[self.group_mapping[var]]
+            return self.const[self.group_mapping[var]].name
         return self.group_mapping[var]
 
     def __repr__(self):
