@@ -550,10 +550,10 @@ if __name__ == '__main__':
 		if num_args > 2:
 			problem_file = sys.argv[2]
 	else:
-		# domain_file = 'Ground_Compiler_Library//domains/travel_domain_primitive_only.pddl'
-		domain_file = 'Ground_Compiler_Library//domains/ark-domain.pddl'
-		problem_file = 'Ground_Compiler_Library//domains/ark-problem.pddl'
-		# problem_file = 'Ground_Compiler_Library//domains/travel-to-la.pddl'
+		#domain_file = 'Ground_Compiler_Library//domains/ark-domain.pddl'
+		#problem_file = 'Ground_Compiler_Library//domains/ark-problem.pddl'
+		domain_file = 'Ground_Compiler_Library//domains/manipulation-domain.pddl'
+		problem_file = 'Ground_Compiler_Library//domains/manipulation-problem.pddl'
 	d_name = domain_file.split('/')[-1].split('.')[0]
 	p_name = problem_file.split('/')[-1].split('.')[0]
 	uploadable_ground_step_library_name = 'compiled/' + d_name +'/' + d_name + '.' + p_name
