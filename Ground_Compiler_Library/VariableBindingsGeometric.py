@@ -5,7 +5,7 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, box
+from shapely import Polygon, box, difference, within
 
 @dataclass
 class placeloc:
@@ -51,12 +51,12 @@ class VariableBindingsGeometric:
     def set_base_area(self, area):
         self.base_area = area
 
-    def register_variable(self, areavar, objvar):
+    def register_variable(self, areavar, objvar, width, length):
         if areavar in self.variables:
             print(f"Warning variable {areavar} is already registered")
             return
         self.variables.append(areavar)
-        self.placelocs[areavar] = placeloc(objvar, 0, 0, self.base_area, None)
+        self.placelocs[areavar] = placeloc(objvar, width, length, self.base_area, None)
         self.within_mapping[areavar] = []
         self.within_areas[areavar] = [self.base_area]
         self.disjunctions[areavar] = []
@@ -132,8 +132,8 @@ class VariableBindingsGeometric:
         Returns:
             bool: False if the non codesignation is inconsistent with the existing bindings
         """
-        self.disjunctions[varA].append[varB]
-        self.disjunctions[varB].append[varA]
+        self.disjunctions[varA].append(varB)
+        self.disjunctions[varB].append(varA)
         return True
     
     def resolve(self):
@@ -143,17 +143,21 @@ class VariableBindingsGeometric:
             _type_: _description_
         """
         # sort the list by size of area_max
-        sorted_list = [p for p in self.placelocs.values()]
-        sorted_list.sort(key=lambda p: p.area_max.area)
-        for ploc in sorted_list:
+        sorted_list = self.variables.copy()
+        sorted_list.sort(key=lambda v: self.placelocs[v].area_max.area)
+        for var in sorted_list:
+            ploc = self.placelocs[var]
             disjunct_area_max = ploc.area_max
+            for d_area in self.disjunctions[var]:
+                if self.placelocs[d_area].area_assigned is not None:
+                    disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
             minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
             x_pos = minx # lower left coordinate
             y_pos = miny # lower left coordinate
             while y_pos + ploc.object_length < maxy:
                 # sample acceptable pose in the area_max
-                a_min = box(x_pos, y_pos, ploc.object_width, ploc.object_length)
-                if a_min.intersects(disjunct_area_max):
+                a_min = box(x_pos, y_pos, x_pos+ploc.object_width, y_pos+ploc.object_length)
+                if within(a_min, disjunct_area_max):
                     ploc.area_assigned = a_min
                     break
                 # iterate to next position
