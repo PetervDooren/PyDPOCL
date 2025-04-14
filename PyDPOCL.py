@@ -9,7 +9,7 @@ import copy
 from heapq import heappush, heappop
 from clockdeco import clock
 import time
-LOG = 0
+LOG = 1
 REPORT = 1
 RRP = 0
 from collections import Counter

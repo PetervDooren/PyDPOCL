@@ -1,6 +1,7 @@
 (define (domain manipulation)
   (:requirements)
-  (:types robot item area - object)
+  (:types symbol area - object
+          item robot - symbol)
   (:predicates (free ?area - area)
                (in_reach ?area - area ?robot - robot)
                (within ?obj - item ?area - area))
