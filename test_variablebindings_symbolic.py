@@ -2,13 +2,13 @@ import unittest
 
 from uuid import uuid4
 from collections import defaultdict
-from Ground_Compiler_Library.VariableBindings import VariableBindings
-from Ground_Compiler_Library.Element import Argument  
+from Ground_Compiler_Library.VariableBindingsSymbolic import VariableBindingsSymbolic
+from Ground_Compiler_Library.Element import Argument
 
 class TestVariableBindings(unittest.TestCase):
 
     def test_codesignation(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -22,7 +22,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(vb.is_codesignated(variables["A"], variables["B"]), "A and B are not codesignated after codesignation")
 
     def test_can_codesignate(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -36,7 +36,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertFalse(vb.can_codesignate(variables["A"], variables["B"]), "A and B can be codesignated after non codesignation")
 
     def test_codesignation_multi(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -50,7 +50,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(vb.add_codesignation(variables["A"], variables["C"]), "third codesignation between A and C could not be instantiated")
 
     def test_non_codesignation(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -64,7 +64,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(vb.add_non_codesignation(variables["A"], variables["C"]), "third non codesignation between A and C could not be instantiated")
 
     def test_direct_conflict(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -77,7 +77,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertFalse(vb.add_non_codesignation(variables["A"], variables["B"]), "non codesignation between A and B can be instantiated, which it should not")
 
     def test_direct_conflict2(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -91,7 +91,7 @@ class TestVariableBindings(unittest.TestCase):
 
     
     def test_indirect_conflict(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -105,7 +105,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertFalse(vb.add_non_codesignation(variables["A"], variables["C"]), "non codesignation between A and C can be instantiated, which it should not")
 
     def test_non_codesignation_chaining1(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -119,7 +119,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(vb.add_codesignation(variables["A"], variables["C"]), "codesignation between A and C could not be instantiated")
 
     def test_non_codesignation_chaining2(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -133,7 +133,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertFalse(vb.add_codesignation(variables["A"], variables["C"]))
 
     def test_const_assigning(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument(),
                      "C": Argument()}
@@ -155,7 +155,7 @@ class TestVariableBindings(unittest.TestCase):
         self.assertFalse(vb.can_codesignate(objects["C"], variables["B"]), "two unidentical constants can codesignate")
     
     def test_type_matching(self):
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(uuid4(), "typA"),
                      "B": Argument(uuid4(), "typA"),
                      "C": Argument(uuid4(), "typB"),
@@ -187,7 +187,7 @@ class TestVariableBindings(unittest.TestCase):
     def test_object_non_codesignation(self):
         """check that two variables with a non-codesignation cannot codesignate to the same object
         """
-        vb = VariableBindings()
+        vb = VariableBindingsSymbolic()
         variables = {"A": Argument(),
                      "B": Argument()}
         

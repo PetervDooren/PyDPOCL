@@ -35,7 +35,7 @@ class VariableBindingsGeometric:
     """
     def __init__(self):
         self.base_area = None
-        self.defined_areas = []
+        self.defined_areas = {}
         self.variables = []
         self.placelocs = {}
         self.within_mapping = {}
@@ -49,9 +49,9 @@ class VariableBindingsGeometric:
         self.defined_areas = areas
 
     def set_base_area(self, area):
-        self.base_area = area
+        self.base_area = self.defined_areas[area]
 
-    def register_variable(self, areavar, objvar, width, length):
+    def register_variable(self, areavar, objvar=None, width=0, length=0):
         if areavar in self.variables:
             print(f"Warning variable {areavar} is already registered")
             return
@@ -60,6 +60,12 @@ class VariableBindingsGeometric:
         self.within_mapping[areavar] = []
         self.within_areas[areavar] = [self.base_area]
         self.disjunctions[areavar] = []
+
+    def link_area_to_object(self, objvar, areavar):
+        if areavar not in self.variables:
+            print(f"Warning! variable {areavar} not in geometric variables set {self.variables}")
+            raise
+        self.placelocs[areavar].object = objvar
     
     def is_ground(self, var) -> bool:
         return False
@@ -113,9 +119,13 @@ class VariableBindingsGeometric:
                 print(f"{varA} is already constrained to be within {varB}. This should not happen!")
                 return False
             self.within_mapping[varA].append(varB)
-            if not self.placelocs[varA].area_max.intersects(self.placelocs[varB].area_max):
+            if varB in self.defined_areas:
+                areaB = self.defined_areas[varB]
+            else: # varB is a variable with a place location
+                areaB = self.placelocs[varB].area_max
+            if not self.placelocs[varA].area_max.intersects(areaB):
                 return False
-            new_poly = self.placelocs[varA].area_max.intersection(self.placelocs[varB].area_max)
+            new_poly = self.placelocs[varA].area_max.intersection(areaB)
             self.placelocs[varA].area_max = new_poly
             #TODO check if new_poly is still large enough to house the object
         else: # must be Polygon type

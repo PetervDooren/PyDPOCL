@@ -6,6 +6,7 @@ from Ground_Compiler_Library.GElm import GLiteral, Operator
 from Flaws import Flaw, OPF, TCLF
 from uuid import uuid4
 import copy
+from worldmodel import load_worldmodel, link_areas
 from heapq import heappush, heappop
 from clockdeco import clock
 import time
@@ -120,6 +121,19 @@ class GPlanner:
 		return self._frontier[position]
 
 	# Methods #
+	def set_areas(self, areas):
+		"""define the geometric areas used in planning. Must be called before self.plan may be called.
+
+		Args:
+			areas (Dict[str:Polygon]): named areas refered to in the planning problem.
+		"""
+		if len(self) > 1:
+			print("WTF are you doing! dont call me in this order")
+			raise
+		self[0].variableBindings.set_areas(areas)
+		# base area is table:
+		table_areas = [a for a in areas if a.name=='table']
+		self[0].variableBindings.geometric_vb.set_base_area(table_areas[0])
 
 	def pop(self) -> GPlan:
 		return self._frontier.pop()
@@ -274,18 +288,9 @@ class GPlanner:
 			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			provider_args = new_step.effects[cndt_eff].Args
-			consumer_args = mutable_p.Args
-			if not len(provider_args) == len(consumer_args):
-				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-			consistent = True
-			for i in range(len(provider_args)):
-				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
-					consistent = False
-					break
-				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
-			if not consistent:
-				#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+			provider = new_step.effects[cndt_eff]
+			consumer = mutable_p
+			if not new_plan.variableBindings.unify(provider, consumer):
 				continue
 			log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {cndt_eff} of {new_step}")
 
@@ -328,19 +333,9 @@ class GPlanner:
 			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan.name))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			provider_args = old_step.effects[eff_nr].Args
-			consumer_args = mutable_p.Args
-			if not len(provider_args) == len(consumer_args):
-				print(f"Warning: provider and consumer have a different amount of arguments: provider: {provider_args}, consumer: {consumer_args}")
-				continue
-			consistent = True
-			for i in range(len(provider_args)):
-				if not new_plan.variableBindings.can_codesignate(provider_args[i], consumer_args[i]):
-					consistent = False
-					break
-				new_plan.variableBindings.add_codesignation(provider_args[i], consumer_args[i])
-			if not consistent:
-				#log_message(f"Warning: arguments are inconsistent, provider: {provider_args}, consumer: {consumer_args}")
+			provider = old_step.effects[eff_nr]
+			consumer = mutable_p
+			if not new_plan.variableBindings.unify(provider, consumer):
 				continue
 			# resolve open condition with old step
 			new_plan.resolve(old_step, mutable_s_need, mutable_p)
@@ -552,8 +547,11 @@ if __name__ == '__main__':
 	else:
 		#domain_file = 'Ground_Compiler_Library//domains/ark-domain.pddl'
 		#problem_file = 'Ground_Compiler_Library//domains/ark-problem.pddl'
+		#domain_file = 'Ground_Compiler_Library//domains/manipulation-domain-symbolic.pddl'
+		#problem_file = 'Ground_Compiler_Library//domains/manipulation-problem-symbolic.pddl'
 		domain_file = 'Ground_Compiler_Library//domains/manipulation-domain.pddl'
 		problem_file = 'Ground_Compiler_Library//domains/manipulation-problem.pddl'
+		worldmodel_file = 'Ground_Compiler_Library//domains/manipulation-worldmodel.json'
 	d_name = domain_file.split('/')[-1].split('.')[0]
 	p_name = problem_file.split('/')[-1].split('.')[0]
 	uploadable_ground_step_library_name = 'compiled/' + d_name +'/' + d_name + '.' + p_name
@@ -577,7 +575,12 @@ if __name__ == '__main__':
 				break
 		print('finished uploading')
 
+	# load worldmodel
+	robot_reach, areas = load_worldmodel(worldmodel_file)
+	linked_areas = link_areas(objects, areas)
+
 	PLAN = 1
 	if PLAN:
 		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)
+		planner.set_areas(linked_areas)
 		planner.solve(k=1)
