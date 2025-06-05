@@ -3,8 +3,7 @@ import unittest
 from worldmodel import load_worldmodel, update_init_state, just_compile
 
 class TestVariableBindings(unittest.TestCase):
-
-    def test_load_init_state(self):
+    def setUp(self):
         domain_file = 'test/domains/test-domain.pddl'
         problem_file = 'test/domains/test-problem.pddl'
         worldmodel_file = 'test/domains/test-worldmodel.json'
@@ -16,25 +15,36 @@ class TestVariableBindings(unittest.TestCase):
 
         init_state = ground_steps[-2]
         init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-        for o in objects:
-            if o.typ == 'item' or 'item' in object_types[o.typ]:
-                for a in area_mapping.keys():
-                    for e in init_state.effects:
+
+        self.objects = objects
+        self.area_mapping = area_mapping
+        self.object_types = object_types
+        self.init_state = init_state
+
+    def test_all_within(self):
+        for o in self.objects:
+            if o.typ == 'item' or 'item' in self.object_types[o.typ]:
+                for a in self.area_mapping.keys():
+                    for e in self.init_state.effects:
                         if e.name == 'within' and e.Args == [o, a]:
                             break
                     else:
                         self.assertTrue(False, f"There is no 'within({o}, {a})' predicate in the initial state")
-        
-        # check that the correct conditions are True
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='table']), "Box A is not within the table")
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='goal_left']), "Box A is not within the left goal")
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='reach_robot_left']), "Box B is not within reach of the left robot")
-        self.assertTrue(all([not e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='goal_left']), "Box B is within goal_left")
-        self.assertTrue(all([not e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='goal_right']), "Box C is within goal_right")
+    
+    def test_init_pose(self):
         # assert objects start in their initial poses
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='boxa_init_pos']), "Box A is not within its initial pose")
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='boxb_init_pos']), "Box A is not within its initial pose")
-        self.assertTrue(all([e.truth for e in init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='boxc_init_pos']), "Box A is not within its initial pose")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='boxa_init_pos']), "Box A is not within its initial pose")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='boxb_init_pos']), "Box A is not within its initial pose")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='boxc_init_pos']), "Box A is not within its initial pose")
+    
+    def test_within_truth(self):
+        # check that the correct conditions are True
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='table']), "Box A is not within the table")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='goal_left']), "Box A is not within the left goal")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='reach_robot_left']), "Box B is not within reach of the left robot")
+        self.assertTrue(all([not e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='goal_left']), "Box B is within goal_left")
+        self.assertTrue(all([not e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='goal_right']), "Box C is within goal_right")
+        
         
 if __name__ == '__main__':
     unittest.main()
