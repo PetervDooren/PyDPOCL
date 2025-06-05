@@ -1,7 +1,6 @@
 from typing import Set, List
 from GPlan import GPlan, math
 from Ground_Compiler_Library.GElm import GLiteral, Operator
-from Ground_Compiler_Library import Ground, precompile
 from Flaws import Flaw, TCLF
 from uuid import uuid4
 from heapq import heappush, heappop
@@ -464,13 +463,3 @@ class POCLPlanner:
 				continue
 			sumo += self.h_condition(plan, abstract_step.dummy.final.stepnum, pre)
 		return sumo
-
-import sys
-import pickle
-# import Ground_Compiler_Library
-
-
-def just_compile(domain_file, problem_file):
-	GL = Ground.GLib(domain_file, problem_file)
-	ground_step_list = precompile.deelementize_ground_library(GL)
-	return ground_step_list, GL.objects, GL.object_types

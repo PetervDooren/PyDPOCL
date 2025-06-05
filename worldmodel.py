@@ -4,7 +4,13 @@ from dataclasses import dataclass
 from uuid import uuid4
 
 from Ground_Compiler_Library.GElm import GLiteral, Operator
+from Ground_Compiler_Library import Ground, precompile
 from Ground_Compiler_Library.Element import Argument
+
+def just_compile(domain_file, problem_file):
+	GL = Ground.GLib(domain_file, problem_file)
+	ground_step_list = precompile.deelementize_ground_library(GL)
+	return ground_step_list, GL.objects, GL.object_types
 
 @dataclass
 class world_object:
