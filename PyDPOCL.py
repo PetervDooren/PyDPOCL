@@ -1,19 +1,14 @@
-import os
 from typing import Set, List
-from pathlib import Path
 from GPlan import GPlan, math
 from Ground_Compiler_Library.GElm import GLiteral, Operator
-from Flaws import Flaw, OPF, TCLF
+from Ground_Compiler_Library import Ground, precompile
+from Flaws import Flaw, TCLF
 from uuid import uuid4
-import copy
-from worldmodel import load_worldmodel, update_init_state
 from heapq import heappush, heappop
-from clockdeco import clock
 import time
 LOG = 1
 REPORT = 1
 RRP = 0
-from collections import Counter
 
 def log_message(message):
 	if LOG:
@@ -48,7 +43,7 @@ class Frontier:
 		return k
 
 
-class GPlanner:
+class POCLPlanner:
 	"""
 	Plan space planner, only instantiate once per planner, starts with ground steps
     ...
@@ -473,116 +468,9 @@ class GPlanner:
 import sys
 import pickle
 # import Ground_Compiler_Library
-from Ground_Compiler_Library import Ground, precompile
-# import json
-# import jsonpickle
-#
-# class gstep_encoder(json.JSONEncoder):
-# 	def default(self, obj):
-# 		if hasattr(obj, 'to_json'):
-# 			return obj.to_json()
-# 		return json.JSONEncoder.default(self, obj)
 
 
-def upload(GL, name):
-	print(name)
-	with open(name, 'wb') as afile:
-		pickle.dump(GL, afile)
-
-# def just_compile_no_saving_steps(domain_file, problem_file):
-# 	GL = Ground.GLib(domain_file, problem_file)
-# 	ground_step_list = precompile.deelementize_ground_library(GL)
-
-def just_compile(domain_file, problem_file, pickle_names):
+def just_compile(domain_file, problem_file):
 	GL = Ground.GLib(domain_file, problem_file)
-	# with open('compiled/ground_steps.txt', 'w') as gs:
-	# 	for step in GL:
-	# 		gs.write(str(step))
-	# 		gs.write('\n\tpreconditions:')
-	# 		for pre in step.Preconditions:
-	# 			gs.write('\n\t\t' + str(pre))
-	# 		gs.write('\n\teffects:')
-	# 		for eff in step.Effects:
-	# 			gs.write('\n\t\t' + str(eff))
-	# 		gs.write('\n\n')
 	ground_step_list = precompile.deelementize_ground_library(GL)
-	# with open('compiled/ground_steps_stripped.txt', 'w') as gs:
-	# 	# gs.write('\n\n')
-	# 	for i, step in enumerate(ground_step_list):
-	# 		gs.write('\n')
-	# 		gs.write(str(i) + '\n')
-	# 		gs.write(str(step))
-	# 		gs.write('\n\tpreconditions:')
-	# 		for pre in step.preconds:
-	# 			gs.write('\n\t\t' + str(pre))
-	# 			if step.cndt_map is not None:
-	# 				if pre.ID in step.cndt_map.keys():
-	# 					gs.write('\n\t\t\tcndts:\t{}'.format(str(step.cndt_map[pre.ID])))
-	# 			if step.threat_map is not None:
-	# 				if pre.ID in step.threat_map.keys():
-	# 					gs.write('\n\t\t\trisks:\t{}'.format(str(step.threat_map[pre.ID])))
-
-	# 		if step.height > 0:
-	# 			gs.write('\n\tsub_steps:')
-	# 			for sub in step.sub_steps:
-	# 				gs.write('\n\t\t{}'.format(str(sub)))
-	# 			gs.write('\n\tsub_orderings:')
-	# 			for ord in step.sub_orderings.edges:
-	# 				gs.write('\n\t\t{}'.format(str(ord.source) + ' < ' + str(ord.sink)))
-	# 			for link in step.sub_links.edges:
-	# 				gs.write('\n\t\t{}'.format(str(link)))
-	# 		gs.write('\n\n')
-
-	# for i, gstep in enumerate(ground_step_list):
-	# 	with open(pickle_names + str(i), 'wb') as ugly:
-	# 		pickle.dump(gstep, ugly)
 	return ground_step_list, GL.objects, GL.object_types
-
-if __name__ == '__main__':
-	num_args = len(sys.argv)
-	if num_args >1:
-		domain_file = sys.argv[1]
-		if num_args > 2:
-			problem_file = sys.argv[2]
-	else:
-		#domain_file = 'Ground_Compiler_Library//domains/ark-domain.pddl'
-		#problem_file = 'Ground_Compiler_Library//domains/ark-problem.pddl'
-		#domain_file = 'Ground_Compiler_Library//domains/manipulation-domain-symbolic.pddl'
-		#problem_file = 'Ground_Compiler_Library//domains/manipulation-problem-symbolic.pddl'
-		domain_file = 'Ground_Compiler_Library//domains/manipulation-domain.pddl'
-		problem_file = 'Ground_Compiler_Library//domains/manipulation-problem.pddl'
-		worldmodel_file = 'Ground_Compiler_Library//domains/manipulation-worldmodel.json'
-	d_name = domain_file.split('/')[-1].split('.')[0]
-	p_name = problem_file.split('/')[-1].split('.')[0]
-	uploadable_ground_step_library_name = 'compiled/' + d_name +'/' + d_name + '.' + p_name
-
-	RELOAD = 1
-	if RELOAD or not os.path.exists(uploadable_ground_step_library_name):
-		# create folder if it does not exist yet
-		file = Path(uploadable_ground_step_library_name)
-		file.parent.mkdir(parents=True, exist_ok=True)
-		ground_steps, objects, object_types = just_compile(domain_file, problem_file, uploadable_ground_step_library_name)
-	else:
-		ground_steps = []
-		i = 0
-		while True:
-			try:
-				print(i)
-				with open(uploadable_ground_step_library_name + str(i), 'rb') as ugly:
-					ground_steps.append(pickle.load(ugly))
-				i += 1
-			except:
-				break
-		print('finished uploading')
-
-	# load worldmodel
-	objects, area_mapping, object_mapping, object_area_mapping, robot_reach = load_worldmodel(worldmodel_file, objects)
-
-	init_state = ground_steps[-2]
-	init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-
-	PLAN = 1
-	if PLAN:
-		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)
-		planner.set_areas(area_mapping)
-		planner.solve(k=1)
