@@ -18,6 +18,14 @@ class VariableBindings:
 
         self.symbolic_vb = VariableBindingsSymbolic()
         self.geometric_vb = VariableBindingsGeometric()
+
+    def __contains__(self, id):
+        if id in self.symbolic_vb.variables:
+            return True
+        if id in self.geometric_vb.variables:
+            return True
+        else:
+            return False
     
     def isInternallyConsistent():
         return True

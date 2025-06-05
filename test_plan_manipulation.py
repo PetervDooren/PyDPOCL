@@ -36,7 +36,11 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(new_plan.OrderingGraph.isPath(new_plan.dummy.init, action))
         self.assertFalse(new_plan.OrderingGraph.isPath(new_plan.dummy.goal, action))
         self.assertFalse(new_plan.OrderingGraph.isPath(action, new_plan.dummy.init))
-        self.assertTrue(new_plan.OrderingGraph.isPath(action, new_plan.dummy.goal))       
+        self.assertTrue(new_plan.OrderingGraph.isPath(action, new_plan.dummy.goal))
+
+        # test all arguments are in the variablebindings
+        for a in action.Args:
+            self.assertIn(a, new_plan.variableBindings)
 
 if __name__ == '__main__':
     unittest.main()
