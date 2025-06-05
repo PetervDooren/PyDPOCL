@@ -81,10 +81,29 @@ def load_worldmodel(file, objects):
     return objects, area_mapping, object_mapping, object_area_mapping, robot_reach
 
 def update_init_state(init_state, area_mapping, object_area_mapping):
+    """update the truth conditions of the initial state using the geometry
+
+    Args:
+        init_state (_type_): initial state to be modified
+        area_mapping (dict(Argument: Polygon)): mapping of arguments to a polygon
+        object_area_mapping (dict(Argument:Argument)): mapping of object argument to inital area argument
+
+    Returns:
+        _type_: initial state with updated truth values on its effects.
+    """
+    # add conditions for intial positions
+    for obj in object_area_mapping.keys():
+        for area in object_area_mapping.values():
+            cond = GLiteral('within', [obj, area], False, uuid4(), False)
+            init_state.effects.append(cond)
+
+
     for cond in init_state.effects:
         init_area_arg = object_area_mapping[cond.Args[0]]
         object_poly = area_mapping[init_area_arg]
         area_poly = area_mapping[cond.Args[1]]
         if object_poly.within(area_poly):
             cond.truth = True
+        else:
+            cond.truth = False
     return init_state
