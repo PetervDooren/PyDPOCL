@@ -6,7 +6,7 @@ from Ground_Compiler_Library.GElm import GLiteral, Operator
 from Flaws import Flaw, OPF, TCLF
 from uuid import uuid4
 import copy
-from worldmodel import load_worldmodel, link_areas
+from worldmodel import load_worldmodel, update_init_state
 from heapq import heappush, heappop
 from clockdeco import clock
 import time
@@ -576,11 +576,13 @@ if __name__ == '__main__':
 		print('finished uploading')
 
 	# load worldmodel
-	robot_reach, areas = load_worldmodel(worldmodel_file)
-	linked_areas = link_areas(objects, areas)
+	objects, area_mapping, object_mapping, object_area_mapping, robot_reach = load_worldmodel(worldmodel_file, objects)
+
+	init_state = ground_steps[-2]
+	init_state = update_init_state(init_state, area_mapping, object_area_mapping)
 
 	PLAN = 1
 	if PLAN:
 		planner = GPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)
-		planner.set_areas(linked_areas)
+		planner.set_areas(area_mapping)
 		planner.solve(k=1)

@@ -2,23 +2,17 @@
   (:requirements)
   (:types symbol area - object
           item robot - symbol)
-  (:predicates (free ?area - area)
-               (in_reach ?area - area ?robot - robot)
-               (within ?obj - item ?area - area))
+  (:predicates (within ?obj - item ?area - area))
 
 
   (:action movemono
     :parameters   (?robot - robot ?obj - item ?startarea - area ?goalarea - area)
 	:precondition (and
-	                   (free ?goalarea)
-                       (within ?obj ?startarea)
-                       (in_reach ?startarea ?robot)
-                       (in_reach ?goalarea ?robot)
-                       )
+	                 (within ?obj ?startarea)
+                )
 	:effect       (and (within ?obj ?goalarea)
-                        (free ?startarea)
                         (not (within ?obj ?startarea))
-                        (not (free ?goalarea)))
+                )
     :agents       (?robot))
 
 

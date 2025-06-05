@@ -1,7 +1,29 @@
 import json
 from shapely import Polygon
+from dataclasses import dataclass
+from uuid import uuid4
 
-def load_worldmodel(file):
+from Ground_Compiler_Library.GElm import GLiteral, Operator
+from Ground_Compiler_Library.Element import Argument
+
+@dataclass
+class world_object:
+    name: str
+    width: float # dimension x
+    length: float # dimension y
+    pos_x: float
+    pos_y: float
+
+def load_worldmodel(file, objects):
+    """Load a geometric worldmodel and link it to the symbolic worldmodel
+
+    Args:
+        file (sting): json file containing the worldmodel description
+        objects (set(Arguments)): list of symbolic objects in the planning problem
+
+    Returns:
+        _type_: _description_
+    """
     with open(file, 'r') as file:
         data = json.load(file)
         # load areas
@@ -14,11 +36,49 @@ def load_worldmodel(file):
             robot_reach[r["name"]] = r["reach"]
             if r["reach"] not in areas.keys():
                 print(f"robot {r['name']} specifies reach area {r['reach']} but this is not defined. Existing areas are {areas.keys()}")
-    return robot_reach, areas
+        # load objects
+        geo_objects = {}
+        for o in data["objects"]:
+            geo_objects[o["name"]] = world_object(o["name"], o["width"], o["length"], o["initial_pose"][0], o["initial_pose"][1])
 
-def link_areas(objects, areas):
+    area_mapping = {} # mapping of arguments to a polygon
+    object_mapping = {} # mapping of arguments to world_object
+    object_area_mapping = {} # mapping of object argument to inital area argument
+
+    # link areas to their arguments
     area_objects = [a for a in objects if a.typ=='area']
-    linked_areas = {}
     for a in area_objects:
-        linked_areas[a] = areas[a.name]
-    return linked_areas
+        area_mapping[a] = areas[a.name]
+
+    # link objects to their arguments
+    physical_objects = [a for a in objects if a.typ=='item']
+    for o in physical_objects:
+        object_mapping[o] = geo_objects[o.name]
+        # create arguments to represent the initial positions of the object
+        argname = o.name + "_init_pos"
+        area_arg = Argument(uuid4(), "area", argname, None)
+        objects.add(area_arg)
+        object_area_mapping[o] = area_arg
+        # create an area to represent the initial position of the object
+        obj = geo_objects[o.name]
+        x_min = obj.pos_x - 0.5*obj.width
+        x_max = obj.pos_x + 0.5*obj.width
+        y_min = obj.pos_y - 0.5*obj.length
+        y_max = obj.pos_y + 0.5*obj.length
+        object_poly = Polygon([[x_min, y_min],
+                              [x_min, y_max],
+                              [x_max, y_max],
+                              [x_max, y_min]])
+        # add inital area to the set of objects
+        area_mapping[area_arg] = object_poly
+
+    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach
+
+def update_init_state(init_state, area_mapping, object_area_mapping):
+    for cond in init_state.effects:
+        init_area_arg = object_area_mapping[cond.Args[0]]
+        object_poly = area_mapping[init_area_arg]
+        area_poly = area_mapping[cond.Args[1]]
+        if object_poly.within(area_poly):
+            cond.truth = True
+    return init_state
