@@ -7,7 +7,7 @@ from Ground_Compiler_Library.VariableBindings import VariableBindings
 import copy
 from collections import namedtuple, defaultdict
 import math
-dummyTuple = namedtuple('dummyTuple', ['init', 'final'])
+dummyTuple = namedtuple('dummyTuple', ['init', 'goal'])
 # class dummyTuple:
 # 	def __init__(self, init, final):
 # 		self.init = init
@@ -79,11 +79,11 @@ class GPlan:
 		self.dummy = dummyTuple(dummy_init_constructor, dummy_goal_constructor)
 
 		self.init = self.dummy.init.preconds
-		self.goal = self.dummy.final.preconds
-		self.steps = [self.dummy.init, self.dummy.final]
+		self.goal = self.dummy.goal.preconds
+		self.steps = [self.dummy.init, self.dummy.goal]
 
 		# check if any existing steps are choices (instances of cndts of open conditions)
-		self.dummy.final.update_choices(self)
+		self.dummy.goal.update_choices(self)
 
 		self.cndt_map = None
 		self.threat_map = None
@@ -119,7 +119,7 @@ class GPlan:
 		"""
 		root_plan = GPlan(dummy_init_constructor, dummy_goal_constructor)
 		# add required orderings
-		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.final)
+		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.goal)
 
 		# register parameters
 		root_plan.variableBindings.set_objects(objects, object_types)
@@ -131,8 +131,8 @@ class GPlan:
 		# 		root_plan.variableBindings.register_variable(a)
 
 		# add open precondition flaws for the goal
-		for p in root_plan.dummy.final.open_preconds:
-			root_plan.flaws.insert(root_plan, OPF(root_plan.dummy.final, p, 100000))
+		for p in root_plan.dummy.goal.open_preconds:
+			root_plan.flaws.insert(root_plan, OPF(root_plan.dummy.goal, p, 100000))
 
 		return root_plan
 
@@ -176,7 +176,7 @@ class GPlan:
 
 		# global orderings
 		self.OrderingGraph.addEdge(self.dummy.init, new_step)
-		self.OrderingGraph.addEdge(new_step, self.dummy.final)
+		self.OrderingGraph.addEdge(new_step, self.dummy.goal)
 
 		# add variables of the new step
 		for a in new_step.Args:
@@ -224,19 +224,19 @@ class GPlan:
 		d_i.open_preconds = preconds
 
 		self.OrderingGraph.addEdge(self.dummy.init, d_i)
-		self.OrderingGraph.addEdge(d_i, self.dummy.final)
+		self.OrderingGraph.addEdge(d_i, self.dummy.goal)
 
 
-		# sub dummy final
-		d_f = new_step.dummy.final.instantiate(default_None_is_to_refresh_open_preconds=False)
+		# sub dummy goal
+		d_f = new_step.dummy.goal.instantiate(default_None_is_to_refresh_open_preconds=False)
 		d_f.depth = new_step.depth
-		swap_dict[new_step.dummy.final.ID] = d_f
+		swap_dict[new_step.dummy.goal.ID] = d_f
 		# d_f will be primitive, to allow any heighted applicable steps
 		self.insert(d_f)
 
 		# added this 2017-08-09
 		self.OrderingGraph.addEdge(d_i, d_f)
-		self.OrderingGraph.addEdge(d_f, self.dummy.final)
+		self.OrderingGraph.addEdge(d_f, self.dummy.goal)
 		self.OrderingGraph.addEdge(self.dummy.init, d_f)
 
 		# decomposition links
@@ -264,14 +264,14 @@ class GPlan:
 
 			# if your substeps have children, make those children fit between your init and
 			if new_substep.height > 0:
-				self.OrderingGraph.addEdge(new_substep.dummy.final, d_f)
+				self.OrderingGraph.addEdge(new_substep.dummy.goal, d_f)
 				self.OrderingGraph.addEdge(d_i, new_substep.dummy.init)
 
 		# sub orderings
 		for edge in new_step.sub_orderings.edges:
 			source, sink = swap_dict[edge.source.ID], swap_dict[edge.sink.ID]
 			if source.height > 0:
-				source = source.dummy.final
+				source = source.dummy.goal
 			if sink.height > 0:
 				sink = sink.dummy.init
 			self.OrderingGraph.addEdge(source, sink)
@@ -281,7 +281,7 @@ class GPlan:
 			# instantiating a GLiteral does not give it new ID (just returns deep copy)
 			source, sink, label = swap_dict[edge.source.ID], swap_dict[edge.sink.ID], edge.label.instantiate()
 			if source.height > 0:
-				source = source.dummy.final
+				source = source.dummy.goal
 			if sink.height > 0:
 				sink = sink.dummy.init
 
@@ -295,12 +295,12 @@ class GPlan:
 				if new_substep.stepnum not in clink.sink.threat_map[clink.label.ID]:
 					continue
 				if new_substep.height > 0:
-					# decomp step compared to its dummy init and dummy final steps
-					if self.OrderingGraph.isPath(new_substep.dummy.final, clink.source):
+					# decomp step compared to its dummy init and dummy goal steps
+					if self.OrderingGraph.isPath(new_substep.dummy.goal, clink.source):
 						continue
 					if self.OrderingGraph.isPath(clink.sink, new_substep.dummy.init):
 						continue
-					self.flaws.insert(self, TCLF(new_substep.dummy.final, clink))
+					self.flaws.insert(self, TCLF(new_substep.dummy.goal, clink))
 				else:
 					# primitive step gets the primitive treatment
 					if self.OrderingGraph.isPath(new_substep, clink.source):
