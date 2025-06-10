@@ -129,6 +129,42 @@ class POCLPlanner:
 		table_areas = [a for a in areas if a.name=='table']
 		self[0].variableBindings.geometric_vb.set_base_area(table_areas[0])
 
+	@staticmethod
+	def pre_process_operators(operators):
+		"""pre processes operators with the relations between them.
+		updates properties cndts, cndt_map, threat_map, and threats
+
+		Args:
+			operators (List(Operator)): list of operators
+		"""
+		
+		for op1 in operators:
+			# clear existing data
+			op1.cndts = []
+			op1.cndt_map = dict()
+			op1.threats = []
+			op1.threat_map = dict()
+
+			for pre in op1.preconds:
+				print('... Processing antecedents for {} \t\tof step {}'.format(pre, op1))
+				for op2 in operators:
+					for eff_i in range(len(op2.effects)):
+						eff = op2.effects[eff_i]
+						if eff.name != pre.name:
+							continue # effect is not based on the same predicate as the precondition
+						if eff.truth != pre.truth: # the effect undoes the precondition. Add to threat list
+							if op2.stepnumber not in op1.threats:
+								op1.threats.append(op2.stepnumber)
+								op1.threat_map[pre.ID] = [(op2.stepnumber, eff_i)]
+							else:
+								op1.threat_map[pre.ID].append((op2.stepnumber, eff_i))
+						else: # the effect is identical and therefore fulfills the precondition
+							if op2.stepnumber not in op1.cndts:
+								op1.cndts.append(op2.stepnumber)
+								op1.cndt_map[pre.ID] = [(op2.stepnumber, eff_i)]
+							else:
+								op1.cndt_map[pre.ID].append((op2.stepnumber, eff_i))
+
 	def pop(self) -> GPlan:
 		return self._frontier.pop()
 

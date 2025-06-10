@@ -25,6 +25,7 @@ if __name__ == '__main__':
     init_state = ground_steps[-2]
     init_state = update_init_state(init_state, area_mapping, object_area_mapping)
 
+    POCLPlanner.pre_process_operators(ground_steps)
     PLAN = 1
     if PLAN:
         planner = POCLPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)

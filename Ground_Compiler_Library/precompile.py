@@ -22,7 +22,7 @@ def deelementize_ground_library(GL: GLib) -> List[Operator]:
 
 	init_preconds = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in
 	                 GL[-2].Effects]
-	dummy_init = Operator(GL[-2].name, GL[-2].Args, init_preconds, init_preconds, GL[-2].stepnumber, GL[-2].height, GL[-2].nonequals)
+	dummy_init = Operator(GL[-2].name, GL[-2].Args, [], init_preconds, GL[-2].stepnumber, GL[-2].height, GL[-2].nonequals)
 	dummy_init.instantiable = False
 
 	goal_preconds = [GLiteral(p.name, p.Args, p.truth, p.replaced_ID, (p.name, p.truth) not in GL.non_static_preds) for p in
