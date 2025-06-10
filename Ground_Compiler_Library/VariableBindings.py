@@ -123,6 +123,8 @@ class VariableBindings:
         Returns:
             bool: _description_
         """
+        if varA.typ == 'area' or 'area' in self.object_types[varA.typ]:
+            return True
         return self.symbolic_vb.is_codesignated(varA, varB)
 
     def can_codesignate(self, varA, varB) -> bool:
