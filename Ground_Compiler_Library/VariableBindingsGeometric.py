@@ -24,11 +24,11 @@ class VariableBindingsGeometric:
         concrete areas
     variables : list(Argument)
         list of area variables
-    placelocs : dict(Arugment:placeloc)
+    placelocs : dict(Argument:placeloc)
         mapping between arguments and their place location info.
     groups : list(Argument)
         list of arguments where the properties of a group are collected
-    within_mapping : dict(argument:list(argument))
+    within_mapping : dict(Argument:list(Argument))
         maps a variable A to all other variables B where within(A, B) holds
     disjunctions : dict(Argument:set(Argument))
         maps a variable A to all other variable areas that must be disjunct from A
