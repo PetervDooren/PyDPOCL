@@ -39,36 +39,38 @@ class VariableBindingsGeometric:
         self.variables = []
         self.placelocs = {}
         self.within_mapping = {}
-        self.within_areas = {}
         self.disjunctions = {}
     
     def isInternallyConsistent():
         return True
 
-    def set_areas(self, areas):
+    def set_areas(self, areas: dict):
         self.defined_areas = areas
+        for a in areas.keys():
+            self.within_mapping[a] = []
+            self.disjunctions[a] = []
 
-    def set_base_area(self, area):
-        self.base_area = self.defined_areas[area]
+    def set_base_area(self, area: Argument):
+        self.base_area = area
 
-    def register_variable(self, areavar, objvar=None, width=0, length=0):
+    def register_variable(self, areavar: Argument, objvar: Argument=None, width=0, length=0):
         if areavar in self.variables:
             print(f"Warning variable {areavar} is already registered")
             return
         self.variables.append(areavar)
-        self.placelocs[areavar] = placeloc(objvar, width, length, self.base_area, None)
-        self.within_mapping[areavar] = []
-        self.within_areas[areavar] = [self.base_area]
+        area_max = self.defined_areas[self.base_area]
+        self.placelocs[areavar] = placeloc(objvar, width, length, area_max, None)
+        self.within_mapping[areavar] = [self.base_area]
         self.disjunctions[areavar] = []
 
-    def link_area_to_object(self, objvar, areavar):
+    def link_area_to_object(self, objvar: Argument, areavar: Argument):
         if areavar not in self.variables:
             print(f"Warning! variable {areavar} not in geometric variables set {self.variables}")
             raise
         self.placelocs[areavar].object = objvar
     
     def is_ground(self, var) -> bool:
-        return False
+        return var in self.defined_areas
 
     def is_fully_ground(self) -> bool:
         return False
@@ -88,8 +90,8 @@ class VariableBindingsGeometric:
         """
         return False
 
-    def can_codesignate(self, varA, varB) -> bool:
-        """check if A and B could be codesignated
+    def can_unify(self, varA, varB) -> bool:
+        """check if area A can lie within area B
 
         Args:
             varA (uuid): _description_
@@ -98,7 +100,20 @@ class VariableBindingsGeometric:
         Returns:
             bool: _description_
         """
-        return True
+        if varB in self.within_mapping[varA]:
+            print(f"{varA} is already constrained to be within {varB}. This should not happen!")
+            return False
+        
+        # check if either A or B is a defined area
+        Aisarea = varA in self.defined_areas.keys()
+        Bisarea = varB in self.defined_areas.keys()
+
+        area_A = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
+        area_B = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
+        if Aisarea:
+            return within(area_A, area_B)
+        else: # A is variable and can thus shrink
+            return area_A.intersects(area_B)
 
     def unify(self, varA, varB) -> bool:
         """add a constraint that area A must lie within area B
@@ -111,25 +126,20 @@ class VariableBindingsGeometric:
             bool: False if the constraint is inconsistent with the existing bindings
         """
 
-        if not self.can_codesignate(varA, varB):
+        if not self.can_unify(varA, varB):
             return False
         
-        if isinstance(varB, Argument):
-            if varB in self.within_mapping[varA]:
-                print(f"{varA} is already constrained to be within {varB}. This should not happen!")
-                return False
-            self.within_mapping[varA].append(varB)
-            if varB in self.defined_areas:
-                areaB = self.defined_areas[varB]
-            else: # varB is a variable with a place location
-                areaB = self.placelocs[varB].area_max
-            if not self.placelocs[varA].area_max.intersects(areaB):
-                return False
-            new_poly = self.placelocs[varA].area_max.intersection(areaB)
+        # check if either A or B is a defined area
+        Aisarea = varA in self.defined_areas.keys()
+        Bisarea = varB in self.defined_areas.keys()
+
+        self.within_mapping[varA].append(varB)
+        if not Aisarea:
+            area_A = self.placelocs[varA].area_max 
+            area_B = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
+            new_poly = area_A.intersection(area_B)
             self.placelocs[varA].area_max = new_poly
             #TODO check if new_poly is still large enough to house the object
-        else: # must be Polygon type
-            self.within_areas[varA].append(varB)
         return True
 
     def add_disjunction(self, varA, varB) -> bool:
