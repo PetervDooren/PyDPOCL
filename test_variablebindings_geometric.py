@@ -11,8 +11,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
     def test_unify(self):
         vb = VariableBindingsGeometric()
 
-        base_area = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
-        vb.set_base_area(base_area)
+        areas = {}
+        areas['base'] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
+        vb.set_areas(areas)
+        vb.set_base_area('base')
 
         objects = {"A": Argument()}
         variables = {"A": Argument(),
@@ -33,8 +35,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
     def test_disjunct(self):
         vb = VariableBindingsGeometric()
 
-        base_area = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
-        vb.set_base_area(base_area)
+        areas = {}
+        areas['base'] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
+        vb.set_areas(areas)
+        vb.set_base_area('base')
 
         objects = {"A": Argument(),
                    "B": Argument()}
