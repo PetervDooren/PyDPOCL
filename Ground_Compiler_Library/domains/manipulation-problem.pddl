@@ -6,5 +6,5 @@
             )
   (:init )
   (:goal (and
-              (within boxa goal_left)
+              (within boxc goal_left)
               )))
