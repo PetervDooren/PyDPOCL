@@ -147,6 +147,8 @@ class POCLPlanner:
 
 			for pre in op1.preconds:
 				print('... Processing antecedents for {} \t\tof step {}'.format(pre, op1))
+				op1.cndt_map[pre.ID] = []
+				op1.threat_map[pre.ID] = []
 				for op2 in operators:
 					for eff_i in range(len(op2.effects)):
 						eff = op2.effects[eff_i]
@@ -155,15 +157,11 @@ class POCLPlanner:
 						if eff.truth != pre.truth: # the effect undoes the precondition. Add to threat list
 							if op2.stepnumber not in op1.threats:
 								op1.threats.append(op2.stepnumber)
-								op1.threat_map[pre.ID] = [(op2.stepnumber, eff_i)]
-							else:
-								op1.threat_map[pre.ID].append((op2.stepnumber, eff_i))
+							op1.threat_map[pre.ID].append((op2.stepnumber, eff_i))
 						else: # the effect is identical and therefore fulfills the precondition
 							if op2.stepnumber not in op1.cndts:
 								op1.cndts.append(op2.stepnumber)
-								op1.cndt_map[pre.ID] = [(op2.stepnumber, eff_i)]
-							else:
-								op1.cndt_map[pre.ID].append((op2.stepnumber, eff_i))
+							op1.cndt_map[pre.ID].append((op2.stepnumber, eff_i))
 
 	def pop(self) -> GPlan:
 		return self._frontier.pop()
