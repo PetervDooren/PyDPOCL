@@ -406,7 +406,8 @@ class POCLPlanner:
 	def ground_variable(self, plan: GPlan):
 		plan.name += '[ug]'
 
-		for var in plan.variableBindings.get_var_par_group(): # TODO will find codesignated groups multiple times
+		# ground a symbolic parameter
+		for var in plan.variableBindings.get_var_per_group():
 			if plan.variableBindings.is_ground(var):
 				continue
 			for obj in plan.variableBindings.objects:

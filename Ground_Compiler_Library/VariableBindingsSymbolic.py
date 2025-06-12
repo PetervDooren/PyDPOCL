@@ -75,7 +75,7 @@ class VariableBindingsSymbolic:
     def is_fully_ground(self) -> bool:
         return not any([v is None for v in self.const.values()])
     
-    def get_var_par_group(self) -> List[Argument]:
+    def get_var_per_group(self) -> List[Argument]:
         varlist = []
         for group in self.groups:
             varlist.append(next(iter(self.group_members[group])))

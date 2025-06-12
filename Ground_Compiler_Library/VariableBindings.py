@@ -80,7 +80,7 @@ class VariableBindings:
     def is_fully_ground(self) -> bool:
         return self.symbolic_vb.is_fully_ground()
 
-    def get_var_par_group(self) -> List[Argument]:
+    def get_var_per_group(self) -> List[Argument]:
         return self.symbolic_vb.get_var_per_group()
 
     def unify(self, provider, consumer)-> bool:
