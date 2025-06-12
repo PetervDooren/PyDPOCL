@@ -115,7 +115,7 @@ class POCLPlanner:
 		return self._frontier[position]
 
 	# Methods #
-	def set_areas(self, areas):
+	def set_areas(self, areas, base_area='table'):
 		"""define the geometric areas used in planning. Must be called before self.plan may be called.
 
 		Args:
@@ -126,7 +126,7 @@ class POCLPlanner:
 			raise
 		self[0].variableBindings.set_areas(areas)
 		# base area is table:
-		table_areas = [a for a in areas if a.name=='table']
+		table_areas = [a for a in areas if a.name==base_area]
 		self[0].variableBindings.geometric_vb.set_base_area(table_areas[0])
 
 	@staticmethod
