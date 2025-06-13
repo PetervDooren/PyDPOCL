@@ -28,6 +28,5 @@ if __name__ == '__main__':
     POCLPlanner.pre_process_operators(ground_steps)
     PLAN = 1
     if PLAN:
-        planner = POCLPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types)
-        planner.set_areas(area_mapping)
+        planner = POCLPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types, area_mapping, robot_reach)
         planner.solve(k=1)

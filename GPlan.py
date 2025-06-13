@@ -108,7 +108,7 @@ class GPlan:
 		self.steps[pos] = item
 
 	@staticmethod
-	def make_root_plan(dummy_init_constructor, dummy_goal_constructor, objects, object_types) -> GPlan:
+	def make_root_plan(dummy_init_constructor, dummy_goal_constructor, objects, object_types, area_mapping, robot_reach, base_area='table') -> GPlan:
 		"""Helper function to create a root plan at the start of planning
 
 		Args:
@@ -123,6 +123,11 @@ class GPlan:
 
 		# register parameters
 		root_plan.variableBindings.set_objects(objects, object_types)
+		root_plan.variableBindings.set_areas(area_mapping)
+		# base area is table:
+		table_areas = [a for a in area_mapping if a.name==base_area]
+		root_plan.variableBindings.geometric_vb.set_base_area(table_areas[0])
+		root_plan.variableBindings.set_reach(robot_reach)
 		# for condition in root_plan.init:
 		# 	for a in condition.Args:
 		# 		root_plan.variableBindings.register_variable(a)

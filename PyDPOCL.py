@@ -83,7 +83,7 @@ class POCLPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, operators: Set[Operator], init_stat: Operator, goal: Operator, objects, object_types):
+	def __init__(self, operators: Set[Operator], init_stat: Operator, goal: Operator, objects, object_types, area_mapping, robot_reach):
 		"""construct planner
 
 		Args:
@@ -98,7 +98,7 @@ class POCLPlanner:
 		self.h_step_dict = dict()
 		self.h_lit_dict = dict()
 
-		root_plan = GPlan.make_root_plan(init_stat, goal, objects, object_types)
+		root_plan = GPlan.make_root_plan(init_stat, goal, objects, object_types, area_mapping, robot_reach, 'table')
 
 		self._frontier = Frontier()
 		self.plan_num = 0
@@ -115,20 +115,6 @@ class POCLPlanner:
 		return self._frontier[position]
 
 	# Methods #
-	def set_areas(self, areas, base_area='table'):
-		"""define the geometric areas used in planning. Must be called before self.plan may be called.
-
-		Args:
-			areas (Dict[str:Polygon]): named areas refered to in the planning problem.
-		"""
-		if len(self) > 1:
-			print("WTF are you doing! dont call me in this order")
-			raise
-		self[0].variableBindings.set_areas(areas)
-		# base area is table:
-		table_areas = [a for a in areas if a.name==base_area]
-		self[0].variableBindings.geometric_vb.set_base_area(table_areas[0])
-
 	@staticmethod
 	def pre_process_operators(operators):
 		"""pre processes operators with the relations between them.

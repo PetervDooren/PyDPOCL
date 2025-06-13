@@ -50,6 +50,7 @@ def load_worldmodel(file, objects):
     area_mapping = {} # mapping of arguments to a polygon
     object_mapping = {} # mapping of arguments to world_object
     object_area_mapping = {} # mapping of object argument to inital area argument
+    robot_reach_mapping = {} # mapping between a robot argument and an area argument representing its reach
 
     # link areas to their arguments
     area_objects = [a for a in objects if a.typ=='area']
@@ -78,7 +79,13 @@ def load_worldmodel(file, objects):
         # add inital area to the set of objects
         area_mapping[area_arg] = object_poly
 
-    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach
+    # link robots to their reach
+    robot_objects = [a for a in objects if a.typ=='robot']
+    for r in robot_objects:
+        reach_area = [a for a in area_objects if a.name == robot_reach[r.name]]
+        robot_reach_mapping[r] = reach_area[0] 
+
+    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach_mapping
 
 def update_init_state(init_state, area_mapping, object_area_mapping):
     """update the truth conditions of the initial state using the geometry

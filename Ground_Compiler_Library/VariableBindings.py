@@ -56,6 +56,14 @@ class VariableBindings:
             areas (dict(str:Polygon)): named areas
         """
         self.geometric_vb.set_areas(areas)
+    
+    def set_reach(self, reach_areas):
+        """Configure the areas used in the geometric part of variable bindings
+
+        Args:
+            reach_areas (dict(Argument:Argument)): mapping between robots and their reach. each represented by an argument 
+        """
+        self.reach_areas = reach_areas
 
     def register_variable(self, var):
         if var in self.variables:
