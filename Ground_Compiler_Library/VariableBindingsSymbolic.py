@@ -36,6 +36,9 @@ class VariableBindingsSymbolic:
         self.group_members = {}
         self.non_codesignations = {}
     
+    def get_const(self, var):
+        return self.const[self.group_mapping[var]]
+
     def isInternallyConsistent():
         return True
 

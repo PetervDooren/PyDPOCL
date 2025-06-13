@@ -101,7 +101,7 @@ class VariableBindings:
             consumer_args (_type_): _description_
 
         Returns:
-            bool: _description_
+            bool: indicating wether unification is possible
         """
         if provider.name == 'within':
             if not self.symbolic_vb.add_codesignation(provider.Args[0], consumer.Args[0]):
@@ -163,7 +163,11 @@ class VariableBindings:
             bool: False if the codesignation is inconsistent with the existing bindings
         """
         if varA in self.symbolic_vb.variables:
-            return self.symbolic_vb.add_codesignation(varA, varB)
+            if not self.symbolic_vb.add_codesignation(varA, varB):
+                return False
+            if self.is_ground(varA) and self.symbolic_vb.get_const(varA) in self.reach_areas:
+                return self.apply_reach(varA)
+            return True
         else:
             return True
 
@@ -197,6 +201,26 @@ class VariableBindings:
             print(f"Warning: variable {varB} of type {varB.typ} is not in the symbolic parameter list")
             raise
         self.reach_constraints.append((varA, varB))
+    
+    def apply_reach(self, robotvar):
+        """_summary_
+
+        Args:
+            robotvar (Argument): argument of a robot whose reach can now be applied.
+        
+        Returns:
+            bool: False if applying the reach makes the CSP insolvable.
+        """
+        for rc in self.reach_constraints:
+            if rc[1] != robotvar:
+                continue
+            robot = self.symbolic_vb.get_const(robotvar)
+            if robot is None:
+                print(f"tried to apply reach constraint of var {robotvar} but it is not ground yet. This should not happen!")
+                return False
+            if not self.geometric_vb.unify(rc[0], self.reach_areas[robot]):
+                return False
+        return True
 
     def print_var(self, var):
         if var in self.symbolic_vb.variables:
