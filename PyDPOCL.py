@@ -299,14 +299,14 @@ class POCLPlanner:
 
 			# recursively insert new step and substeps into plan, adding orderings and flaws
 			new_plan.insert(new_step)
-			log_message('Add step {} to plan {}\n'.format(str(new_step), new_plan.name))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
 			provider = new_step.effects[cndt_eff]
 			consumer = mutable_p
 			if not new_plan.variableBindings.unify(provider, consumer):
 				continue
-			log_message(f"precondition {mutable_p} of {s_need} can be provided by effect {cndt_eff} of {new_step}")
+
+			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {mutable_p} of {s_need}.')
 
 			# resolve s_need with the new step
 			new_plan.resolve(new_step, mutable_s_need, mutable_p)
@@ -344,13 +344,13 @@ class POCLPlanner:
 
 			# use index to find old step
 			old_step = new_plan.steps[plan.index(choice)]
-			log_message('Reuse step {} to plan {}\n'.format(str(old_step), new_plan.name))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
 			provider = old_step.effects[eff_nr]
 			consumer = mutable_p
 			if not new_plan.variableBindings.unify(provider, consumer):
 				continue
+			log_message(f'Reuse step {old_step} to plan {new_plan.name} to satisfy precondition {mutable_p} of {s_need}.')
 			# resolve open condition with old step
 			new_plan.resolve(old_step, mutable_s_need, mutable_p)
 
