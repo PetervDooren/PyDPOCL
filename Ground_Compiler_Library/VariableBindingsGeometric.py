@@ -7,6 +7,9 @@ from operator import attrgetter
 from Ground_Compiler_Library.Element import Argument
 from shapely import Polygon, box, difference, within
 
+# visualization
+import matplotlib.pyplot as plt
+
 @dataclass
 class placeloc:
     object: Argument
@@ -201,6 +204,23 @@ class VariableBindingsGeometric:
         if self.const[self.group_mapping[var]] is not None:
             return self.const[self.group_mapping[var]].name
         return self.group_mapping[var]
+    
+    def plot(self):
+        plt.figure()   
+        plt.cla()
+        # plot base area
+        base_polygon = self.defined_areas[self.base_area]
+        plt.fill(*base_polygon.exterior.xy, color='grey')
+
+        for areakey, area in self.defined_areas.items():
+            if areakey == self.base_area:
+                continue            
+            plt.fill(*area.exterior.xy, color='red', alpha=0.1)
+        
+        for ploc in self.placelocs.values():
+            plt.fill(*ploc.area_max.exterior.xy, color='blue', alpha=0.5)
+        
+        plt.show()
 
     def __repr__(self):
         return f"geometric variablebinding set with {len(self.variables)} variables"
