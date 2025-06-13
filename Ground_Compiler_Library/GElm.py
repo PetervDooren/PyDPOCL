@@ -41,6 +41,8 @@ class Operator:
         step number (identical to stepnum?)
 	nonequals : set(tuple(int, int))
 		pairs of argument indices indicating which arguments may not codesignate.
+	reach_constraints : set(tuple(int, int))
+		pairs of argument indices indicating in_reach(1, 2) conditions on arguments.
 	height : int
         ?
 	sub_steps : list(?)
@@ -101,6 +103,8 @@ class Operator:
 		self.stepnumber = stepnum
 		# which arguments should be unequal
 		self.nonequals = nonequals
+		# in-reach constraints for the arms
+		self.reach_constraints = [(p.Args[0], p.Args[1]) for p in self.preconds if p.name == 'in_reach']
 		# height is 0 when primitive
 		self.height = height
 
@@ -128,7 +132,8 @@ class Operator:
 		self.choice_map = dict()
 		# self.num_choices = 0
 		# open preconditions which need causal link
-		self.open_preconds = list(self.preconds)
+		open_preconds = [p for p in self.preconds if p.name != 'in_reach']
+		self.open_preconds = list(open_preconds)
 
 	# def to_json(self):
 	# 	return '{}:{}, {}'
@@ -221,7 +226,8 @@ class Operator:
 			self.choices = list()
 
 		if default_None_is_to_refresh_open_preconds is None:
-			self.open_preconds = list(self.preconds)
+			open_preconds = [p for p in self.preconds if p.name != 'in_reach']
+			self.open_preconds = list(open_preconds)
 
 		return new_self
 

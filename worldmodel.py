@@ -97,13 +97,13 @@ def update_init_state(init_state, area_mapping, object_area_mapping):
             cond = GLiteral('within', [obj, area], False, uuid4(), False)
             init_state.effects.append(cond)
 
-
     for cond in init_state.effects:
-        init_area_arg = object_area_mapping[cond.Args[0]]
-        object_poly = area_mapping[init_area_arg]
-        area_poly = area_mapping[cond.Args[1]]
-        if object_poly.within(area_poly):
-            cond.truth = True
-        else:
-            cond.truth = False
+        if cond.name == 'within':
+            init_area_arg = object_area_mapping[cond.Args[0]]
+            object_poly = area_mapping[init_area_arg]
+            area_poly = area_mapping[cond.Args[1]]
+            if object_poly.within(area_poly):
+                cond.truth = True
+            else:
+                cond.truth = False
     return init_state

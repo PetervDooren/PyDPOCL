@@ -186,6 +186,8 @@ class GPlan:
 				self.variableBindings.link_area_to_object(within_condition.Args[0], within_condition.Args[1])
 		for ne in new_step.nonequals:
 			self.variableBindings.add_non_codesignation(new_step.Args[ne[0]], new_step.Args[ne[1]])
+		for rc in new_step.reach_constraints:
+			self.variableBindings.add_reach_constraint(rc[0], rc[1])
 
 		# add open conditions for new step
 		for pre in new_step.open_preconds:

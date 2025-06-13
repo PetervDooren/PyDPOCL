@@ -19,6 +19,8 @@ class VariableBindings:
         self.symbolic_vb = VariableBindingsSymbolic()
         self.geometric_vb = VariableBindingsGeometric()
 
+        self.reach_constraints = []
+
     def __contains__(self, id):
         if id in self.symbolic_vb.variables:
             return True
@@ -171,6 +173,22 @@ class VariableBindings:
             return self.symbolic_vb.add_non_codesignation(varA, varB)
         else:
             return True
+    
+    def add_reach_constraint(self, varA, varB):
+        """add a constraint in_reach(varA, varB) indicating that area B should be in reach of robot A
+
+        Args:
+            varA (_type_): _description_
+            varB (_type_): _description_
+        """
+        
+        if varA not in self.geometric_vb.variables:
+            print(f"Warning: variable {varA} of type {varA.typ} is not in the geometric parameter list")
+            raise
+        if varB not in self.symbolic_vb.variables:
+            print(f"Warning: variable {varB} of type {varB.typ} is not in the symbolic parameter list")
+            raise
+        self.reach_constraints.append((varA, varB))
 
     def print_var(self, var):
         if var in self.symbolic_vb.variables:
