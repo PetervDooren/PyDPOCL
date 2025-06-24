@@ -33,6 +33,8 @@ class VariableBindingsGeometric:
         list of arguments where the properties of a group are collected
     within_mapping : dict(Argument:list(Argument))
         maps a variable A to all other variables B where within(A, B) holds
+    inverse_within_mapping : dict(Argument:list(Argument))
+        maps a variable A to all other variables B where within(B, A) holds
     disjunctions : dict(Argument:set(Argument))
         maps a variable A to all other variable areas that must be disjunct from A
     """
@@ -42,6 +44,7 @@ class VariableBindingsGeometric:
         self.variables = []
         self.placelocs = {}
         self.within_mapping = {}
+        self.inverse_within_mapping = {}
         self.disjunctions = {}
     
     def isInternallyConsistent():
@@ -51,6 +54,7 @@ class VariableBindingsGeometric:
         self.defined_areas = areas
         for a in areas.keys():
             self.within_mapping[a] = []
+            self.inverse_within_mapping[a] = []
             self.disjunctions[a] = []
 
     def set_base_area(self, area: Argument):
@@ -64,6 +68,8 @@ class VariableBindingsGeometric:
         area_max = self.defined_areas[self.base_area]
         self.placelocs[areavar] = placeloc(objvar, width, length, area_max, None)
         self.within_mapping[areavar] = [self.base_area]
+        self.inverse_within_mapping[areavar] = []
+        self.inverse_within_mapping[self.base_area].append(areavar)
         self.disjunctions[areavar] = []
 
     def link_area_to_object(self, objvar: Argument, areavar: Argument):
@@ -103,10 +109,7 @@ class VariableBindingsGeometric:
         Returns:
             bool: _description_
         """
-        if varB in self.within_mapping[varA]:
-            print(f"{varA} is already constrained to be within {varB}. This should not happen!")
-            return False
-        
+        raise DeprecationWarning("can unify is deprecated. Instead attempt to unify")
         # check if either A or B is a defined area
         Aisarea = varA in self.defined_areas.keys()
         Bisarea = varB in self.defined_areas.keys()
@@ -123,27 +126,49 @@ class VariableBindingsGeometric:
 
         Args:
             varA (uuid): child area
-            varB (Argument | Polygon): parent area
+            varB (Argument): parent area
 
         Returns:
             bool: False if the constraint is inconsistent with the existing bindings
         """
 
-        if not self.can_unify(varA, varB):
+        if varB in self.within_mapping[varA]:
+            print(f"{varA} is already constrained to be within {varB}. This should not happen!")
             return False
-        
+
+        self.within_mapping[varA].append(varB)
+        self.inverse_within_mapping[varB].append(varA)
+        return self._apply_unify(varA, varB)
+
+    def _apply_unify(self, varA, varB) -> bool:
+        """recursively apply the constraint that area A must lie within area B
+
+        Args:
+            varA (uuid): child area
+            varB (Argument): parent area
+
+        Returns:
+            bool: False if the constraint is inconsistent with the existing bindings
+        """
         # check if either A or B is a defined area
         Aisarea = varA in self.defined_areas.keys()
         Bisarea = varB in self.defined_areas.keys()
 
-        self.within_mapping[varA].append(varB)
-        if not Aisarea:
+        area_A = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
+        area_B = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
+        if Aisarea:
+            return within(area_A, area_B)
+        else: # A is variable and can thus shrink
             area_A = self.placelocs[varA].area_max 
             area_B = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
             new_poly = area_A.intersection(area_B)
             self.placelocs[varA].area_max = new_poly
             #TODO check if new_poly is still large enough to house the object
-        return True
+            # chain the new area_max A to everything with a relation to it.
+            for areaC in self.inverse_within_mapping[varA]:
+                if not self._apply_unify(areaC, varA):
+                    return False
+            return True
 
     def add_disjunction(self, varA, varB) -> bool:
         """add a constraint that area A must be disjunct from area B
@@ -206,7 +231,7 @@ class VariableBindingsGeometric:
         return self.group_mapping[var]
     
     def plot(self):
-        plt.figure()   
+        plt.figure()
         plt.cla()
         # plot base area
         base_polygon = self.defined_areas[self.base_area]
@@ -220,6 +245,7 @@ class VariableBindingsGeometric:
         for ploc in self.placelocs.values():
             plt.fill(*ploc.area_max.exterior.xy, color='blue', alpha=0.5)
         
+        plt.axis('equal')
         plt.show()
 
     def __repr__(self):
