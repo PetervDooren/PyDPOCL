@@ -162,10 +162,20 @@ class VariableBindingsGeometric:
             area_A = self.placelocs[varA].area_max 
             area_B = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
             new_poly = area_A.intersection(area_B)
+            if type(new_poly) != Polygon: # intersection is a linesegment (or a multipolygon)
+                return False
             self.placelocs[varA].area_max = new_poly
             #TODO check if new_poly is still large enough to house the object
-            # chain the new area_max A to everything with a relation to it.
+
+            # chain the new area_max A to everything with a relation to it. Starting with the variables
             for areaC in self.inverse_within_mapping[varA]:
+                if areaC in self.defined_areas.keys(): # do the areas last. The order matters
+                    continue
+                if not self._apply_unify(areaC, varA):
+                    return False
+            for areaC in self.inverse_within_mapping[varA]:
+                if not areaC in self.defined_areas.keys():
+                    continue
                 if not self._apply_unify(areaC, varA):
                     return False
             return True
