@@ -7,6 +7,8 @@ from Ground_Compiler_Library.VariableBindings import VariableBindings
 import copy
 from collections import namedtuple, defaultdict
 import math
+import json
+
 dummyTuple = namedtuple('dummyTuple', ['init', 'goal'])
 # class dummyTuple:
 # 	def __init__(self, init, final):
@@ -418,6 +420,72 @@ class GPlan:
 		# 	if self.OrderingGraph.isPath(cl.sink, d_f):  # LOOK HERE TODO: DECIDE
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(d_f, cl))
+
+	def to_json(self, filepath: str):
+		"""
+		Serialize the current plan to a JSON file.
+
+		Args:
+			filepath (str): The path to the output JSON file.
+
+		The JSON will include:
+			- Plan metadata (ID, name, cost, heuristic, depth)
+			- Steps with their arguments and properties
+			- Orderings and causal links
+			- Variable bindings (if serializable)
+			- Flaws (if serializable)
+
+		Note:
+			Some complex objects may require custom serialization logic.
+		"""
+		def literal_to_dict(literal):
+			return {
+				"ID": str(literal.ID),
+				"name": literal.name,
+				"Args": [str(a) for a in literal.Args],
+			}
+
+		def step_to_dict(step):
+			return {
+				"ID": str(step.ID),
+				"name": getattr(step, "name", None),
+				"schema": str(getattr(step, "schema", "")),
+				"Args": [str(a) for a in getattr(step, "Args", [])],
+				"preconds": [literal_to_dict(p) for p in getattr(step, "preconds", [])],
+				"effects": [literal_to_dict(p) for p in getattr(step, "effects", [])],
+				#"nonequals": [ne for ne in getattr(step, "nonequals", [])],
+				#"reach_constraints": [rc for rc in getattr(step, "reach_constraints", [])],
+				#"open_preconds": [str(p) for p in getattr(step, "open_preconds", [])],
+				"stepnum": getattr(step, "stepnum", None),
+				"height": getattr(step, "height", None),
+			}
+
+		def edge_to_dict(edge):
+			return {
+				"source": str(getattr(edge.source, "ID", "")),
+				"sink": str(getattr(edge.sink, "ID", "")),
+				"label": str(getattr(edge, "label", "")),
+			}
+		
+		def variable_bindings_to_dict(vb):
+			# Assuming VariableBindings has a method to serialize itself
+			return vb.to_dict() if hasattr(vb, 'to_dict') else str(vb)
+
+		plan_dict = {
+			"ID": str(self.ID),
+			"name": self.name,
+			"cost": self.cost,
+			"heuristic": self.heuristic,
+			"depth": self.depth,
+			"steps": [step_to_dict(step) for step in self.steps],
+			"orderings": [edge_to_dict(edge) for edge in self.OrderingGraph.edges],
+			"causal_links": [edge_to_dict(edge) for edge in self.CausalLinkGraph.edges],
+			"variableBindings": variable_bindings_to_dict(self.variableBindings),
+			# "flaws": str(self.flaws),
+		}
+
+		with open(filepath, "w") as f:
+			json.dump(plan_dict, f, indent=2)
 
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:

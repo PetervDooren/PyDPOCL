@@ -190,6 +190,21 @@ class VariableBindingsSymbolic:
         if self.const[self.group_mapping[var]] is not None:
             return self.const[self.group_mapping[var]].name
         return self.group_mapping[var]
+    
+    def to_dict(self):
+        """convert the variable bindings to a dictionary representation
+
+        Returns:
+            dict: dictionary representation of the variable bindings
+        """
+        return {
+            "variables": [str(v) for v in self.variables],
+            #"groups": [g.to_dict() for g in self.groups],
+            "const": {str(v): str(self.const[self.group_mapping[v]]) for v in self.variables},
+            #"group_mapping": {str(k): str(v) for k, v in self.group_mapping.items()},
+            #"group_members": {str(k): [str(m) for m in v] for k, v in self.group_members.items()},
+            #"non_codesignations": {str(k): [str(n) for n in v] for k, v in self.non_codesignations.items()}
+        }
 
     def __repr__(self):
         return f"variablebinding set with {len(self.variables)} variables, {len(self.groups)} groups, of which {len([g for g in self.groups if self.const[g] is not None])} groups are ground"

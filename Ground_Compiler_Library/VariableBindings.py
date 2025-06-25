@@ -14,8 +14,6 @@ class VariableBindings:
     
     """
     def __init__(self):
-        self.variables = []
-
         self.symbolic_vb = VariableBindingsSymbolic()
         self.geometric_vb = VariableBindingsGeometric()
 
@@ -66,10 +64,6 @@ class VariableBindings:
         self.reach_areas = reach_areas
 
     def register_variable(self, var):
-        if var in self.variables:
-            print(f"Warning variable {var} is already registered")
-            return
-        self.variables.append(var)
         if var.typ == 'symbol' or 'symbol' in self.object_types[var.typ]:
             self.symbolic_vb.register_variable(var)
         elif var.typ == 'area' or 'area' in self.object_types[var.typ]:
@@ -233,6 +227,17 @@ class VariableBindings:
             return self.symbolic_vb.repr_arg(var)
         else:
             return var
+        
+    def to_dict(self):
+        """convert the variable bindings to a dictionary representation
+
+        Returns:
+            dict: dictionary representation of the variable bindings
+        """
+        return {
+            'symbolic': self.symbolic_vb.to_dict(),
+            'geometric': self.geometric_vb.to_dict(),
+        }
 
     def __repr__(self):
         return f"variablebinding set with {len(self.variables)} variables. contains {self.symbolic_vb}"

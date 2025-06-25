@@ -258,5 +258,35 @@ class VariableBindingsGeometric:
         plt.axis('equal')
         plt.show()
 
+    def to_dict(self):
+        """convert the variable bindings to a dictionary representation suitable for serialization
+
+        Returns:
+            dict: dictionary representation of the variable bindings
+        """
+        def defined_areas_to_dict(areas):
+            return {str(k): list(v.exterior.coords) for k, v in areas.items()}
+        
+        def placelocs_to_dict(placelocs):
+            return {
+                str(k): {
+                    'object': str(v.object),
+                    'object_width': v.object_width,
+                    'object_length': v.object_length,
+                    'area_max': list(v.area_max.exterior.coords),
+                    'area_assigned': list(v.area_assigned.exterior.coords) if v.area_assigned else None
+                } for k, v in placelocs.items()
+            }
+        
+        return {
+            'defined_areas': defined_areas_to_dict(self.defined_areas),
+            'variables': [str(v) for v in self.variables],
+            'placelocs': placelocs_to_dict(self.placelocs),
+            'base_area': str(self.base_area) if self.base_area else None,
+            'within_mapping': {str(k): [str(v) for v in vs] for k, vs in self.within_mapping.items()},
+            #'inverse_within_mapping': self.inverse_within_mapping,
+            'disjunctions': {str(k): [str(v) for v in vs] for k, vs in self.disjunctions.items()}
+        }
+
     def __repr__(self):
         return f"geometric variablebinding set with {len(self.variables)} variables"
