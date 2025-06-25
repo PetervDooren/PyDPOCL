@@ -488,7 +488,6 @@ class GPlan:
 		def step_to_dict(step):
 			return {
 				"ID": str(step.ID),
-				"name": getattr(step, "name", None),
 				"schema": str(getattr(step, "schema", "")),
 				"Args": [str(a) for a in getattr(step, "Args", [])],
 				"preconds": [literal_to_dict(p) for p in getattr(step, "preconds", [])],
@@ -517,6 +516,8 @@ class GPlan:
 			"cost": self.cost,
 			"heuristic": self.heuristic,
 			"depth": self.depth,
+			"init_state": step_to_dict(self.dummy.init),
+			"goal_state": step_to_dict(self.dummy.goal),
 			"steps": [step_to_dict(step) for step in self.steps],
 			"orderings": [edge_to_dict(edge) for edge in self.OrderingGraph.edges],
 			"causal_links": [edge_to_dict(edge) for edge in self.CausalLinkGraph.edges],
@@ -526,6 +527,89 @@ class GPlan:
 
 		with open(filepath, "w") as f:
 			json.dump(plan_dict, f, indent=2)
+	
+	@staticmethod
+	def from_json(filepath: str) -> GPlan:
+		"""
+		Load a plan from a JSON file.
+
+		Args:
+			filepath (str): The path to the input JSON file.
+
+		This method will populate the current instance with the data from the JSON file.
+		"""
+		with open(filepath, "r") as f:
+			plan_dict = json.load(f)
+		# Create a new GPlan instance
+		init = Operator(
+			operator=plan_dict["init_state"]["schema"],
+			args=plan_dict["init_state"]["Args"],
+			preconditions=[GLiteral(**p) for p in plan_dict["init_state"]["preconds"]],
+			effects=[GLiteral(**p) for p in plan_dict["init_state"]["effects"]],
+			stepnum=plan_dict["init_state"].get("stepnum", None),
+			height=plan_dict["init_state"].get("height", 0),
+			nonequals=[]
+		)
+		# Set the ID for the init state
+		init.ID = plan_dict["init_state"]["ID"]
+		goal = Operator(
+			operator=plan_dict["goal_state"]["schema"],
+			args=plan_dict["goal_state"]["Args"],
+			preconditions=[GLiteral(**p) for p in plan_dict["goal_state"]["preconds"]],
+			effects=[GLiteral(**p) for p in plan_dict["goal_state"]["effects"]],
+			stepnum=plan_dict["goal_state"].get("stepnum", None),
+			height=plan_dict["goal_state"].get("height", 0),
+			nonequals=[]
+		)
+		# Set the ID for the goal state
+		goal.ID = plan_dict["goal_state"]["ID"]
+		# Create the GPlan instance
+		plan = GPlan(init, goal)
+		plan.ID = plan_dict["ID"]
+		plan.name = plan_dict["name"]
+		plan.cost = plan_dict["cost"]
+		plan.heuristic = plan_dict["heuristic"]
+		plan.depth = plan_dict["depth"]
+		# Populate steps
+		for step_data in plan_dict["steps"]:
+			if step_data["schema"] == "dummy_init" or step_data["schema"] == "dummy_goal":
+				# Skip the dummy init and goal steps as they are already created
+				continue
+			step = Operator(
+				operator=step_data["schema"],
+				args=[str(a) for a in step_data["Args"]],
+				preconditions=[GLiteral(**p) for p in step_data["preconds"]],
+				effects=[GLiteral(**p) for p in step_data["effects"]],
+				stepnum=step_data.get("stepnum", None),
+				height=step_data.get("height", 0),
+				nonequals=[]
+			)
+			step.ID = step_data["ID"]
+			# Add the step to the plan
+			plan.steps.append(step)
+			plan.OrderingGraph.elements.add(step)
+			plan.CausalLinkGraph.elements.add(step)
+		# Populate orderings
+		for edge_data in plan_dict["orderings"]:
+			source = next((s for s in plan.OrderingGraph.elements if str(s.ID) == edge_data["source"]), None)
+			sink = next((s for s in plan.OrderingGraph.elements if str(s.ID) == edge_data["sink"]), None)
+			if source and sink:
+				plan.OrderingGraph.addEdge(source, sink)
+		# Populate causal links
+		for edge_data in plan_dict["causal_links"]:
+			source = next((s for s in plan.CausalLinkGraph.elements if str(s.ID) == edge_data["source"]), None)
+			sink = next((s for s in plan.CausalLinkGraph.elements if str(s.ID) == edge_data["sink"]), None)
+			label = GLiteral(ID=edge_data["label"])
+			if source and sink:
+				plan.CausalLinkGraph.addEdge(source, sink, label)
+		# Populate variable bindings
+		if "variableBindings" in plan_dict:
+			vb_data = plan_dict["variableBindings"]
+			# Assuming VariableBindings has a method to load from a dict
+			plan.variableBindings = VariableBindings.from_dict(vb_data) if hasattr(VariableBindings, 'from_dict') else VariableBindings()
+		else:
+			plan.variableBindings = VariableBindings()
+		return plan
 
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:
