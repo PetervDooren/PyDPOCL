@@ -420,6 +420,46 @@ class GPlan:
 		# 	if self.OrderingGraph.isPath(cl.sink, d_f):  # LOOK HERE TODO: DECIDE
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(d_f, cl))
+	def check_plan(self):
+		"""Check if the plan is internally consistent and has no flaws"""
+		if not self.isInternallyConsistent():
+			print("Plan is not internally consistent")
+			return False
+		if len(self.flaws) > 0:
+			print("Plan has open flaws")
+			return False
+		if not self.variableBindings.isInternallyConsistent():
+			print("Variable bindings are not internally consistent")
+			return False
+		# check that all variables are ground
+		if not self.variableBindings.is_fully_ground():
+			print("Variable bindings are not ground")
+			return False
+		# check that all preconditions of steps are supported by causal links
+		for step in self.steps:
+			for pre in step.preconds:
+				for edge in self.CausalLinkGraph.edges:
+					if edge.label.ID == pre.ID and edge.sink.ID == step.ID:
+						break
+				else:
+					# if we did not break, then no edge was found
+					print(f"Step {step.ID} has unsupported precondition {pre.ID}")
+					return False
+		# check that no causal links are threatened
+		for edge in self.CausalLinkGraph.edges:
+			threatening_operators = [t[0] for t in  edge.sink.threat_map[edge.label.ID]]
+			for step in self.steps:
+				if not step.stepnum in threatening_operators:
+					continue
+				if not self.OrderingGraph.isPath(edge.source, step) or not self.OrderingGraph.isPath(step, edge.sink):
+					# if the step is not in the path between source and sink, it cannot threaten the causal link
+					continue
+				for t in [t for t in edge.sink.threat_map[edge.label.ID] if t[0] == step.stepnum]:
+					if self.variableBindings.is_unified(edge.label, step.effects[t[1]]):
+						# if the edge is unified with the threatening effect, it threatens it
+						print(f"Causal link {edge} is threatened by step {step.ID}")
+						return False
+		return True
 
 	def to_json(self, filepath: str):
 		"""

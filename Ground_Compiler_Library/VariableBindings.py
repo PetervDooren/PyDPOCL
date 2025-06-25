@@ -27,7 +27,7 @@ class VariableBindings:
         else:
             return False
     
-    def isInternallyConsistent():
+    def isInternallyConsistent(self):
         return True
 
     def set_objects(self, objects, object_types):
@@ -82,7 +82,11 @@ class VariableBindings:
         return self.symbolic_vb.is_ground(var)
 
     def is_fully_ground(self) -> bool:
-        return self.symbolic_vb.is_fully_ground()
+        if not self.symbolic_vb.is_fully_ground():
+            return False
+        if not self.geometric_vb.is_fully_ground():
+            return False
+        return True
 
     def get_var_per_group(self) -> List[Argument]:
         return self.symbolic_vb.get_var_per_group()
@@ -115,6 +119,26 @@ class VariableBindings:
                 if not self.can_codesignate(provider_args[i], consumer_args[i]):
                     return False
                 self.add_codesignation(provider_args[i], consumer_args[i])
+            return True
+        
+    def is_unified(self, provider, consumer) -> bool:
+        """check if the provider and consumer are unified
+
+        Args:
+            provider (Argument): _description_
+            consumer (Argument): _description_
+
+        Returns:
+            bool: True if the provider and consumer are unified
+        """
+        if provider.name == 'within':
+            return self.symbolic_vb.is_codesignated(provider.Args[0], consumer.Args[0]) and self.geometric_vb.is_unified(provider.Args[1], consumer.Args[1])
+        else:
+            if not len(provider.Args) == len(consumer.Args):
+                return False
+            for i in range(len(provider.Args)):
+                if not self.symbolic_vb.is_codesignated(provider.Args[i], consumer.Args[i]):
+                    return False
             return True
 
     def is_codesignated(self, varA, varB) -> bool:

@@ -215,24 +215,26 @@ class POCLPlanner:
 					plan.potential_tclf.remove(pot_tclf)
 
 			if len(plan.flaws) == 0:
-				if plan.variableBindings.is_fully_ground():
-					# success
-					elapsed = time.time() - t0
-					delay = str('%0.8f' % elapsed)
-					completed.append(plan)
- 
-					trace = math.floor(len(plan.name.split('['))/2)
-					print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
-					if REPORT:
-						print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
-						plan.print()
-						plan.to_json("plan_{}.json".format(len(completed)))
+				if plan.variableBindings.symbolic_vb.is_fully_ground():
+					if plan.variableBindings.geometric_vb.resolve():
+						# success
+						elapsed = time.time() - t0
+						delay = str('%0.8f' % elapsed)
+						completed.append(plan)
+	
+						trace = math.floor(len(plan.name.split('['))/2)
+						print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
+						if REPORT:
+							print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
+							plan.print()
+							plan.check_plan()
+							plan.to_json("plan_{}.json".format(len(completed)))
 
-					if len(completed) == k:
-						return completed
-					# if len(completed) == 6:
-					# 	print('check here')
-					continue
+						if len(completed) == k:
+							return completed
+						# if len(completed) == 6:
+						# 	print('check here')
+						continue
 				else: # variables are not fully ground
 					self.ground_variable(plan)
 					continue

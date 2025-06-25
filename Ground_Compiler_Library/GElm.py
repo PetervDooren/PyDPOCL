@@ -96,7 +96,7 @@ class Operator:
 		# ID used as "instance ID"
 		self.ID = uuid4()
 		# preconds is a list of GCond
-		self.preconds = preconditions
+		self.preconds = [p for p in preconditions if p.name != 'in_reach'] # exclude in reach preconds
 		self.effects = effects
 		# stepnum is the ground step constructor type
 		self.stepnum = stepnum

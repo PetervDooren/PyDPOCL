@@ -79,10 +79,21 @@ class VariableBindingsGeometric:
         self.placelocs[areavar].object = objvar
     
     def is_ground(self, var) -> bool:
-        return var in self.defined_areas
-
+        """check if a variable is ground"""
+        if var not in self.placelocs:
+            print(f"Variable {var} is not registered in the geometric variable bindings")
+            return False
+        if self.placelocs[var].area_assigned is not None:
+            return True
+        else:
+            print(f"Variable {var} is not ground. area_assigned is None")
+            return False
+        
     def is_fully_ground(self) -> bool:
-        return False
+        for var in self.variables:
+            if not self.is_ground(var):
+                return False
+        return True
     
     def get_var_par_group(self) -> List[Argument]:
         return self.variables
@@ -179,6 +190,29 @@ class VariableBindingsGeometric:
                 if not self._apply_unify(areaC, varA):
                     return False
             return True
+    
+    def is_unified(self, varA, varB) -> bool:
+        """check if area A is within area B
+
+        Args:
+            varA (uuid): child area
+            varB (Argument): parent area
+
+        Returns:
+            bool: True if A is within B, False otherwise
+        """
+        if varB not in self.within_mapping[varA]:
+            return False
+        if varA not in self.inverse_within_mapping[varB]:
+            return False
+        if not within(self.placelocs[varA].area_max, self.placelocs[varB].area_max):
+            print(f"Max area of {varA} is not within max area of {varB}. This should not happen!")
+            return False
+        if self.placelocs[varA].area_assigned is not None:
+            if not within(self.placelocs[varA].area_assigned, self.placelocs[varB].area_assigned):
+                print(f"Assigned area of {varA} is not within assigned area of {varB}. This should not happen!")
+                return False
+        return True
 
     def add_disjunction(self, varA, varB) -> bool:
         """add a constraint that area A must be disjunct from area B
