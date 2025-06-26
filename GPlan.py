@@ -483,6 +483,7 @@ class GPlan:
 				"ID": str(literal.ID),
 				"name": literal.name,
 				"Args": [str(a) for a in literal.Args],
+				"trudom": literal.truth,
 			}
 
 		def step_to_dict(step):
@@ -538,14 +539,23 @@ class GPlan:
 
 		This method will populate the current instance with the data from the JSON file.
 		"""
+		def literal_from_dict(literal_dict):
+			return GLiteral(
+				pred_name=literal_dict["name"],
+				arg_tup=(literal_dict["Args"][0], literal_dict["Args"][1]),
+				trudom=literal_dict["trudom"],
+				_id=literal_dict["ID"],
+				is_static=False, # static property should no longer be used
+				)
+
 		with open(filepath, "r") as f:
 			plan_dict = json.load(f)
 		# Create a new GPlan instance
 		init = Operator(
 			operator=plan_dict["init_state"]["schema"],
 			args=plan_dict["init_state"]["Args"],
-			preconditions=[GLiteral(**p) for p in plan_dict["init_state"]["preconds"]],
-			effects=[GLiteral(**p) for p in plan_dict["init_state"]["effects"]],
+			preconditions=[literal_from_dict(p) for p in plan_dict["init_state"]["preconds"]],
+			effects=[literal_from_dict(p) for p in plan_dict["init_state"]["effects"]],
 			stepnum=plan_dict["init_state"].get("stepnum", None),
 			height=plan_dict["init_state"].get("height", 0),
 			nonequals=[]
@@ -555,8 +565,8 @@ class GPlan:
 		goal = Operator(
 			operator=plan_dict["goal_state"]["schema"],
 			args=plan_dict["goal_state"]["Args"],
-			preconditions=[GLiteral(**p) for p in plan_dict["goal_state"]["preconds"]],
-			effects=[GLiteral(**p) for p in plan_dict["goal_state"]["effects"]],
+			preconditions=[literal_from_dict(p) for p in plan_dict["goal_state"]["preconds"]],
+			effects=[literal_from_dict(p) for p in plan_dict["goal_state"]["effects"]],
 			stepnum=plan_dict["goal_state"].get("stepnum", None),
 			height=plan_dict["goal_state"].get("height", 0),
 			nonequals=[]
@@ -578,8 +588,8 @@ class GPlan:
 			step = Operator(
 				operator=step_data["schema"],
 				args=[str(a) for a in step_data["Args"]],
-				preconditions=[GLiteral(**p) for p in step_data["preconds"]],
-				effects=[GLiteral(**p) for p in step_data["effects"]],
+				preconditions=[literal_from_dict(p) for p in step_data["preconds"]],
+				effects=[literal_from_dict(p) for p in step_data["effects"]],
 				stepnum=step_data.get("stepnum", None),
 				height=step_data.get("height", 0),
 				nonequals=[]
