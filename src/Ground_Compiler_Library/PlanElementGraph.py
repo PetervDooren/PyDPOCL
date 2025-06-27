@@ -5,9 +5,6 @@ from Ground_Compiler_Library.Element import Argument, Element, Operator, Literal
 from Ground_Compiler_Library.Graph import Edge
 from Ground_Compiler_Library.ElementGraph import ElementGraph
 import copy
-import collections
-from clockdeco import clock
-
 
 class Action(ElementGraph):
 	""" a class to represent an action which can be taken in a planning problem
