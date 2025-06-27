@@ -70,34 +70,27 @@ class GPlan:
 	resolve_with_decomp():
 	"""
 
-	def __init__(self, dummy_init_constructor, dummy_goal_constructor):
+	def __init__(self):
+		"""Initialize a GPlan with empty graphs and no steps"""
+		# plan data
 		self.ID = uuid4()
+		self.steps = []
 		self.OrderingGraph = OrderingGraph()
 		self.CausalLinkGraph = CausalLinkGraph()
 		self.variableBindings = VariableBindings()
-		# self.HierarchyGraph = HierarchyGraph()
+		self.init = []
+		self.goal = []
+
+		# planning metadata
 		self.flaws = FlawLib()
 		self.solved = False
-		self.dummy = dummyTuple(dummy_init_constructor, dummy_goal_constructor)
-
-		self.init = self.dummy.init.preconds
-		self.goal = self.dummy.goal.preconds
-		self.steps = [self.dummy.init, self.dummy.goal]
-
-		# check if any existing steps are choices (instances of cndts of open conditions)
-		self.dummy.goal.update_choices(self)
-
+		self.dummy = None
 		self.cndt_map = None
 		self.threat_map = None
-		# self.gstep_lib = ground_step_list
-
-		# self.h_step_dict = dict()
-
 		self.heuristic = float('inf')
 		self.name = ''
 		self.cost = 0
 		self.depth = 0
-
 		self.potential_tclf = []
 
 	def __len__(self):
@@ -119,7 +112,15 @@ class GPlan:
 			objects (set(Argument)): list of objects in the world
 			object_types(defaultdict(str, set(str)))
 		"""
-		root_plan = GPlan(dummy_init_constructor, dummy_goal_constructor)
+		root_plan = GPlan()
+
+		root_plan.dummy = dummyTuple(dummy_init_constructor, dummy_goal_constructor)
+
+		root_plan.init = root_plan.dummy.init.preconds
+		root_plan.goal = root_plan.dummy.goal.preconds
+		root_plan.steps = [root_plan.dummy.init, root_plan.dummy.goal]
+		# check if any existing steps are choices (instances of cndts of open conditions)
+		root_plan.dummy.goal.update_choices(root_plan)
 		# add required orderings
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.goal)
 
@@ -574,7 +575,8 @@ class GPlan:
 		# Set the ID for the goal state
 		goal.ID = plan_dict["goal_state"]["ID"]
 		# Create the GPlan instance
-		plan = GPlan(init, goal)
+		plan = GPlan()
+
 		plan.ID = plan_dict["ID"]
 		plan.name = plan_dict["name"]
 		plan.cost = plan_dict["cost"]
