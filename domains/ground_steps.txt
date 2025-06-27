@@ -1,0 +1,1196 @@
+steal-0-be5f['nazis', 'ark', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'ark']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['indiana', 'tanis']
+		armed['nazis']
+		not-armed['indiana']
+	effects:
+		has['nazis', 'ark']
+		not-has['indiana', 'ark']
+
+steal-1-be5f['nazis', 'ark', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'ark']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['indiana', 'usa']
+		armed['nazis']
+		not-armed['indiana']
+	effects:
+		has['nazis', 'ark']
+		not-has['indiana', 'ark']
+
+steal-2-be5f['nazis', 'ark', 'army', 'tanis']
+	preconditions:
+		has['army', 'ark']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['army', 'tanis']
+		armed['nazis']
+		not-armed['army']
+	effects:
+		has['nazis', 'ark']
+		not-has['army', 'ark']
+
+steal-3-be5f['nazis', 'ark', 'army', 'usa']
+	preconditions:
+		has['army', 'ark']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['army', 'usa']
+		armed['nazis']
+		not-armed['army']
+	effects:
+		has['nazis', 'ark']
+		not-has['army', 'ark']
+
+steal-4-be5f['nazis', 'gun', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'gun']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['indiana', 'tanis']
+		armed['nazis']
+		not-armed['indiana']
+	effects:
+		has['nazis', 'gun']
+		not-has['indiana', 'gun']
+
+steal-5-be5f['nazis', 'gun', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'gun']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['indiana', 'usa']
+		armed['nazis']
+		not-armed['indiana']
+	effects:
+		has['nazis', 'gun']
+		not-has['indiana', 'gun']
+
+steal-6-be5f['nazis', 'gun', 'army', 'tanis']
+	preconditions:
+		has['army', 'gun']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['army', 'tanis']
+		armed['nazis']
+		not-armed['army']
+	effects:
+		has['nazis', 'gun']
+		not-has['army', 'gun']
+
+steal-7-be5f['nazis', 'gun', 'army', 'usa']
+	preconditions:
+		has['army', 'gun']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['army', 'usa']
+		armed['nazis']
+		not-armed['army']
+	effects:
+		has['nazis', 'gun']
+		not-has['army', 'gun']
+
+steal-8-be5f['indiana', 'ark', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'ark']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['nazis', 'tanis']
+		armed['indiana']
+		not-armed['nazis']
+	effects:
+		has['indiana', 'ark']
+		not-has['nazis', 'ark']
+
+steal-9-be5f['indiana', 'ark', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'ark']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['nazis', 'usa']
+		armed['indiana']
+		not-armed['nazis']
+	effects:
+		has['indiana', 'ark']
+		not-has['nazis', 'ark']
+
+steal-10-be5f['indiana', 'ark', 'army', 'tanis']
+	preconditions:
+		has['army', 'ark']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['army', 'tanis']
+		armed['indiana']
+		not-armed['army']
+	effects:
+		has['indiana', 'ark']
+		not-has['army', 'ark']
+
+steal-11-be5f['indiana', 'ark', 'army', 'usa']
+	preconditions:
+		has['army', 'ark']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['army', 'usa']
+		armed['indiana']
+		not-armed['army']
+	effects:
+		has['indiana', 'ark']
+		not-has['army', 'ark']
+
+steal-12-be5f['indiana', 'gun', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'gun']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['nazis', 'tanis']
+		armed['indiana']
+		not-armed['nazis']
+	effects:
+		has['indiana', 'gun']
+		not-has['nazis', 'gun']
+
+steal-13-be5f['indiana', 'gun', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'gun']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['nazis', 'usa']
+		armed['indiana']
+		not-armed['nazis']
+	effects:
+		has['indiana', 'gun']
+		not-has['nazis', 'gun']
+
+steal-14-be5f['indiana', 'gun', 'army', 'tanis']
+	preconditions:
+		has['army', 'gun']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['army', 'tanis']
+		armed['indiana']
+		not-armed['army']
+	effects:
+		has['indiana', 'gun']
+		not-has['army', 'gun']
+
+steal-15-be5f['indiana', 'gun', 'army', 'usa']
+	preconditions:
+		has['army', 'gun']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['army', 'usa']
+		armed['indiana']
+		not-armed['army']
+	effects:
+		has['indiana', 'gun']
+		not-has['army', 'gun']
+
+steal-16-be5f['army', 'ark', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'ark']
+		at['army', 'tanis']
+		alive['army']
+		at['nazis', 'tanis']
+		armed['army']
+		not-armed['nazis']
+	effects:
+		has['army', 'ark']
+		not-has['nazis', 'ark']
+
+steal-17-be5f['army', 'ark', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'ark']
+		at['army', 'usa']
+		alive['army']
+		at['nazis', 'usa']
+		armed['army']
+		not-armed['nazis']
+	effects:
+		has['army', 'ark']
+		not-has['nazis', 'ark']
+
+steal-18-be5f['army', 'ark', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'ark']
+		at['army', 'tanis']
+		alive['army']
+		at['indiana', 'tanis']
+		armed['army']
+		not-armed['indiana']
+	effects:
+		has['army', 'ark']
+		not-has['indiana', 'ark']
+
+steal-19-be5f['army', 'ark', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'ark']
+		at['army', 'usa']
+		alive['army']
+		at['indiana', 'usa']
+		armed['army']
+		not-armed['indiana']
+	effects:
+		has['army', 'ark']
+		not-has['indiana', 'ark']
+
+steal-20-be5f['army', 'gun', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'gun']
+		at['army', 'tanis']
+		alive['army']
+		at['nazis', 'tanis']
+		armed['army']
+		not-armed['nazis']
+	effects:
+		has['army', 'gun']
+		not-has['nazis', 'gun']
+
+steal-21-be5f['army', 'gun', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'gun']
+		at['army', 'usa']
+		alive['army']
+		at['nazis', 'usa']
+		armed['army']
+		not-armed['nazis']
+	effects:
+		has['army', 'gun']
+		not-has['nazis', 'gun']
+
+steal-22-be5f['army', 'gun', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'gun']
+		at['army', 'tanis']
+		alive['army']
+		at['indiana', 'tanis']
+		armed['army']
+		not-armed['indiana']
+	effects:
+		has['army', 'gun']
+		not-has['indiana', 'gun']
+
+steal-23-be5f['army', 'gun', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'gun']
+		at['army', 'usa']
+		alive['army']
+		at['indiana', 'usa']
+		armed['army']
+		not-armed['indiana']
+	effects:
+		has['army', 'gun']
+		not-has['indiana', 'gun']
+
+travel-24-a0ac['nazis', 'tanis', 'usa']
+	preconditions:
+		alive['nazis']
+		at['nazis', 'tanis']
+	effects:
+		at['nazis', 'usa']
+		not-at['nazis', 'tanis']
+
+travel-25-a0ac['nazis', 'usa', 'tanis']
+	preconditions:
+		alive['nazis']
+		at['nazis', 'usa']
+	effects:
+		at['nazis', 'tanis']
+		not-at['nazis', 'usa']
+
+travel-26-a0ac['indiana', 'tanis', 'usa']
+	preconditions:
+		alive['indiana']
+		at['indiana', 'tanis']
+	effects:
+		at['indiana', 'usa']
+		not-at['indiana', 'tanis']
+
+travel-27-a0ac['indiana', 'usa', 'tanis']
+	preconditions:
+		alive['indiana']
+		at['indiana', 'usa']
+	effects:
+		at['indiana', 'tanis']
+		not-at['indiana', 'usa']
+
+travel-28-a0ac['army', 'tanis', 'usa']
+	preconditions:
+		alive['army']
+		at['army', 'tanis']
+	effects:
+		at['army', 'usa']
+		not-at['army', 'tanis']
+
+travel-29-a0ac['army', 'usa', 'tanis']
+	preconditions:
+		alive['army']
+		at['army', 'usa']
+	effects:
+		at['army', 'tanis']
+		not-at['army', 'usa']
+
+armed-axiom-30-9a93['nazis', 'gun']
+	preconditions:
+		has['nazis', 'gun']
+	effects:
+		armed['nazis']
+
+armed-axiom-31-9a93['indiana', 'gun']
+	preconditions:
+		has['indiana', 'gun']
+	effects:
+		armed['indiana']
+
+armed-axiom-32-9a93['army', 'gun']
+	preconditions:
+		has['army', 'gun']
+	effects:
+		armed['army']
+
+kill-33-bb0a['nazis', 'gun', 'indiana', 'tanis']
+	preconditions:
+		at['nazis', 'tanis']
+		at['indiana', 'tanis']
+		alive['indiana']
+		alive['nazis']
+		has['nazis', 'gun']
+	effects:
+		not-alive['indiana']
+
+kill-34-bb0a['nazis', 'gun', 'indiana', 'usa']
+	preconditions:
+		at['nazis', 'usa']
+		at['indiana', 'usa']
+		alive['indiana']
+		alive['nazis']
+		has['nazis', 'gun']
+	effects:
+		not-alive['indiana']
+
+kill-35-bb0a['nazis', 'gun', 'army', 'tanis']
+	preconditions:
+		at['nazis', 'tanis']
+		at['army', 'tanis']
+		alive['army']
+		alive['nazis']
+		has['nazis', 'gun']
+	effects:
+		not-alive['army']
+
+kill-36-bb0a['nazis', 'gun', 'army', 'usa']
+	preconditions:
+		at['nazis', 'usa']
+		at['army', 'usa']
+		alive['army']
+		alive['nazis']
+		has['nazis', 'gun']
+	effects:
+		not-alive['army']
+
+kill-37-bb0a['indiana', 'gun', 'nazis', 'tanis']
+	preconditions:
+		at['indiana', 'tanis']
+		at['nazis', 'tanis']
+		alive['nazis']
+		alive['indiana']
+		has['indiana', 'gun']
+	effects:
+		not-alive['nazis']
+
+kill-38-bb0a['indiana', 'gun', 'nazis', 'usa']
+	preconditions:
+		at['indiana', 'usa']
+		at['nazis', 'usa']
+		alive['nazis']
+		alive['indiana']
+		has['indiana', 'gun']
+	effects:
+		not-alive['nazis']
+
+kill-39-bb0a['indiana', 'gun', 'army', 'tanis']
+	preconditions:
+		at['indiana', 'tanis']
+		at['army', 'tanis']
+		alive['army']
+		alive['indiana']
+		has['indiana', 'gun']
+	effects:
+		not-alive['army']
+
+kill-40-bb0a['indiana', 'gun', 'army', 'usa']
+	preconditions:
+		at['indiana', 'usa']
+		at['army', 'usa']
+		alive['army']
+		alive['indiana']
+		has['indiana', 'gun']
+	effects:
+		not-alive['army']
+
+kill-41-bb0a['army', 'gun', 'nazis', 'tanis']
+	preconditions:
+		at['army', 'tanis']
+		at['nazis', 'tanis']
+		alive['nazis']
+		alive['army']
+		has['army', 'gun']
+	effects:
+		not-alive['nazis']
+
+kill-42-bb0a['army', 'gun', 'nazis', 'usa']
+	preconditions:
+		at['army', 'usa']
+		at['nazis', 'usa']
+		alive['nazis']
+		alive['army']
+		has['army', 'gun']
+	effects:
+		not-alive['nazis']
+
+kill-43-bb0a['army', 'gun', 'indiana', 'tanis']
+	preconditions:
+		at['army', 'tanis']
+		at['indiana', 'tanis']
+		alive['indiana']
+		alive['army']
+		has['army', 'gun']
+	effects:
+		not-alive['indiana']
+
+kill-44-bb0a['army', 'gun', 'indiana', 'usa']
+	preconditions:
+		at['army', 'usa']
+		at['indiana', 'usa']
+		alive['indiana']
+		alive['army']
+		has['army', 'gun']
+	effects:
+		not-alive['indiana']
+
+unarmed-axiom-45-bfb8['nazis', 'gun']
+	preconditions:
+		not-has['nazis', 'gun']
+	effects:
+		not-armed['nazis']
+
+unarmed-axiom-46-bfb8['indiana', 'gun']
+	preconditions:
+		not-has['indiana', 'gun']
+	effects:
+		not-armed['indiana']
+
+unarmed-axiom-47-bfb8['army', 'gun']
+	preconditions:
+		not-has['army', 'gun']
+	effects:
+		not-armed['army']
+
+give-48-8d2f['nazis', 'ark', 'indiana', 'tanis']
+	preconditions:
+		alive['nazis']
+		alive['indiana']
+		at['indiana', 'tanis']
+		at['nazis', 'tanis']
+		has['nazis', 'ark']
+	effects:
+		not-has['nazis', 'ark']
+		has['indiana', 'ark']
+
+give-49-8d2f['nazis', 'ark', 'indiana', 'usa']
+	preconditions:
+		alive['nazis']
+		alive['indiana']
+		at['indiana', 'usa']
+		at['nazis', 'usa']
+		has['nazis', 'ark']
+	effects:
+		not-has['nazis', 'ark']
+		has['indiana', 'ark']
+
+give-50-8d2f['nazis', 'ark', 'army', 'tanis']
+	preconditions:
+		alive['nazis']
+		alive['army']
+		at['army', 'tanis']
+		at['nazis', 'tanis']
+		has['nazis', 'ark']
+	effects:
+		not-has['nazis', 'ark']
+		has['army', 'ark']
+
+give-51-8d2f['nazis', 'ark', 'army', 'usa']
+	preconditions:
+		alive['nazis']
+		alive['army']
+		at['army', 'usa']
+		at['nazis', 'usa']
+		has['nazis', 'ark']
+	effects:
+		not-has['nazis', 'ark']
+		has['army', 'ark']
+
+give-52-8d2f['nazis', 'gun', 'indiana', 'tanis']
+	preconditions:
+		alive['nazis']
+		alive['indiana']
+		at['indiana', 'tanis']
+		at['nazis', 'tanis']
+		has['nazis', 'gun']
+	effects:
+		not-has['nazis', 'gun']
+		has['indiana', 'gun']
+
+give-53-8d2f['nazis', 'gun', 'indiana', 'usa']
+	preconditions:
+		alive['nazis']
+		alive['indiana']
+		at['indiana', 'usa']
+		at['nazis', 'usa']
+		has['nazis', 'gun']
+	effects:
+		not-has['nazis', 'gun']
+		has['indiana', 'gun']
+
+give-54-8d2f['nazis', 'gun', 'army', 'tanis']
+	preconditions:
+		alive['nazis']
+		alive['army']
+		at['army', 'tanis']
+		at['nazis', 'tanis']
+		has['nazis', 'gun']
+	effects:
+		not-has['nazis', 'gun']
+		has['army', 'gun']
+
+give-55-8d2f['nazis', 'gun', 'army', 'usa']
+	preconditions:
+		alive['nazis']
+		alive['army']
+		at['army', 'usa']
+		at['nazis', 'usa']
+		has['nazis', 'gun']
+	effects:
+		not-has['nazis', 'gun']
+		has['army', 'gun']
+
+give-56-8d2f['indiana', 'ark', 'nazis', 'tanis']
+	preconditions:
+		alive['indiana']
+		alive['nazis']
+		at['nazis', 'tanis']
+		at['indiana', 'tanis']
+		has['indiana', 'ark']
+	effects:
+		not-has['indiana', 'ark']
+		has['nazis', 'ark']
+
+give-57-8d2f['indiana', 'ark', 'nazis', 'usa']
+	preconditions:
+		alive['indiana']
+		alive['nazis']
+		at['nazis', 'usa']
+		at['indiana', 'usa']
+		has['indiana', 'ark']
+	effects:
+		not-has['indiana', 'ark']
+		has['nazis', 'ark']
+
+give-58-8d2f['indiana', 'ark', 'army', 'tanis']
+	preconditions:
+		alive['indiana']
+		alive['army']
+		at['army', 'tanis']
+		at['indiana', 'tanis']
+		has['indiana', 'ark']
+	effects:
+		not-has['indiana', 'ark']
+		has['army', 'ark']
+
+give-59-8d2f['indiana', 'ark', 'army', 'usa']
+	preconditions:
+		alive['indiana']
+		alive['army']
+		at['army', 'usa']
+		at['indiana', 'usa']
+		has['indiana', 'ark']
+	effects:
+		not-has['indiana', 'ark']
+		has['army', 'ark']
+
+give-60-8d2f['indiana', 'gun', 'nazis', 'tanis']
+	preconditions:
+		alive['indiana']
+		alive['nazis']
+		at['nazis', 'tanis']
+		at['indiana', 'tanis']
+		has['indiana', 'gun']
+	effects:
+		not-has['indiana', 'gun']
+		has['nazis', 'gun']
+
+give-61-8d2f['indiana', 'gun', 'nazis', 'usa']
+	preconditions:
+		alive['indiana']
+		alive['nazis']
+		at['nazis', 'usa']
+		at['indiana', 'usa']
+		has['indiana', 'gun']
+	effects:
+		not-has['indiana', 'gun']
+		has['nazis', 'gun']
+
+give-62-8d2f['indiana', 'gun', 'army', 'tanis']
+	preconditions:
+		alive['indiana']
+		alive['army']
+		at['army', 'tanis']
+		at['indiana', 'tanis']
+		has['indiana', 'gun']
+	effects:
+		not-has['indiana', 'gun']
+		has['army', 'gun']
+
+give-63-8d2f['indiana', 'gun', 'army', 'usa']
+	preconditions:
+		alive['indiana']
+		alive['army']
+		at['army', 'usa']
+		at['indiana', 'usa']
+		has['indiana', 'gun']
+	effects:
+		not-has['indiana', 'gun']
+		has['army', 'gun']
+
+give-64-8d2f['army', 'ark', 'nazis', 'tanis']
+	preconditions:
+		alive['army']
+		alive['nazis']
+		at['nazis', 'tanis']
+		at['army', 'tanis']
+		has['army', 'ark']
+	effects:
+		not-has['army', 'ark']
+		has['nazis', 'ark']
+
+give-65-8d2f['army', 'ark', 'nazis', 'usa']
+	preconditions:
+		alive['army']
+		alive['nazis']
+		at['nazis', 'usa']
+		at['army', 'usa']
+		has['army', 'ark']
+	effects:
+		not-has['army', 'ark']
+		has['nazis', 'ark']
+
+give-66-8d2f['army', 'ark', 'indiana', 'tanis']
+	preconditions:
+		alive['army']
+		alive['indiana']
+		at['indiana', 'tanis']
+		at['army', 'tanis']
+		has['army', 'ark']
+	effects:
+		not-has['army', 'ark']
+		has['indiana', 'ark']
+
+give-67-8d2f['army', 'ark', 'indiana', 'usa']
+	preconditions:
+		alive['army']
+		alive['indiana']
+		at['indiana', 'usa']
+		at['army', 'usa']
+		has['army', 'ark']
+	effects:
+		not-has['army', 'ark']
+		has['indiana', 'ark']
+
+give-68-8d2f['army', 'gun', 'nazis', 'tanis']
+	preconditions:
+		alive['army']
+		alive['nazis']
+		at['nazis', 'tanis']
+		at['army', 'tanis']
+		has['army', 'gun']
+	effects:
+		not-has['army', 'gun']
+		has['nazis', 'gun']
+
+give-69-8d2f['army', 'gun', 'nazis', 'usa']
+	preconditions:
+		alive['army']
+		alive['nazis']
+		at['nazis', 'usa']
+		at['army', 'usa']
+		has['army', 'gun']
+	effects:
+		not-has['army', 'gun']
+		has['nazis', 'gun']
+
+give-70-8d2f['army', 'gun', 'indiana', 'tanis']
+	preconditions:
+		alive['army']
+		alive['indiana']
+		at['indiana', 'tanis']
+		at['army', 'tanis']
+		has['army', 'gun']
+	effects:
+		not-has['army', 'gun']
+		has['indiana', 'gun']
+
+give-71-8d2f['army', 'gun', 'indiana', 'usa']
+	preconditions:
+		alive['army']
+		alive['indiana']
+		at['indiana', 'usa']
+		at['army', 'usa']
+		has['army', 'gun']
+	effects:
+		not-has['army', 'gun']
+		has['indiana', 'gun']
+
+close-ark-72-b94d['ark']
+	preconditions:
+		open['ark']
+	effects:
+		not-open['ark']
+
+open-ark-73-aa69['nazis', 'ark']
+	preconditions:
+		alive['nazis']
+		has['nazis', 'ark']
+	effects:
+		open['ark']
+		not-alive['nazis']
+
+open-ark-74-aa69['indiana', 'ark']
+	preconditions:
+		alive['indiana']
+		has['indiana', 'ark']
+	effects:
+		open['ark']
+		not-alive['indiana']
+
+open-ark-75-aa69['army', 'ark']
+	preconditions:
+		alive['army']
+		has['army', 'ark']
+	effects:
+		open['ark']
+		not-alive['army']
+
+take-from-corpse-76-a0f5['nazis', 'ark', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'ark']
+		not-alive['indiana']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['indiana', 'tanis']
+	effects:
+		has['nazis', 'ark']
+		not-has['indiana', 'ark']
+
+take-from-corpse-77-a0f5['nazis', 'ark', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'ark']
+		not-alive['indiana']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['indiana', 'usa']
+	effects:
+		has['nazis', 'ark']
+		not-has['indiana', 'ark']
+
+take-from-corpse-78-a0f5['nazis', 'ark', 'army', 'tanis']
+	preconditions:
+		has['army', 'ark']
+		not-alive['army']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['army', 'tanis']
+	effects:
+		has['nazis', 'ark']
+		not-has['army', 'ark']
+
+take-from-corpse-79-a0f5['nazis', 'ark', 'army', 'usa']
+	preconditions:
+		has['army', 'ark']
+		not-alive['army']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['army', 'usa']
+	effects:
+		has['nazis', 'ark']
+		not-has['army', 'ark']
+
+take-from-corpse-80-a0f5['nazis', 'gun', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'gun']
+		not-alive['indiana']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['indiana', 'tanis']
+	effects:
+		has['nazis', 'gun']
+		not-has['indiana', 'gun']
+
+take-from-corpse-81-a0f5['nazis', 'gun', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'gun']
+		not-alive['indiana']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['indiana', 'usa']
+	effects:
+		has['nazis', 'gun']
+		not-has['indiana', 'gun']
+
+take-from-corpse-82-a0f5['nazis', 'gun', 'army', 'tanis']
+	preconditions:
+		has['army', 'gun']
+		not-alive['army']
+		at['nazis', 'tanis']
+		alive['nazis']
+		at['army', 'tanis']
+	effects:
+		has['nazis', 'gun']
+		not-has['army', 'gun']
+
+take-from-corpse-83-a0f5['nazis', 'gun', 'army', 'usa']
+	preconditions:
+		has['army', 'gun']
+		not-alive['army']
+		at['nazis', 'usa']
+		alive['nazis']
+		at['army', 'usa']
+	effects:
+		has['nazis', 'gun']
+		not-has['army', 'gun']
+
+take-from-corpse-84-a0f5['indiana', 'ark', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'ark']
+		not-alive['nazis']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['nazis', 'tanis']
+	effects:
+		has['indiana', 'ark']
+		not-has['nazis', 'ark']
+
+take-from-corpse-85-a0f5['indiana', 'ark', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'ark']
+		not-alive['nazis']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['nazis', 'usa']
+	effects:
+		has['indiana', 'ark']
+		not-has['nazis', 'ark']
+
+take-from-corpse-86-a0f5['indiana', 'ark', 'army', 'tanis']
+	preconditions:
+		has['army', 'ark']
+		not-alive['army']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['army', 'tanis']
+	effects:
+		has['indiana', 'ark']
+		not-has['army', 'ark']
+
+take-from-corpse-87-a0f5['indiana', 'ark', 'army', 'usa']
+	preconditions:
+		has['army', 'ark']
+		not-alive['army']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['army', 'usa']
+	effects:
+		has['indiana', 'ark']
+		not-has['army', 'ark']
+
+take-from-corpse-88-a0f5['indiana', 'gun', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'gun']
+		not-alive['nazis']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['nazis', 'tanis']
+	effects:
+		has['indiana', 'gun']
+		not-has['nazis', 'gun']
+
+take-from-corpse-89-a0f5['indiana', 'gun', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'gun']
+		not-alive['nazis']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['nazis', 'usa']
+	effects:
+		has['indiana', 'gun']
+		not-has['nazis', 'gun']
+
+take-from-corpse-90-a0f5['indiana', 'gun', 'army', 'tanis']
+	preconditions:
+		has['army', 'gun']
+		not-alive['army']
+		at['indiana', 'tanis']
+		alive['indiana']
+		at['army', 'tanis']
+	effects:
+		has['indiana', 'gun']
+		not-has['army', 'gun']
+
+take-from-corpse-91-a0f5['indiana', 'gun', 'army', 'usa']
+	preconditions:
+		has['army', 'gun']
+		not-alive['army']
+		at['indiana', 'usa']
+		alive['indiana']
+		at['army', 'usa']
+	effects:
+		has['indiana', 'gun']
+		not-has['army', 'gun']
+
+take-from-corpse-92-a0f5['army', 'ark', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'ark']
+		not-alive['nazis']
+		at['army', 'tanis']
+		alive['army']
+		at['nazis', 'tanis']
+	effects:
+		has['army', 'ark']
+		not-has['nazis', 'ark']
+
+take-from-corpse-93-a0f5['army', 'ark', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'ark']
+		not-alive['nazis']
+		at['army', 'usa']
+		alive['army']
+		at['nazis', 'usa']
+	effects:
+		has['army', 'ark']
+		not-has['nazis', 'ark']
+
+take-from-corpse-94-a0f5['army', 'ark', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'ark']
+		not-alive['indiana']
+		at['army', 'tanis']
+		alive['army']
+		at['indiana', 'tanis']
+	effects:
+		has['army', 'ark']
+		not-has['indiana', 'ark']
+
+take-from-corpse-95-a0f5['army', 'ark', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'ark']
+		not-alive['indiana']
+		at['army', 'usa']
+		alive['army']
+		at['indiana', 'usa']
+	effects:
+		has['army', 'ark']
+		not-has['indiana', 'ark']
+
+take-from-corpse-96-a0f5['army', 'gun', 'nazis', 'tanis']
+	preconditions:
+		has['nazis', 'gun']
+		not-alive['nazis']
+		at['army', 'tanis']
+		alive['army']
+		at['nazis', 'tanis']
+	effects:
+		has['army', 'gun']
+		not-has['nazis', 'gun']
+
+take-from-corpse-97-a0f5['army', 'gun', 'nazis', 'usa']
+	preconditions:
+		has['nazis', 'gun']
+		not-alive['nazis']
+		at['army', 'usa']
+		alive['army']
+		at['nazis', 'usa']
+	effects:
+		has['army', 'gun']
+		not-has['nazis', 'gun']
+
+take-from-corpse-98-a0f5['army', 'gun', 'indiana', 'tanis']
+	preconditions:
+		has['indiana', 'gun']
+		not-alive['indiana']
+		at['army', 'tanis']
+		alive['army']
+		at['indiana', 'tanis']
+	effects:
+		has['army', 'gun']
+		not-has['indiana', 'gun']
+
+take-from-corpse-99-a0f5['army', 'gun', 'indiana', 'usa']
+	preconditions:
+		has['indiana', 'gun']
+		not-alive['indiana']
+		at['army', 'usa']
+		alive['army']
+		at['indiana', 'usa']
+	effects:
+		has['army', 'gun']
+		not-has['indiana', 'gun']
+
+excavate-100-9119['nazis', 'ark', 'tanis']
+	preconditions:
+		alive['nazis']
+		burried['ark', 'tanis']
+		at['nazis', 'tanis']
+		knows-location['nazis', 'ark', 'tanis']
+	effects:
+		has['nazis', 'ark']
+		not-burried['ark', 'tanis']
+
+excavate-101-9119['nazis', 'ark', 'usa']
+	preconditions:
+		alive['nazis']
+		burried['ark', 'usa']
+		at['nazis', 'usa']
+		knows-location['nazis', 'ark', 'usa']
+	effects:
+		has['nazis', 'ark']
+		not-burried['ark', 'usa']
+
+excavate-102-9119['nazis', 'gun', 'tanis']
+	preconditions:
+		alive['nazis']
+		burried['gun', 'tanis']
+		at['nazis', 'tanis']
+		knows-location['nazis', 'gun', 'tanis']
+	effects:
+		has['nazis', 'gun']
+		not-burried['gun', 'tanis']
+
+excavate-103-9119['nazis', 'gun', 'usa']
+	preconditions:
+		alive['nazis']
+		burried['gun', 'usa']
+		at['nazis', 'usa']
+		knows-location['nazis', 'gun', 'usa']
+	effects:
+		has['nazis', 'gun']
+		not-burried['gun', 'usa']
+
+excavate-104-9119['indiana', 'ark', 'tanis']
+	preconditions:
+		alive['indiana']
+		burried['ark', 'tanis']
+		at['indiana', 'tanis']
+		knows-location['indiana', 'ark', 'tanis']
+	effects:
+		has['indiana', 'ark']
+		not-burried['ark', 'tanis']
+
+excavate-105-9119['indiana', 'ark', 'usa']
+	preconditions:
+		alive['indiana']
+		burried['ark', 'usa']
+		at['indiana', 'usa']
+		knows-location['indiana', 'ark', 'usa']
+	effects:
+		has['indiana', 'ark']
+		not-burried['ark', 'usa']
+
+excavate-106-9119['indiana', 'gun', 'tanis']
+	preconditions:
+		alive['indiana']
+		burried['gun', 'tanis']
+		at['indiana', 'tanis']
+		knows-location['indiana', 'gun', 'tanis']
+	effects:
+		has['indiana', 'gun']
+		not-burried['gun', 'tanis']
+
+excavate-107-9119['indiana', 'gun', 'usa']
+	preconditions:
+		alive['indiana']
+		burried['gun', 'usa']
+		at['indiana', 'usa']
+		knows-location['indiana', 'gun', 'usa']
+	effects:
+		has['indiana', 'gun']
+		not-burried['gun', 'usa']
+
+excavate-108-9119['army', 'ark', 'tanis']
+	preconditions:
+		alive['army']
+		burried['ark', 'tanis']
+		at['army', 'tanis']
+		knows-location['army', 'ark', 'tanis']
+	effects:
+		has['army', 'ark']
+		not-burried['ark', 'tanis']
+
+excavate-109-9119['army', 'ark', 'usa']
+	preconditions:
+		alive['army']
+		burried['ark', 'usa']
+		at['army', 'usa']
+		knows-location['army', 'ark', 'usa']
+	effects:
+		has['army', 'ark']
+		not-burried['ark', 'usa']
+
+excavate-110-9119['army', 'gun', 'tanis']
+	preconditions:
+		alive['army']
+		burried['gun', 'tanis']
+		at['army', 'tanis']
+		knows-location['army', 'gun', 'tanis']
+	effects:
+		has['army', 'gun']
+		not-burried['gun', 'tanis']
+
+excavate-111-9119['army', 'gun', 'usa']
+	preconditions:
+		alive['army']
+		burried['gun', 'usa']
+		at['army', 'usa']
+		knows-location['army', 'gun', 'usa']
+	effects:
+		has['army', 'gun']
+		not-burried['gun', 'usa']
+
+dummy_init-112-acb3[]
+	preconditions:
+	effects:
+		alive['nazis']
+		burried['ark', 'tanis']
+		alive['army']
+		at['indiana', 'usa']
+		knows-location['indiana', 'ark', 'tanis']
+		at['nazis', 'tanis']
+		not-at['indiana', 'tanis']
+		has['nazis', 'gun']
+		not-at['army', 'tanis']
+		at['army', 'usa']
+		not-open['ark']
+		not-armed['indiana']
+		not-armed['nazis']
+		alive['indiana']
+		not-armed['army']
+		not-at['nazis', 'usa']
+
+dummy_goal-113-a334[]
+	preconditions:
+		not-alive['nazis']
+		open['ark']
+	effects:
+
