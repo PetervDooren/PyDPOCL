@@ -2,7 +2,7 @@ import copy
 from uuid import uuid4
 from typing import List
 from collections import defaultdict
-from Ground_Compiler_Library.Element import Argument
+from PyPOCL.Ground_Compiler_Library.Element import Argument
 
 class VariableBindingsSymbolic:
     """class to manage symbolic variablebindings

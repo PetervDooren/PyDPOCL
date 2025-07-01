@@ -2,8 +2,8 @@ import unittest
 
 from uuid import uuid4
 from collections import defaultdict
-from Ground_Compiler_Library.VariableBindingsGeometric import VariableBindingsGeometric
-from Ground_Compiler_Library.Element import Argument
+from PyPOCL.Ground_Compiler_Library.VariableBindingsGeometric import VariableBindingsGeometric
+from PyPOCL.Ground_Compiler_Library.Element import Argument
 from shapely import Polygon, overlaps, within
 
 class TestVariableBindingsGeometric(unittest.TestCase):

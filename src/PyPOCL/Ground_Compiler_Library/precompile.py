@@ -1,10 +1,8 @@
 import sys
 from typing import List
 
-from Ground_Compiler_Library.Ground import GLib, upload
-from Ground_Compiler_Library.GElm import GLiteral, Operator
-
-
+from PyPOCL.Ground_Compiler_Library.Ground import GLib, upload
+from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 
 def deelementize_ground_library(GL: GLib) -> List[Operator]:
 	g_steps = []

@@ -1,4 +1,4 @@
-from Ground_Compiler_Library.Element import Element, Argument, Literal
+from PyPOCL.Ground_Compiler_Library.Element import Element, Argument, Literal
 #from PlanElementGraph import Condition
 import copy
 

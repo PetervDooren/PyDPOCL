@@ -2,8 +2,8 @@ import unittest
 
 from uuid import uuid4
 from collections import defaultdict
-from Ground_Compiler_Library.VariableBindingsSymbolic import VariableBindingsSymbolic
-from Ground_Compiler_Library.Element import Argument
+from PyPOCL.Ground_Compiler_Library.VariableBindingsSymbolic import VariableBindingsSymbolic
+from PyPOCL.Ground_Compiler_Library.Element import Argument
 
 class TestVariableBindings(unittest.TestCase):
 

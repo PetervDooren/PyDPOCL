@@ -3,9 +3,9 @@ from shapely import Polygon
 from dataclasses import dataclass
 from uuid import uuid4
 
-from Ground_Compiler_Library.GElm import GLiteral, Operator
-from Ground_Compiler_Library import Ground, precompile
-from Ground_Compiler_Library.Element import Argument
+from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
+from PyPOCL.Ground_Compiler_Library import Ground, precompile
+from PyPOCL.Ground_Compiler_Library.Element import Argument
 
 def just_compile(domain_file, problem_file):
 	GL = Ground.GLib(domain_file, problem_file)

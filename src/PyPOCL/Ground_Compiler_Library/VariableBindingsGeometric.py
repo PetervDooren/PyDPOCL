@@ -4,7 +4,7 @@ from uuid import uuid4
 from typing import List
 from collections import defaultdict
 from operator import attrgetter
-from Ground_Compiler_Library.Element import Argument
+from PyPOCL.Ground_Compiler_Library.Element import Argument
 from shapely import Polygon, box, difference, within
 
 # visualization

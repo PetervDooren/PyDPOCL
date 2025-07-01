@@ -1,7 +1,7 @@
 import collections
 
-from Ground_Compiler_Library.Graph import Graph, Edge
-from Ground_Compiler_Library.Element import Element
+from PyPOCL.Ground_Compiler_Library.Graph import Graph, Edge
+from PyPOCL.Ground_Compiler_Library.Element import Element
 
 class OrderingGraph(Graph):
 	def __init__(self, ID=None, typ=None, name=None, Elements=None, Edges=None):

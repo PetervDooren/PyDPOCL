@@ -1,10 +1,10 @@
-from Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
-from Ground_Compiler_Library.Flaws_unused import Flaw, FlawLib, TCLF
+from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
+from PyPOCL.Ground_Compiler_Library.Flaws_unused import Flaw, FlawLib, TCLF
 from uuid import uuid4
-from Ground_Compiler_Library.Element import Argument, Element, Operator, Literal
-from Ground_Compiler_Library.Graph import Edge
-from Ground_Compiler_Library.ElementGraph import ElementGraph
-from Ground_Compiler_Library.PlanElementGraph import Condition
+from PyPOCL.Ground_Compiler_Library.Element import Argument, Element, Operator, Literal
+from PyPOCL.Ground_Compiler_Library.Graph import Edge
+from PyPOCL.Ground_Compiler_Library.ElementGraph import ElementGraph
+from PyPOCL.Ground_Compiler_Library.PlanElementGraph import Condition
 import copy
 from collections import namedtuple
 # import json

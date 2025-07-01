@@ -1,5 +1,5 @@
 import sys
-from GPlan import GPlan
+from PyPOCL.GPlan import GPlan
 
 if __name__ == '__main__':
     num_args = len(sys.argv)

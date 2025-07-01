@@ -1,7 +1,7 @@
 from typing import Set, List
-from GPlan import GPlan, math
-from Ground_Compiler_Library.GElm import GLiteral, Operator
-from Flaws import Flaw, TCLF
+from PyPOCL.GPlan import GPlan, math
+from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
+from PyPOCL.Flaws import Flaw, TCLF
 from uuid import uuid4
 from heapq import heappush, heappop
 import time

@@ -1,6 +1,6 @@
 import unittest
 import json
-from GPlan import GPlan
+from PyPOCL.GPlan import GPlan
 
 class DummyStep:
     def __init__(self, ID, name):

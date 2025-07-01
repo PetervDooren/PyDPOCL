@@ -1,9 +1,9 @@
 from __future__ import annotations
-from Ground_Compiler_Library.GElm import GLiteral, Operator
+from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from uuid import uuid4
-from Flaws import FlawLib, OPF, TCLF
-from Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
-from Ground_Compiler_Library.VariableBindings import VariableBindings
+from PyPOCL.Flaws import FlawLib, OPF, TCLF
+from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
+from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
 import copy
 from collections import namedtuple, defaultdict
 import math

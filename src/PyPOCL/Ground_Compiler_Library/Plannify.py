@@ -1,9 +1,9 @@
-from Ground_Compiler_Library.PlanElementGraph import Action, PlanElementGraph, Condition
-from Ground_Compiler_Library.Element import Operator
-from Ground_Compiler_Library.Graph import Edge
-from Ground_Compiler_Library.Flaws_unused import Flaw
+from PyPOCL.Ground_Compiler_Library.PlanElementGraph import Action, PlanElementGraph, Condition
+from PyPOCL.Ground_Compiler_Library.Element import Operator
+from PyPOCL.Ground_Compiler_Library.Graph import Edge
+from PyPOCL.Ground_Compiler_Library.Flaws_unused import Flaw
 
-from clockdeco import clock
+from PyPOCL.clockdeco import clock
 import copy
 import itertools
 

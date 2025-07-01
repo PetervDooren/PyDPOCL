@@ -1,6 +1,6 @@
 import sys
-from PyDPOCL import POCLPlanner
-from worldmodel import load_worldmodel, update_init_state, just_compile
+from PyPOCL.PyDPOCL import POCLPlanner
+from PyPOCL.worldmodel import load_worldmodel, update_init_state, just_compile
 
 if __name__ == '__main__':
     num_args = len(sys.argv)

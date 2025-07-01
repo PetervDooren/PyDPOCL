@@ -11,7 +11,7 @@ element in 'E'.
 
 """
 
-from Ground_Compiler_Library.Graph import *
+from PyPOCL.Ground_Compiler_Library.Graph import *
 #graph has import copy
 import collections
 

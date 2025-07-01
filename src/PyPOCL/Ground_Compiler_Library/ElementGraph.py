@@ -1,6 +1,6 @@
-from Ground_Compiler_Library.Restrictions import Restriction
+from PyPOCL.Ground_Compiler_Library.Restrictions import Restriction
 import uuid
-from Ground_Compiler_Library.Graph import Graph
+from PyPOCL.Ground_Compiler_Library.Graph import Graph
 import copy
 
 #if you subclass ElementGraph, please inform the authorities
