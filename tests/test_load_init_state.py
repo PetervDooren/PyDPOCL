@@ -42,8 +42,9 @@ class TestVariableBindings(unittest.TestCase):
         self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='table']), "Box A is not within the table")
         self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxa' and e.Args[1].name=='goal_left']), "Box A is not within the left goal")
         self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='reach_robot_left']), "Box B is not within reach of the left robot")
+        self.assertTrue(all([not e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='reach_robot_right']), "Box B is within reach of the right robot")
         self.assertTrue(all([not e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxb' and e.Args[1].name=='goal_left']), "Box B is within goal_left")
-        self.assertTrue(all([not e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='goal_right']), "Box C is within goal_right")
+        self.assertTrue(all([e.truth for e in self.init_state.effects if e.name=='within' and e.Args[0].name=='boxc' and e.Args[1].name=='goal_right']), "Box C is not within goal_right")
         
         
 if __name__ == '__main__':
