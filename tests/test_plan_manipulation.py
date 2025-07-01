@@ -3,7 +3,7 @@ import unittest
 from PyPOCL.GPlan import GPlan
 from PyPOCL.worldmodel import load_worldmodel, update_init_state, just_compile
 
-class TestVariableBindings(unittest.TestCase):
+class TestPlanManipulation(unittest.TestCase):
     def setUp(self):
         domain_file = 'tests/domains/test-domain.pddl'
         problem_file = 'tests/domains/test-problem.pddl'
@@ -18,7 +18,7 @@ class TestVariableBindings(unittest.TestCase):
         init_state = update_init_state(init_state, area_mapping, object_area_mapping)
 
         goal_state = ground_steps[-1]
-        self.root_plan = GPlan.make_root_plan(init_state, goal_state, objects, object_types)
+        self.root_plan = GPlan.make_root_plan(init_state, goal_state, objects, object_types, area_mapping, robot_reach, 'table')
         self.operators = ground_steps
 
     def test_add_step(self):
