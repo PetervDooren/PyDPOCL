@@ -5,7 +5,7 @@ from collections import defaultdict
 from PyPOCL.Ground_Compiler_Library.VariableBindingsSymbolic import VariableBindingsSymbolic
 from PyPOCL.Ground_Compiler_Library.Element import Argument
 
-class TestVariableBindings(unittest.TestCase):
+class TestVariableBindingsSymbolic(unittest.TestCase):
 
     def test_codesignation(self):
         vb = VariableBindingsSymbolic()
