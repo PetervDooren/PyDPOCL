@@ -5,9 +5,9 @@ from PyPOCL.worldmodel import load_worldmodel, update_init_state, just_compile
 
 class TestVariableBindings(unittest.TestCase):
     def setUp(self):
-        domain_file = 'domains/test-domain.pddl'
-        problem_file = 'domains/test-problem.pddl'
-        worldmodel_file = 'domains/test-worldmodel.json'
+        domain_file = 'tests/domains/test-domain.pddl'
+        problem_file = 'tests/domains/test-problem.pddl'
+        worldmodel_file = 'tests/domains/test-worldmodel.json'
 
         ground_steps, objects, object_types = just_compile(domain_file, problem_file)
 
