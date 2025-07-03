@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
-from uuid import uuid4
+from uuid import UUID, uuid4
 from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
@@ -25,6 +25,10 @@ class GPlan:
     ----------
     ID : uuid
         unique identifier of the plan
+	domain: str
+		name of the domain this plan is for
+	problem: str
+		name of the problem this plan is for
     OrderingGraph : OrderingGraph
         ???
 	CausalLinkGraph: CausalLinkGraph
@@ -75,6 +79,8 @@ class GPlan:
 		"""Initialize a GPlan with empty graphs and no steps"""
 		# plan data
 		self.ID = uuid4()
+		self.domain = None
+		self.problem = None
 		self.steps = []
 		self.OrderingGraph = OrderingGraph()
 		self.CausalLinkGraph = CausalLinkGraph()
@@ -151,6 +157,14 @@ class GPlan:
 		for i, s in enumerate(self.steps):
 			print('{} {} {}'.format(i, s, s.ID))
 		raise ValueError('{} with ID={} not found in plan {}'.format(step, step.ID, self.name))
+	
+	def get(self, id):
+		for i, s in enumerate(self.steps):
+			if s.ID == id:
+				return s
+		for i, s in enumerate(self.steps):
+			print('{} {} {}'.format(i, s, s.ID))
+		raise ValueError('ID={} not found in plan {}'.format(id, self.name))
 
 	def instantiate(self, add_to_name):
 		new_self = copy.deepcopy(self)
@@ -478,33 +492,36 @@ class GPlan:
 		Note:
 			Some complex objects may require custom serialization logic.
 		"""
-		def literal_to_dict(literal):
+		def condition_to_dict(literal):
 			return {
 				"ID": str(literal.ID),
-				"name": literal.name,
-				"Args": [str(a) for a in literal.Args],
-				"trudom": literal.truth,
+				"name": literal.name, # not required, but useful for debugging
+				"Args": [str(a.ID) for a in literal.Args],
+				"trudom": literal.truth, # not required, but useful debugging
 			}
 
 		def step_to_dict(step):
 			return {
 				"ID": str(step.ID),
 				"schema": str(getattr(step, "schema", "")),
-				"Args": [str(a) for a in getattr(step, "Args", [])],
-				"preconds": [literal_to_dict(p) for p in getattr(step, "preconds", [])],
-				"effects": [literal_to_dict(p) for p in getattr(step, "effects", [])],
-				#"nonequals": [ne for ne in getattr(step, "nonequals", [])],
-				#"reach_constraints": [rc for rc in getattr(step, "reach_constraints", [])],
-				#"open_preconds": [str(p) for p in getattr(step, "open_preconds", [])],
-				"stepnum": getattr(step, "stepnum", None),
-				"height": getattr(step, "height", None),
+				"Args": [str(a.ID) for a in getattr(step, "Args", [])],
+				"preconds": [condition_to_dict(p) for p in getattr(step, "preconds", [])],
+				"effects": [condition_to_dict(p) for p in getattr(step, "effects", [])],
+				"stepnum": getattr(step, "stepnum", None), # not required, but useful for debugging
+				"height": getattr(step, "height", None), # not required, but useful for debugging
 			}
 
-		def edge_to_dict(edge):
+		def ordering_to_dict(edge):
 			return {
 				"source": str(getattr(edge.source, "ID", "")),
 				"sink": str(getattr(edge.sink, "ID", "")),
-				"label": str(getattr(edge, "label", "")),
+			}
+
+		def causal_link_to_dict(edge):
+			return {
+				"source": str(getattr(edge.source, "ID", "")),
+				"sink": str(getattr(edge.sink, "ID", "")),
+				"sink-precondition": str(getattr(edge.label, "ID", "")),
 			}
 		
 		def variable_bindings_to_dict(vb):
@@ -514,14 +531,17 @@ class GPlan:
 		plan_dict = {
 			"ID": str(self.ID),
 			"name": self.name,
+			"domain": self.domain,
+			"problem": self.problem,
+			"solved": self.solved,
 			"cost": self.cost,
 			"heuristic": self.heuristic,
 			"depth": self.depth,
 			"init_state": step_to_dict(self.dummy.init),
 			"goal_state": step_to_dict(self.dummy.goal),
 			"steps": [step_to_dict(step) for step in self.steps],
-			"orderings": [edge_to_dict(edge) for edge in self.OrderingGraph.edges],
-			"causal_links": [edge_to_dict(edge) for edge in self.CausalLinkGraph.edges],
+			"orderings": [ordering_to_dict(edge) for edge in self.OrderingGraph.edges],
+			"causal_links": [causal_link_to_dict(edge) for edge in self.CausalLinkGraph.edges],
 			"variableBindings": variable_bindings_to_dict(self.variableBindings),
 			# "flaws": str(self.flaws),
 		}
@@ -530,7 +550,7 @@ class GPlan:
 			json.dump(plan_dict, f, indent=2)
 	
 	@staticmethod
-	def from_json(filepath: str) -> GPlan:
+	def from_json(domain: Domain, problem: Problem, filepath: str) -> GPlan:
 		"""
 		Load a plan from a JSON file.
 
@@ -539,87 +559,82 @@ class GPlan:
 
 		This method will populate the current instance with the data from the JSON file.
 		"""
-		def literal_from_dict(literal_dict):
-			return GLiteral(
-				pred_name=literal_dict["name"],
-				arg_tup=(literal_dict["Args"][0], literal_dict["Args"][1]),
-				trudom=literal_dict["trudom"],
-				_id=literal_dict["ID"],
-				is_static=False, # static property should no longer be used
-				)
+		plan = GPlan.make_root_plan(domain, problem)
 
 		with open(filepath, "r") as f:
 			plan_dict = json.load(f)
-		# Create a new GPlan instance
-		init = Operator(
-			operator=plan_dict["init_state"]["schema"],
-			args=plan_dict["init_state"]["Args"],
-			preconditions=[literal_from_dict(p) for p in plan_dict["init_state"]["preconds"]],
-			effects=[literal_from_dict(p) for p in plan_dict["init_state"]["effects"]],
-			stepnum=plan_dict["init_state"].get("stepnum", None),
-			height=plan_dict["init_state"].get("height", 0),
-			nonequals=[]
-		)
-		# Set the ID for the init state
-		init.ID = plan_dict["init_state"]["ID"]
-		goal = Operator(
-			operator=plan_dict["goal_state"]["schema"],
-			args=plan_dict["goal_state"]["Args"],
-			preconditions=[literal_from_dict(p) for p in plan_dict["goal_state"]["preconds"]],
-			effects=[literal_from_dict(p) for p in plan_dict["goal_state"]["effects"]],
-			stepnum=plan_dict["goal_state"].get("stepnum", None),
-			height=plan_dict["goal_state"].get("height", 0),
-			nonequals=[]
-		)
-		# Set the ID for the goal state
-		goal.ID = plan_dict["goal_state"]["ID"]
-		# Create the GPlan instance
-		plan = GPlan()
 
-		plan.ID = plan_dict["ID"]
+		# Check if the domain and problem match
+		if plan_dict.get("domain") != domain.name:
+			raise ValueError(f"Plans domain name {plan_dict.get('domain')} does not match provided domain {domain.name}")
+		if plan_dict.get("problem") != problem.name:
+			raise ValueError(f"Plans problem name {plan_dict.get('problem')} does not match provided problem {problem.name}")
+		
 		plan.name = plan_dict["name"]
+		plan.ID = UUID(plan_dict["ID"])
+		plan.solved = plan_dict["solved"]
 		plan.cost = plan_dict["cost"]
 		plan.heuristic = plan_dict["heuristic"]
 		plan.depth = plan_dict["depth"]
-		# Populate steps
+
+		# track IDs between the saved plan and the new plan
+		id_map = {}
+		id_map["steps"] = {}
+		id_map["args"] = {}
+		id_map["preconds"] = {}
+		id_map["effects"] = {}
+		id_map["objects"] = {}
+
+		# get the IDs of the init and goal steps
+		id_map["steps"][plan_dict["init_state"]["ID"]] = plan.dummy.init.ID
+		for i in range(len(plan.dummy.init.effects)):
+			id_map["effects"][plan_dict["init_state"]["effects"][i]["ID"]] = plan.dummy.init.effects[i].ID
+		id_map["steps"][plan_dict["goal_state"]["ID"]] = plan.dummy.goal.ID
+		for i in range(len(plan.dummy.goal.preconds)):
+			id_map["preconds"][plan_dict["goal_state"]["preconds"][i]["ID"]] = plan.dummy.goal.preconds[i].ID
+
+		# Add steps to the plan
 		for step_data in plan_dict["steps"]:
 			if step_data["schema"] == "dummy_init" or step_data["schema"] == "dummy_goal":
 				# Skip the dummy init and goal steps as they are already created
 				continue
-			step = Operator(
-				operator=step_data["schema"],
-				args=[str(a) for a in step_data["Args"]],
-				preconditions=[literal_from_dict(p) for p in step_data["preconds"]],
-				effects=[literal_from_dict(p) for p in step_data["effects"]],
-				stepnum=step_data.get("stepnum", None),
-				height=step_data.get("height", 0),
-				nonequals=[]
-			)
-			step.ID = step_data["ID"]
+			# find the operator schema in the domain
+			op_schema = next((op for op in domain.operators if op.schema == step_data["schema"]), None)
+			if not op_schema:
+				raise ValueError(f"Operator schema {step_data['schema']} not found in domain {domain.name}")
+			step = op_schema.instantiate()
 			# Add the step to the plan
-			plan.steps.append(step)
-			plan.OrderingGraph.elements.add(step)
-			plan.CausalLinkGraph.elements.add(step)
-		# Populate orderings
+			plan.insert(step)
+
+			# map the step ids
+			id_map["steps"][step_data["ID"]] = step.ID
+			# map the argument IDs
+			for i in range(len(step_data["Args"])):
+				id_map["args"][step_data["Args"][i]] = step.Args[i].ID
+			# map the precondition IDs
+			for i in range(len(step_data["preconds"])):
+				id_map["preconds"][step_data["preconds"][i]["ID"]] = step.preconds[i].ID
+			for i in range(len(step_data["effects"])):
+				id_map["effects"][step_data["effects"][i]["ID"]] = step.effects[i].ID
+		
+		# add ordering constraints to the plan
 		for edge_data in plan_dict["orderings"]:
-			source = next((s for s in plan.OrderingGraph.elements if str(s.ID) == edge_data["source"]), None)
-			sink = next((s for s in plan.OrderingGraph.elements if str(s.ID) == edge_data["sink"]), None)
-			if source and sink:
-				plan.OrderingGraph.addEdge(source, sink)
-		# Populate causal links
+			source_id = edge_data["source"]
+			sink_id = edge_data["sink"]
+			source = plan.get(id_map["steps"][source_id])
+			sink = plan.get(id_map["steps"][sink_id])
+			plan.OrderingGraph.addEdge(source, sink)
+		
+		# add causal links to the plan
 		for edge_data in plan_dict["causal_links"]:
-			source = next((s for s in plan.CausalLinkGraph.elements if str(s.ID) == edge_data["source"]), None)
-			sink = next((s for s in plan.CausalLinkGraph.elements if str(s.ID) == edge_data["sink"]), None)
-			label = GLiteral(ID=edge_data["label"])
+			source_id = edge_data["source"]
+			sink_id = edge_data["sink"]
+			sink_precondition_id = edge_data["sink-precondition"]
+			source = plan.get(id_map["steps"][source_id])
+			sink = plan.get(id_map["steps"][sink_id])
+			sink_precondition = next((e for e in sink.preconds if e.ID == id_map["preconds"][sink_precondition_id]))
 			if source and sink:
-				plan.CausalLinkGraph.addEdge(source, sink, label)
-		# Populate variable bindings
-		if "variableBindings" in plan_dict:
-			vb_data = plan_dict["variableBindings"]
-			# Assuming VariableBindings has a method to load from a dict
-			plan.variableBindings = VariableBindings.from_dict(vb_data) if hasattr(VariableBindings, 'from_dict') else VariableBindings()
-		else:
-			plan.variableBindings = VariableBindings()
+				plan.CausalLinkGraph.addEdge(source, sink, sink_precondition)		
 		return plan
 
 	def __lt__(self, other):
@@ -645,7 +660,7 @@ class GPlan:
 			return sum([step.stepnum for step in self]) < sum([step.stepnum for step in other])
 		else:
 			return self.OrderingGraph < other.OrderingGraph
-		
+
 	def print(self):
 		"""Display the plan steps in a human readable format. Substitute constants where possible"""
 		print(f"Plan: {self}")
