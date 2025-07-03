@@ -1,3 +1,4 @@
+import os
 import json
 from collections import namedtuple
 from shapely import Polygon
@@ -178,12 +179,15 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
 
     pre_process_operators(ground_steps)
 
-    domain = Domain(name = domain_file,
+    # domain and problem names
+    domain_name = os.path.splitext(os.path.basename(domain_file))[0]
+    problem_name = os.path.splitext(os.path.basename(problem_file))[0]
+    domain = Domain(name = domain_name,
                     conditions=[], # not used in the planner, but technically part of the domain definition
                     object_types=object_types,
                     operators=operators)
-    problem = Problem(name = problem_file,
-                      domain=domain_file,
+    problem = Problem(name = problem_name,
+                      domain=domain_name,
                       objects=objects,
                       base_area=base_area,
                       areas=area_mapping,
