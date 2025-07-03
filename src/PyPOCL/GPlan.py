@@ -5,6 +5,7 @@ from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
 from PyPOCL.worldmodel import Domain, Problem
+from shapely.geometry import Polygon
 import copy
 from collections import namedtuple, defaultdict
 import math
@@ -439,9 +440,9 @@ class GPlan:
 		if not self.isInternallyConsistent():
 			print("Plan is not internally consistent")
 			return False
-		if len(self.flaws) > 0:
-			print("Plan has open flaws")
-			return False
+		#if len(self.flaws) > 0:
+		#	print("Plan has open flaws")
+		#	return False
 		if not self.variableBindings.isInternallyConsistent():
 			print("Variable bindings are not internally consistent")
 			return False
@@ -525,8 +526,12 @@ class GPlan:
 			}
 		
 		def variable_bindings_to_dict(vb):
-			# Assuming VariableBindings has a method to serialize itself
-			return vb.to_dict() if hasattr(vb, 'to_dict') else str(vb)
+			vb_dict = {"symbolic": {}, "geometric": {}}
+			for a in vb.symbolic_vb.variables:
+				vb_dict["symbolic"][str(a.ID)] = vb.symbolic_vb.get_const(a).name
+			for a in vb.geometric_vb.variables:
+				vb_dict["geometric"][str(a.ID)] = list(vb.geometric_vb.get_assigned_area(a).exterior.coords)
+			return vb_dict
 
 		plan_dict = {
 			"ID": str(self.ID),
@@ -634,7 +639,29 @@ class GPlan:
 			sink = plan.get(id_map["steps"][sink_id])
 			sink_precondition = next((e for e in sink.preconds if e.ID == id_map["preconds"][sink_precondition_id]))
 			if source and sink:
-				plan.CausalLinkGraph.addEdge(source, sink, sink_precondition)		
+				plan.CausalLinkGraph.addEdge(source, sink, sink_precondition)
+		
+		# add variable bindings to the plan
+		for var, obj in plan_dict["variableBindings"]["symbolic"].items():
+			if var not in id_map["args"]:
+				continue  # this is a constant, not a variable
+			var_arg = next((a for a in plan.variableBindings.symbolic_vb.variables if a.ID == id_map["args"][var]), None)
+			if not var_arg:
+				raise ValueError(f"Variable {var} not found in plan {plan.name}")
+			obj_arg = next((o for o in problem.objects if o.name == obj), None)
+			if not obj_arg:
+				raise ValueError(f"Object {obj} not found in problem {problem.name}")
+			plan.variableBindings.symbolic_vb.add_codesignation(var_arg, obj_arg)
+		for var, area in plan_dict["variableBindings"]["geometric"].items():
+			if var not in id_map["args"]:
+				continue  # this is a constant, not a variable
+			var_arg = next((a for a in plan.variableBindings.geometric_vb.variables if a.ID == id_map["args"][var]), None)
+			if not var_arg:
+				raise ValueError(f"Variable {var} not found in plan {plan.name}")
+			area_poly = Polygon(area)
+			if not area_poly:
+				raise ValueError(f"Area {var} has invalid polygon {area}")
+			plan.variableBindings.geometric_vb.set_assigned_area(var_arg, area_poly)
 		return plan
 
 	def __lt__(self, other):

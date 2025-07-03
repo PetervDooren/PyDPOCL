@@ -21,4 +21,5 @@ if __name__ == '__main__':
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
     # Load the plan from the JSON file
     plan = GPlan.from_json(domain, problem, plan_file)
-    plan.check_plan()
+    plan_valid = plan.check_plan()
+    print(f"Plan {plan.name} loaded. Valid: {plan_valid}.")

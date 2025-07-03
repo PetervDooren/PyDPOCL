@@ -61,6 +61,49 @@ class VariableBindingsGeometric:
 
     def set_base_area(self, area: Argument):
         self.base_area = area
+    
+    def get_max_area(self, var: Argument) -> Polygon:
+        """get the maximum area for a variable
+
+        Args:
+            var (Argument): variable to get the maximum area for
+
+        Returns:
+            Polygon: maximum area for the variable
+        """
+        if var not in self.placelocs:
+            print(f"Variable {var} is not registered in the geometric variable bindings")
+            return None
+        return self.placelocs[var].area_max
+    
+    def set_assigned_area(self, var: Argument, area: Polygon):
+        """set the area assigned to a variable. Should only be used when loading a plan from a file. Otherwise use resolve() to set the area.
+
+        Args:
+            var (Argument): variable to set the area for
+            area (Polygon): area to assign to the variable
+        """
+        if var not in self.placelocs:
+            print(f"Variable {var} is not registered in the geometric variable bindings")
+            return
+        self.placelocs[var].area_assigned = area
+        # check if the area is within the maximum area
+        if not within(area, self.placelocs[var].area_max):
+            print(f"Assigned area {area} is not within maximum area {self.placelocs[var].area_max} for variable {var}")
+
+    def get_assigned_area(self, var: Argument) -> Polygon:
+        """get the area assigned to a variable
+
+        Args:
+            var (Argument): variable to get the area for
+
+        Returns:
+            Polygon: area assigned to the variable
+        """
+        if var not in self.placelocs:
+            print(f"Variable {var} is not registered in the geometric variable bindings")
+            return None
+        return self.placelocs[var].area_assigned
 
     def register_variable(self, areavar: Argument, objvar: Argument=None, width=0, length=0):
         if areavar in self.variables:
@@ -320,7 +363,6 @@ class VariableBindingsGeometric:
             'placelocs': placelocs_to_dict(self.placelocs),
             'base_area': str(self.base_area) if self.base_area else None,
             'within_mapping': {str(k): [str(v) for v in vs] for k, vs in self.within_mapping.items()},
-            #'inverse_within_mapping': self.inverse_within_mapping,
             'disjunctions': {str(k): [str(v) for v in vs] for k, vs in self.disjunctions.items()}
         }
 
