@@ -200,7 +200,7 @@ class POCLPlanner:
 							print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
 							plan.print()
 							plan.check_plan()
-							plan.to_json("plan_{}.json".format(len(completed)))
+							plan.to_json("plans/manipulation-domain/manipulation-problem-plan_{}.json".format(len(completed)))
 
 						if len(completed) == k:
 							return completed

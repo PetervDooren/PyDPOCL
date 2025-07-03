@@ -1,13 +1,24 @@
 import sys
 from PyPOCL.GPlan import GPlan
+from PyPOCL.worldmodel import load_domain_and_problem
 
 if __name__ == '__main__':
     num_args = len(sys.argv)
     if num_args >1:
-        json_file = sys.argv[1]
+        domain_file = sys.argv[1]
+        if num_args > 2:
+            problem_file = sys.argv[2]
+            if num_args > 3:
+                worldmodel_file = sys.argv[3]
+                if num_args > 4:
+                    plan_file = sys.argv[4]
     else:
-        json_file = 'plan_1.json'
+        domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
+        problem_file = 'domains/manipulation-domain/manipulation-problem.pddl'
+        worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel.json'
+        plan_file = 'plans/manipulation-domain/manipulation-problem-plan_1.json'
 
+    domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
     # Load the plan from the JSON file
-    plan = GPlan.from_json(json_file)
+    plan = GPlan.from_json(domain, problem, plan_file)
     plan.check_plan()
