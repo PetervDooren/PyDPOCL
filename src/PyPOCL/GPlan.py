@@ -4,6 +4,7 @@ from uuid import uuid4
 from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
+from PyPOCL.worldmodel import Domain, Problem
 import copy
 from collections import namedtuple, defaultdict
 import math
@@ -103,7 +104,7 @@ class GPlan:
 		self.steps[pos] = item
 
 	@staticmethod
-	def make_root_plan(dummy_init_constructor, dummy_goal_constructor, objects, object_types, area_mapping, robot_reach, base_area='table') -> GPlan:
+	def make_root_plan(domain: Domain, problem: Problem) -> GPlan:
 		"""Helper function to create a root plan at the start of planning
 
 		Args:
@@ -112,9 +113,13 @@ class GPlan:
 			objects (set(Argument)): list of objects in the world
 			object_types(defaultdict(str, set(str)))
 		"""
+		if domain.name != problem.domain:
+			raise ValueError(f"Domain name {domain.name} does not match problem domain {problem.domain}")
 		root_plan = GPlan()
+		root_plan.domain = domain.name
+		root_plan.problem = problem.name
 
-		root_plan.dummy = dummyTuple(dummy_init_constructor, dummy_goal_constructor)
+		root_plan.dummy = dummyTuple(problem.init, problem.goal)
 
 		root_plan.init = root_plan.dummy.init.preconds
 		root_plan.goal = root_plan.dummy.goal.preconds
@@ -125,18 +130,12 @@ class GPlan:
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.goal)
 
 		# register parameters
-		root_plan.variableBindings.set_objects(objects, object_types)
-		root_plan.variableBindings.set_areas(area_mapping)
+		root_plan.variableBindings.set_objects(problem.objects, domain.object_types)
+		root_plan.variableBindings.set_areas(problem.areas)
 		# base area is table:
-		table_areas = [a for a in area_mapping if a.name==base_area]
-		root_plan.variableBindings.geometric_vb.set_base_area(table_areas[0])
-		root_plan.variableBindings.set_reach(robot_reach)
-		# for condition in root_plan.init:
-		# 	for a in condition.Args:
-		# 		root_plan.variableBindings.register_variable(a)
-		# for condition in root_plan.goal:
-		# 	for a in condition.Args:
-		# 		root_plan.variableBindings.register_variable(a)
+		base_areas = [a for a in problem.areas if a.name==problem.base_area]
+		root_plan.variableBindings.geometric_vb.set_base_area(base_areas[0])
+		root_plan.variableBindings.set_reach(problem.robot_reach)
 
 		# add open precondition flaws for the goal
 		for p in root_plan.dummy.goal.open_preconds:

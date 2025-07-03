@@ -2,6 +2,7 @@ from typing import Set, List
 from PyPOCL.GPlan import GPlan, math
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.Flaws import Flaw, TCLF
+from PyPOCL.worldmodel import Domain, Problem
 from uuid import uuid4
 from heapq import heappush, heappop
 import time
@@ -83,28 +84,32 @@ class POCLPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, operators: Set[Operator], init_stat: Operator, goal: Operator, objects, object_types, area_mapping, robot_reach):
+	def __init__(self, domain: Domain, problem: Problem) -> None:
 		"""construct planner
 
 		Args:
-			operators (set(Operator)): operators to be used in planning
-			init_stat (Operator): action representing the initial state
-			goal (Operator): action representing the goal state
-			objects (?): list of objects in the world
-			object_types(?): list of object types
+			domain (Domain): domain of the planning problem
+			problem (Problem): problem of the planning problem
 		"""		
-		self.gsteps = operators
 		self.ID = uuid4()
+
+		self.domain = domain
+		self.problem = problem
+
+		# get data from domain and problem
+		steplist = domain.operators
+		steplist.append(problem.init)  # add initial state
+		steplist.append(problem.goal)  # add goal state
+		self.gsteps = steplist
 		self.h_step_dict = dict()
 		self.h_lit_dict = dict()
 
-		root_plan = GPlan.make_root_plan(init_stat, goal, objects, object_types, area_mapping, robot_reach, 'table')
-
 		self._frontier = Frontier()
 		self.plan_num = 0
+		root_plan = GPlan.make_root_plan(domain, problem)
 		self.insert(root_plan)
 		self._h_visited = []
-		self.max_height = operators[-3].height
+		self.max_height = self.gsteps[-3].height
 
 	# Private Hooks #
 
@@ -115,40 +120,6 @@ class POCLPlanner:
 		return self._frontier[position]
 
 	# Methods #
-	@staticmethod
-	def pre_process_operators(operators):
-		"""pre processes operators with the relations between them.
-		updates properties cndts, cndt_map, threat_map, and threats
-
-		Args:
-			operators (List(Operator)): list of operators
-		"""
-		
-		for op1 in operators:
-			# clear existing data
-			op1.cndts = []
-			op1.cndt_map = dict()
-			op1.threats = []
-			op1.threat_map = dict()
-
-			for pre in op1.preconds:
-				print('... Processing antecedents for {} \t\tof step {}'.format(pre, op1))
-				op1.cndt_map[pre.ID] = []
-				op1.threat_map[pre.ID] = []
-				for op2 in operators:
-					for eff_i in range(len(op2.effects)):
-						eff = op2.effects[eff_i]
-						if eff.name != pre.name:
-							continue # effect is not based on the same predicate as the precondition
-						if eff.truth != pre.truth: # the effect undoes the precondition. Add to threat list
-							if op2.stepnumber not in op1.threats:
-								op1.threats.append(op2.stepnumber)
-							op1.threat_map[pre.ID].append((op2.stepnumber, eff_i))
-						else: # the effect is identical and therefore fulfills the precondition
-							if op2.stepnumber not in op1.cndts:
-								op1.cndts.append(op2.stepnumber)
-							op1.cndt_map[pre.ID].append((op2.stepnumber, eff_i))
-
 	def pop(self) -> GPlan:
 		return self._frontier.pop()
 

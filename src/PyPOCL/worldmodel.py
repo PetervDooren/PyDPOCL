@@ -1,4 +1,5 @@
 import json
+from collections import namedtuple
 from shapely import Polygon
 from dataclasses import dataclass
 from uuid import uuid4
@@ -6,6 +7,9 @@ from uuid import uuid4
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.Ground_Compiler_Library import Ground, precompile
 from PyPOCL.Ground_Compiler_Library.Element import Argument
+
+Domain = namedtuple('Domain', ['name', 'conditions', 'object_types', 'operators'])
+Problem = namedtuple('Problem', ['name', 'domain', 'objects', 'base_area', 'areas', 'initial_positions', 'init', 'goal', 'robot_reach'])
 
 def just_compile(domain_file, problem_file):
 	GL = Ground.GLib(domain_file, problem_file)
@@ -36,6 +40,8 @@ def load_worldmodel(file, objects):
         areas = {}
         for a in data['areas']:
             areas[a["name"]] = Polygon(a["coords"])
+        # get base area
+        base_area = data["base_area"]
         # load robot info
         robot_reach = {}
         for r in data["robots"]:
@@ -85,7 +91,7 @@ def load_worldmodel(file, objects):
         reach_area = [a for a in area_objects if a.name == robot_reach[r.name]]
         robot_reach_mapping[r] = reach_area[0] 
 
-    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach_mapping
+    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach_mapping, base_area
 
 def update_init_state(init_state, area_mapping, object_area_mapping):
     """update the truth conditions of the initial state using the geometry
@@ -114,3 +120,75 @@ def update_init_state(init_state, area_mapping, object_area_mapping):
             else:
                 cond.truth = False
     return init_state
+
+def pre_process_operators(operators):
+		"""pre processes operators with the relations between them.
+		updates properties cndts, cndt_map, threat_map, and threats
+
+		Args:
+			operators (List(Operator)): list of operators, including the initial and goal state.
+		"""
+		
+		for op1 in operators:
+			# clear existing data
+			op1.cndts = []
+			op1.cndt_map = dict()
+			op1.threats = []
+			op1.threat_map = dict()
+
+			for pre in op1.preconds:
+				print('... Processing antecedents for {} \t\tof step {}'.format(pre, op1))
+				op1.cndt_map[pre.ID] = []
+				op1.threat_map[pre.ID] = []
+				for op2 in operators:
+					for eff_i in range(len(op2.effects)):
+						eff = op2.effects[eff_i]
+						if eff.name != pre.name:
+							continue # effect is not based on the same predicate as the precondition
+						if eff.truth != pre.truth: # the effect undoes the precondition. Add to threat list
+							if op2.stepnumber not in op1.threats:
+								op1.threats.append(op2.stepnumber)
+							op1.threat_map[pre.ID].append((op2.stepnumber, eff_i))
+						else: # the effect is identical and therefore fulfills the precondition
+							if op2.stepnumber not in op1.cndts:
+								op1.cndts.append(op2.stepnumber)
+							op1.cndt_map[pre.ID].append((op2.stepnumber, eff_i))
+
+
+def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
+    """
+    Create a domain with the given initial and goal states.
+
+    Args:
+        init (str): Initial state of the domain.
+        goal (str): Goal state of the domain.
+
+    Returns:
+        Domain: A named tuple representing the domain with init and goal states.
+    """
+    ground_steps, objects, object_types = just_compile(domain_file, problem_file)
+    operators = ground_steps[:-2]  # all except init and goal
+    init_state = ground_steps[-2]  # second last step is the initial state
+    goal_state = ground_steps[-1]  # last step is the goal state
+
+    # load worldmodel
+    objects, area_mapping, object_mapping, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
+
+    init_state = update_init_state(init_state, area_mapping, object_area_mapping)
+
+    pre_process_operators(ground_steps)
+
+    domain = Domain(name = domain_file,
+                    conditions=[], # not used in the planner, but technically part of the domain definition
+                    object_types=object_types,
+                    operators=operators)
+    problem = Problem(name = problem_file,
+                      domain=domain_file,
+                      objects=objects,
+                      base_area=base_area,
+                      areas=area_mapping,
+                      initial_positions=object_area_mapping,
+                      init=init_state,
+                      goal=goal_state,
+                      robot_reach=robot_reach)
+    return domain, problem

@@ -23,8 +23,10 @@ class VariableBindingsGeometric:
 
     Attributes
     ----------
-    defined areas : list(?)
-        concrete areas
+    base_area : Argument
+        the base area in which all other areas are defined
+    defined areas : dict(Argument:Polygon)
+        mapping between area arguments and their polygons
     variables : list(Argument)
         list of area variables
     placelocs : dict(Argument:placeloc)

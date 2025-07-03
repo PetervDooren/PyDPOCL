@@ -1,7 +1,7 @@
 import unittest
 
 from PyPOCL.GPlan import GPlan
-from PyPOCL.worldmodel import load_worldmodel, update_init_state, just_compile
+from PyPOCL.worldmodel import load_domain_and_problem
 
 class TestPlanManipulation(unittest.TestCase):
     def setUp(self):
@@ -9,17 +9,11 @@ class TestPlanManipulation(unittest.TestCase):
         problem_file = 'tests/domains/test-problem.pddl'
         worldmodel_file = 'tests/domains/test-worldmodel.json'
 
-        ground_steps, objects, object_types = just_compile(domain_file, problem_file)
+        # load domain and problem
+        domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-        # load worldmodel
-        objects, area_mapping, object_mapping, object_area_mapping, robot_reach = load_worldmodel(worldmodel_file, objects)
-
-        init_state = ground_steps[-2]
-        init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-
-        goal_state = ground_steps[-1]
-        self.root_plan = GPlan.make_root_plan(init_state, goal_state, objects, object_types, area_mapping, robot_reach, 'table')
-        self.operators = ground_steps
+        self.root_plan = GPlan.make_root_plan(domain, problem)
+        self.operators = domain.operators
 
     def test_add_step(self):
         # find movemono step

@@ -1,6 +1,6 @@
 import sys
 from PyPOCL.PyDPOCL import POCLPlanner
-from PyPOCL.worldmodel import load_worldmodel, update_init_state, just_compile
+from PyPOCL.worldmodel import load_domain_and_problem
 
 if __name__ == '__main__':
     num_args = len(sys.argv)
@@ -17,16 +17,9 @@ if __name__ == '__main__':
         problem_file = 'domains/manipulation-domain/manipulation-problem.pddl'
         worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel.json'
 
-    ground_steps, objects, object_types = just_compile(domain_file, problem_file)
+    domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-    # load worldmodel
-    objects, area_mapping, object_mapping, object_area_mapping, robot_reach = load_worldmodel(worldmodel_file, objects)
-
-    init_state = ground_steps[-2]
-    init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-
-    POCLPlanner.pre_process_operators(ground_steps)
     PLAN = 1
     if PLAN:
-        planner = POCLPlanner(ground_steps, ground_steps[-2], ground_steps[-1], objects, object_types, area_mapping, robot_reach)
+        planner = POCLPlanner(domain, problem)
         planner.solve(k=1)
