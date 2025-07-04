@@ -102,7 +102,7 @@ class Operator:
 		# which arguments should be unequal
 		self.nonequals = nonequals
 		# in-reach constraints for the arms
-		self.reach_constraints = [(p.Args[0], p.Args[1]) for p in self.preconds if p.name == 'in_reach']
+		self.reach_constraints = [(p.Args[0], p.Args[1]) for p in preconditions if p.name == 'in_reach']
 		# height is 0 when primitive
 		self.height = height
 
