@@ -5,7 +5,7 @@ from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
 from PyPOCL.worldmodel import Domain, Problem
-from shapely.geometry import Polygon
+from shapely import within, Polygon
 import copy
 from collections import namedtuple, defaultdict
 import math
@@ -436,13 +436,10 @@ class GPlan:
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(d_f, cl))
 	def check_plan(self):
-		"""Check if the plan is internally consistent and has no flaws"""
+		"""Check if the plan is complete and valid. Does not use the tracked flaws, but checks the plan structure directly."""
 		if not self.isInternallyConsistent():
 			print("Plan is not internally consistent")
 			return False
-		#if len(self.flaws) > 0:
-		#	print("Plan has open flaws")
-		#	return False
 		if not self.variableBindings.isInternallyConsistent():
 			print("Variable bindings are not internally consistent")
 			return False
@@ -474,6 +471,41 @@ class GPlan:
 						# if the edge is unified with the threatening effect, it threatens it
 						print(f"Causal link {edge} is threatened by step {step.ID}")
 						return False
+		#TODO check that all causal links condition arguments are unified
+		# cannot be done right now as causal links only contain info on the sink-precondition, not the source effect
+
+		# check that place locations are large enough for the objects
+		#for area_id in self.variableBindings.geometric_vb.variables:
+		#	placeloc = self.variableBindings.geometric_vb.placelocs[area_id]
+		#	area = placeloc.area_assigned
+		#	if area is None:
+		#		print(f"Area {area_id} is not assigned")
+		#		return False
+		#	# check that the object is defined
+		#	if placeloc.object_width == 0 or placeloc.object_length == 0:
+		#		print(f"Area {area_id} has no object defined")
+		#		return False
+		#	# check that the object fits within the assigned area
+		#	if area.area < placeloc.object_width * placeloc.object_length:
+		#		print(f"Area {area_id} is too small for the object with width {placeloc.object_width} and length {placeloc.object_length}")
+		#		return False
+
+		# check that all reach constraints of steps are satisfied in the assigned area
+		for step in self.steps:
+			for rc in step.reach_constraints:
+				# check that the reach constraint is satisfied in the assigned area
+				area = self.variableBindings.geometric_vb.get_assigned_area(rc[0])
+				if area is None:
+					print(f"Step {step.ID} has reach constraint {rc} but no assigned area")
+					return False
+				robot_arg = self.variableBindings.symbolic_vb.get_const(rc[1])
+				reach_area_arg = self.variableBindings.reach_areas[robot_arg]
+				reach_area = self.variableBindings.geometric_vb.defined_areas[reach_area_arg]
+				if not within(area, reach_area):
+					print(f"Step {step.ID} has unsatisfied reach constraint {rc}")
+					return False
+		# check that all other areas that can occur simultaneously do not overlap
+		
 		return True
 
 	def to_json(self, filepath: str):
