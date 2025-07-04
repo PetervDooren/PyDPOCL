@@ -102,7 +102,7 @@ class VariableBindings:
             bool: indicating wether unification is possible
         """
         if provider.name == 'within':
-            if not self.symbolic_vb.add_codesignation(provider.Args[0], consumer.Args[0]):
+            if not self.add_codesignation(provider.Args[0], consumer.Args[0]):
                 return False
             return self.geometric_vb.unify(provider.Args[1], consumer.Args[1])
         else:
@@ -173,8 +173,8 @@ class VariableBindings:
         """add a variable binding stating that variable A must equal variable B
 
         Args:
-            varA (uuid): _description_
-            varB (uuid): _description_
+            varA (Argument): sybmolic argument
+            varB (Argument): symbolic argument
 
         Returns:
             bool: False if the codesignation is inconsistent with the existing bindings
@@ -184,6 +184,10 @@ class VariableBindings:
                 return False
             if self.is_ground(varA) and self.symbolic_vb.get_const(varA) in self.reach_areas:
                 return self.apply_reach(varA)
+            if self.is_ground(varA):
+                obj = self.symbolic_vb.get_const(varA)
+                for var in self.symbolic_vb.group_members[self.symbolic_vb.group_mapping[varA]]:
+                    self.geometric_vb.set_object(var, obj)
             return True
         else:
             return True

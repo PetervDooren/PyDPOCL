@@ -175,7 +175,7 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
     if worldmodel_file is None:
         # no worldmodel, so the domain contains no geometric variables
         area_mapping = {}
-        object_mapping = {}
+        object_dimensions = {}
         object_area_mapping = {}
         robot_reach = {}
         base_area = None

@@ -43,11 +43,14 @@ class VariableBindingsGeometric:
     def __init__(self):
         self.base_area = None
         self.defined_areas = {}
+        self.object_dimensions = {}
         self.variables = []
         self.placelocs = {}
         self.within_mapping = {}
         self.inverse_within_mapping = {}
         self.disjunctions = {}
+
+        self.buffer = 0.05 # buffer to use when placing objects in the area.
     
     def isInternallyConsistent():
         return True
@@ -78,6 +81,22 @@ class VariableBindingsGeometric:
             print(f"Variable {var} is not registered in the geometric variable bindings")
             return None
         return self.placelocs[var].area_max
+    
+    def set_object(self, objvar: Argument, obj_instance: Argument):
+        """set the object for a variable. This is used to set the size of the area assigned to the variable.
+
+        Args:
+            objvar (Argument): variable to describe the object
+            obj_instance (Argument): object instance to assign to the variable
+        """
+        #TODO check if the obj instance is a physical object
+        #if obj_instance not in self.object_dimensions:
+            #raise ValueError(f"Object {obj_instance} is not registered in the object dimensions {self.object_dimensions}")
+        for var in self.variables:
+            if self.placelocs[var].object == objvar:
+                self.placelocs[var].object = obj_instance
+                self.placelocs[var].object_width = self.object_dimensions[obj_instance][0]
+                self.placelocs[var].object_length = self.object_dimensions[obj_instance][1]
     
     def set_assigned_area(self, var: Argument, area: Polygon):
         """set the area assigned to a variable. Should only be used when loading a plan from a file. Otherwise use resolve() to set the area.
@@ -296,7 +315,7 @@ class VariableBindingsGeometric:
             y_pos = miny # lower left coordinate
             while y_pos + ploc.object_length < maxy:
                 # sample acceptable pose in the area_max
-                a_min = box(x_pos, y_pos, x_pos+ploc.object_width, y_pos+ploc.object_length)
+                a_min = box(x_pos, y_pos, x_pos+ploc.object_width + self.buffer, y_pos+ploc.object_length + self.buffer)
                 if within(a_min, disjunct_area_max):
                     ploc.area_assigned = a_min
                     break
