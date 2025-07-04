@@ -504,16 +504,16 @@ def addStatics(operators):
 def obTypesDict(object_types):
 	obtypes = defaultdict(set)
 	for t in object_types:
-		obtypes[t.name].add(t.parent)
 		accumulated = set()
+		accumulated.add(t.parent)
 		rFollowHierarchy(object_types, t.parent, accumulated)
-		obtypes[t.name].update(accumulated)
+		obtypes[t.name]=(accumulated)
 	return obtypes
 
 
 def rFollowHierarchy(object_types, child_name, accumulated=set()):
 	for ob in object_types:
-		if ob.name not in accumulated:
+		if ob.parent not in accumulated:
 			if ob.name == child_name:
 				accumulated.add(ob.parent)
 				rFollowHierarchy(object_types, ob.parent, accumulated)
