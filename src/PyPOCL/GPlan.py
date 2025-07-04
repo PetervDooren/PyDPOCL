@@ -485,20 +485,20 @@ class GPlan:
 		# cannot be done right now as causal links only contain info on the sink-precondition, not the source effect
 
 		# check that place locations are large enough for the objects
-		#for area_id in self.variableBindings.geometric_vb.variables:
-		#	placeloc = self.variableBindings.geometric_vb.placelocs[area_id]
-		#	area = placeloc.area_assigned
-		#	if area is None:
-		#		print(f"Area {area_id} is not assigned")
-		#		return False
-		#	# check that the object is defined
-		#	if placeloc.object_width == 0 or placeloc.object_length == 0:
-		#		print(f"Area {area_id} has no object defined")
-		#		return False
-		#	# check that the object fits within the assigned area
-		#	if area.area < placeloc.object_width * placeloc.object_length:
-		#		print(f"Area {area_id} is too small for the object with width {placeloc.object_width} and length {placeloc.object_length}")
-		#		return False
+		for area_id in self.variableBindings.geometric_vb.variables:
+			placeloc = self.variableBindings.geometric_vb.placelocs[area_id]
+			area = placeloc.area_assigned
+			if area is None:
+				print(f"Area {area_id} is not assigned")
+				return False
+			# check that the object is defined
+			if placeloc.object_width == 0 or placeloc.object_length == 0:
+				print(f"Area {area_id} has no object defined")
+				return False
+			# check that the object fits within the assigned area
+			if area.area < placeloc.object_width * placeloc.object_length:
+				print(f"Area {area_id} is too small for the object with width {placeloc.object_width} and length {placeloc.object_length}")
+				return False
 
 		# check that all reach constraints of steps are satisfied in the assigned area
 		for step in self.steps:
