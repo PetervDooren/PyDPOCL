@@ -204,12 +204,14 @@ class VariableBindings:
         else:
             return True
     
-    def add_reach_constraint(self, varA, varB):
+    def add_reach_constraint(self, varA: Argument, varB: Argument) -> None:
         """add a constraint in_reach(varA, varB) indicating that area B should be in reach of robot A
 
         Args:
-            varA (_type_): _description_
-            varB (_type_): _description_
+            varA (Argument): area variable
+            varB (Argument): robot variable
+        Raises:
+            Exception: if varA is not a geometric variable or varB is not a symbolic variable
         """
         
         if varA not in self.geometric_vb.variables:
