@@ -213,6 +213,9 @@ class GPlan:
 		for within_condition in new_step.preconds:
 			if within_condition.name == 'within': 
 				self.variableBindings.link_area_to_object(within_condition.Args[0], within_condition.Args[1])
+		for within_condition in new_step.effects:
+			if within_condition.name == 'within': 
+				self.variableBindings.link_area_to_object(within_condition.Args[0], within_condition.Args[1])
 		for ne in new_step.nonequals:
 			self.variableBindings.add_non_codesignation(new_step.Args[ne[0]], new_step.Args[ne[1]])
 		for rc in new_step.reach_constraints:
