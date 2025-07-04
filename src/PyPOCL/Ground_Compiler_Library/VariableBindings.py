@@ -69,13 +69,11 @@ class VariableBindings:
         elif var.typ == 'area' or 'area' in self.object_types[var.typ]:
             self.geometric_vb.register_variable(var)
         else:
-            print(f"Warning: variable {var} of type {var.typ} is neither a symbol nor an area! This should not happen")
-            raise
+            raise ValueError(f"Variable {var} of type {var.typ} is neither a symbol nor an area!")
 
     def link_area_to_object(self, objvar, areavar) -> None:
         if objvar not in self.symbolic_vb.variables:
-            print(f"Warning: variable {objvar} is not in the symbolic variables set {self.symbolic_vb.variables}")
-            raise
+            raise ValueError(f"Variable {objvar} is not in the symbolic variables set {self.symbolic_vb.variables}")
         self.geometric_vb.link_area_to_object(objvar, areavar)
 
     def is_ground(self, var) -> bool:
@@ -107,9 +105,8 @@ class VariableBindings:
             return self.geometric_vb.unify(provider.Args[1], consumer.Args[1])
         else:
             # check that all arguments are symbolic
-            if any([var.typ == 'symbol' or 'symbol' in self.object_types[var.typ] for var in provider.Args]):
-                print(f"Dont know how to handle predicate: {provider}")
-                return False
+            if any([var.typ != 'symbol' and 'symbol' not in self.object_types[var.typ] for var in provider.Args]):
+                raise ValueError(f"Predicate {provider} is unknown and has geometric arguments, but this is not supported in the current implementation.")
             provider_args = provider.Args
             consumer_args = consumer.Args
             if not len(provider_args) == len(consumer_args):

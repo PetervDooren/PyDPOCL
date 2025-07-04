@@ -139,9 +139,16 @@ class GPlan:
 		# register parameters
 		root_plan.variableBindings.set_objects(problem.objects, domain.object_types)
 		root_plan.variableBindings.set_areas(problem.areas)
-		# base area is table:
+		# set base area
 		base_areas = [a for a in problem.areas if a.name==problem.base_area]
-		root_plan.variableBindings.geometric_vb.set_base_area(base_areas[0])
+		if len(base_areas) == 0:
+			if len(problem.areas) == 0:
+				print(f"Problem has defined no areas. Assuming problem is purely symbolic.")
+			else:
+				raise ValueError(f"Base area {problem.base_area} not found in problem areas {problem.areas}")
+		else:
+			root_plan.variableBindings.geometric_vb.set_base_area(base_areas[0])
+		
 		root_plan.variableBindings.set_reach(problem.robot_reach)
 
 		# add open precondition flaws for the goal
@@ -462,6 +469,9 @@ class GPlan:
 			threatening_operators = [t[0] for t in  edge.sink.threat_map[edge.label.ID]]
 			for step in self.steps:
 				if not step.stepnum in threatening_operators:
+					continue
+				if step == edge.source or step == edge.sink:
+					# if the step is the source or sink of the causal link, it cannot threaten it
 					continue
 				if not self.OrderingGraph.isPath(edge.source, step) or not self.OrderingGraph.isPath(step, edge.sink):
 					# if the step is not in the path between source and sink, it cannot threaten the causal link

@@ -1,8 +1,9 @@
 (define (domain indiana-jones-ark)
   (:requirements)
-  (:types character place item - object
+  (:types object - symbol
+          character place item - object
           weapon - item
-		  ark - item)
+		      ark - item)
   (:predicates (open ?ark - ark)
                (alive ?character - character)
                (armed ?character - character)

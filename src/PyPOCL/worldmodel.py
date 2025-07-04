@@ -172,12 +172,18 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
     init_state = ground_steps[-2]  # second last step is the initial state
     goal_state = ground_steps[-1]  # last step is the goal state
 
-    # load worldmodel
-    objects, area_mapping, object_mapping, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
-
-    init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-
-    pre_process_operators(ground_steps)
+    if worldmodel_file is None:
+        # no worldmodel, so the domain contains no geometric variables
+        area_mapping = {}
+        object_mapping = {}
+        object_area_mapping = {}
+        robot_reach = {}
+        base_area = None
+    else:
+        # load worldmodel
+        objects, area_mapping, object_mapping, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
+        init_state = update_init_state(init_state, area_mapping, object_area_mapping)
+        pre_process_operators(ground_steps)
 
     # domain and problem names
     domain_name = os.path.splitext(os.path.basename(domain_file))[0]
