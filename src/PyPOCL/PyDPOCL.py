@@ -199,11 +199,6 @@ class POCLPlanner:
 						if REPORT:
 							print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
 							plan.print()
-							if not plan.check_plan():
-								print("Error: plan is not valid")
-							else:
-								print("Plan is valid")
-							plan.to_json("plans/manipulation-domain/manipulation-problem-plan_{}.json".format(len(completed)))
 
 						if len(completed) == k:
 							return completed

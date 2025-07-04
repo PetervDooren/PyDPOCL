@@ -19,7 +19,12 @@ if __name__ == '__main__':
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-    PLAN = 1
-    if PLAN:
-        planner = POCLPlanner(domain, problem)
-        planner.solve(k=1)
+    planner = POCLPlanner(domain, problem)
+    plans = planner.solve(k=1)
+    for i in range(len(plans)):
+        plan = plans[i]
+        if not plan.check_plan():
+            print("Error: plan is not valid")
+        else:
+            print("Plan is valid")
+        plan.to_json(f"plans/manipulation-domain/manipulation-problem-plan_{i}.json")
