@@ -10,7 +10,7 @@ from PyPOCL.Ground_Compiler_Library import Ground, precompile
 from PyPOCL.Ground_Compiler_Library.Element import Argument
 
 Domain = namedtuple('Domain', ['name', 'conditions', 'object_types', 'operators'])
-Problem = namedtuple('Problem', ['name', 'domain', 'objects', 'base_area', 'areas', 'initial_positions', 'init', 'goal', 'robot_reach'])
+Problem = namedtuple('Problem', ['name', 'domain', 'objects', 'object_dimensions', 'base_area', 'areas', 'initial_positions', 'init', 'goal', 'robot_reach'])
 
 def just_compile(domain_file, problem_file):
 	GL = Ground.GLib(domain_file, problem_file)
@@ -55,7 +55,7 @@ def load_worldmodel(file, objects):
             geo_objects[o["name"]] = world_object(o["name"], o["width"], o["length"], o["initial_pose"][0], o["initial_pose"][1])
 
     area_mapping = {} # mapping of arguments to a polygon
-    object_mapping = {} # mapping of arguments to world_object
+    object_dimensions = {} # mapping of arguments to their dimensions (width, length)
     object_area_mapping = {} # mapping of object argument to inital area argument
     robot_reach_mapping = {} # mapping between a robot argument and an area argument representing its reach
 
@@ -67,7 +67,7 @@ def load_worldmodel(file, objects):
     # link objects to their arguments
     physical_objects = [a for a in objects if a.typ=='item']
     for o in physical_objects:
-        object_mapping[o] = geo_objects[o.name]
+        object_dimensions[o] = (geo_objects[o.name].width, geo_objects[o.name].length)
         # create arguments to represent the initial positions of the object
         argname = o.name + "_init_pos"
         area_arg = Argument(uuid4(), "area", argname, None)
@@ -92,7 +92,7 @@ def load_worldmodel(file, objects):
         reach_area = [a for a in area_objects if a.name == robot_reach[r.name]]
         robot_reach_mapping[r] = reach_area[0] 
 
-    return objects, area_mapping, object_mapping, object_area_mapping, robot_reach_mapping, base_area
+    return objects, area_mapping, object_dimensions, object_area_mapping, robot_reach_mapping, base_area
 
 def update_init_state(init_state, area_mapping, object_area_mapping):
     """update the truth conditions of the initial state using the geometry
@@ -181,7 +181,7 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
         base_area = None
     else:
         # load worldmodel
-        objects, area_mapping, object_mapping, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
+        objects, area_mapping, object_dimensions, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
         init_state = update_init_state(init_state, area_mapping, object_area_mapping)
         pre_process_operators(ground_steps)
 
@@ -195,6 +195,7 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
     problem = Problem(name = problem_name,
                       domain=domain_name,
                       objects=objects,
+                      object_dimensions=object_dimensions,
                       base_area=base_area,
                       areas=area_mapping,
                       initial_positions=object_area_mapping,

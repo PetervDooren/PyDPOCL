@@ -27,12 +27,12 @@ class VariableBindingsGeometric:
         the base area in which all other areas are defined
     defined areas : dict(Argument:Polygon)
         mapping between area arguments and their polygons
+    object_dimensions: dict(Argument:tuple(float, float))
+        mapping between object arguments and their dimensions (width, length)
     variables : list(Argument)
         list of area variables
     placelocs : dict(Argument:placeloc)
         mapping between arguments and their place location info.
-    groups : list(Argument)
-        list of arguments where the properties of a group are collected
     within_mapping : dict(Argument:list(Argument))
         maps a variable A to all other variables B where within(A, B) holds
     inverse_within_mapping : dict(Argument:list(Argument))
@@ -61,6 +61,9 @@ class VariableBindingsGeometric:
 
     def set_base_area(self, area: Argument):
         self.base_area = area
+    
+    def set_object_dimensions(self, objects):
+        self.object_dimensions = objects
     
     def get_max_area(self, var: Argument) -> Polygon:
         """get the maximum area for a variable

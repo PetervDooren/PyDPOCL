@@ -137,7 +137,7 @@ class GPlan:
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.goal)
 
 		# register parameters
-		root_plan.variableBindings.set_objects(problem.objects, domain.object_types)
+		root_plan.variableBindings.set_objects(problem.objects, domain.object_types, problem.object_dimensions)
 		root_plan.variableBindings.set_areas(problem.areas)
 		# set base area
 		base_areas = [a for a in problem.areas if a.name==problem.base_area]

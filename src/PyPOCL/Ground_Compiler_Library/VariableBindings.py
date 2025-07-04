@@ -30,12 +30,13 @@ class VariableBindings:
     def isInternallyConsistent(self):
         return True
 
-    def set_objects(self, objects, object_types):
+    def set_objects(self, objects, object_types, object_dimensions):
         """configure the objects present in the worldmodel
 
         Args:
             objects (List(arguments)): list of objects present in the world.
             object_types (defaultdict(str: set(str))): mapping between objects and their (sub) types
+            object_dimensions (dict(Argument:tuple(float, float))): mapping between objects and their dimensions (width, length)
         """
         
         # check that no object is of both type symbol and area
@@ -46,6 +47,7 @@ class VariableBindings:
         self.objects =objects
         self.object_types = object_types
         self.symbolic_vb.set_objects(objects, object_types)
+        self.geometric_vb.set_object_dimensions(object_dimensions)
 
     def set_areas(self, areas):
         """Configure the areas used in the geometric part of variable bindings
