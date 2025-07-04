@@ -9,8 +9,6 @@ class TestBenchmarks(unittest.TestCase):
         benchmark_dir = 'tests/benchmarks'
         domains = [name for name in os.listdir(benchmark_dir) if os.path.isdir(os.path.join(benchmark_dir, name))]
 
-        test_data = []
-
         for domain in domains:
             domain_file = os.path.join(benchmark_dir, domain, "domain.pddl")
             problem_file = os.path.join(benchmark_dir, domain, "problem.pddl")
