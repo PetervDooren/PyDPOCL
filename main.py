@@ -30,4 +30,4 @@ if __name__ == '__main__':
             print("Error: plan is not valid")
         else:
             print("Plan is valid")
-        plan.to_json(f"plans/manipulation-domain/manipulation-problem-plan_{i}.json")
+        plan.to_json(f"plans/{domain.name}/{problem.name}-plan_{i}.json")

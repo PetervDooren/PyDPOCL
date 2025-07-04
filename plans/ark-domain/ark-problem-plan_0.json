@@ -1,0 +1,758 @@
+{
+  "ID": "50783614-8781-4c91-b3f1-6a16bedffa3e",
+  "name": "[u]0[a] [s]1[r] [u]2[r] [r]2[a] [s]1[r] [s]0[r] [u]1[r] [u]0[a] [s]0[r] [u]1[r] [r]1[a] [s]0[r] [s]0[r] [s]0[r] [u]1[r] ",
+  "domain": "ark-domain",
+  "problem": "ark-problem",
+  "solved": true,
+  "cost": 4,
+  "heuristic": 0,
+  "depth": 0,
+  "init_state": {
+    "ID": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+    "schema": "dummy_init",
+    "Args": [],
+    "preconds": [],
+    "effects": [
+      {
+        "ID": "c41a4ccc-02c3-4f3c-a13f-bfef849d0975",
+        "name": "armed",
+        "Args": [
+          "41acf0d8-a03b-4a2e-b97d-72bf92b0f111"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "b39e7c29-8782-4ce7-9a65-14a89fcc494c",
+        "name": "armed",
+        "Args": [
+          "7bf60fc4-047e-434a-9c3e-2c8075928ed0"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "edfa6372-467d-437c-b778-2f5c0b49a4c7",
+        "name": "at",
+        "Args": [
+          "41acf0d8-a03b-4a2e-b97d-72bf92b0f111",
+          "9eba32ac-f131-435c-a543-6d6969cbdc41"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "e59642c7-c6b0-4e03-bc6e-c57dda413055",
+        "name": "at",
+        "Args": [
+          "41acf0d8-a03b-4a2e-b97d-72bf92b0f111",
+          "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "9956236b-eb8e-44d4-b1ba-34ec0c5f7bdf",
+        "name": "at",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41",
+          "9eba32ac-f131-435c-a543-6d6969cbdc41"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "d941fdcb-9030-4121-945f-817e59a47420",
+        "name": "alive",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "71028b21-2b73-4839-8b7f-4f59bcebf636",
+        "name": "burried",
+        "Args": [
+          "0c4b3a59-5438-4b4a-b637-845797dd7476",
+          "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "5e6143d2-1a5e-4faa-809a-7c48ac0e2f5f",
+        "name": "alive",
+        "Args": [
+          "7bf60fc4-047e-434a-9c3e-2c8075928ed0"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "1098c8b2-b240-4c0d-a332-a3adaa719c68",
+        "name": "has",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41",
+          "2489c221-36ef-4dc4-95c9-136ef71fa28f"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "58649db7-82f8-4b23-ad69-10f07e1db30e",
+        "name": "alive",
+        "Args": [
+          "41acf0d8-a03b-4a2e-b97d-72bf92b0f111"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "d91d6b72-b310-41fc-9c2e-195cd628aad9",
+        "name": "armed",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "51bdbb71-d13b-409a-9683-38d3f6026d65",
+        "name": "open",
+        "Args": [
+          "0c4b3a59-5438-4b4a-b637-845797dd7476"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "07559e11-c1fd-4933-9ac9-ff879e4f233e",
+        "name": "at",
+        "Args": [
+          "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+          "9eba32ac-f131-435c-a543-6d6969cbdc41"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "1ff20120-8451-401e-a8e6-8c6341fa313d",
+        "name": "at",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41",
+          "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "e5555dff-1d87-46d3-ab83-986f8aa2cdc6",
+        "name": "knows-location",
+        "Args": [
+          "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+          "0c4b3a59-5438-4b4a-b637-845797dd7476",
+          "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "17bfe268-9893-4ff2-99be-3a3e5f8b7947",
+        "name": "at",
+        "Args": [
+          "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+          "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+        ],
+        "trudom": false
+      }
+    ],
+    "stepnum": 10,
+    "height": 0
+  },
+  "goal_state": {
+    "ID": "e3f80fb9-382c-408f-aebb-cbda32216098",
+    "schema": "dummy_goal",
+    "Args": [],
+    "preconds": [
+      {
+        "ID": "a7d2a68a-dce3-4399-919d-e5906f27ce9e",
+        "name": "open",
+        "Args": [
+          "0c4b3a59-5438-4b4a-b637-845797dd7476"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "39e900b0-3baa-4e63-924b-58d6f77e54b4",
+        "name": "alive",
+        "Args": [
+          "3d341183-c696-467e-aace-8805b388fe41"
+        ],
+        "trudom": false
+      }
+    ],
+    "effects": [],
+    "stepnum": 11,
+    "height": 0
+  },
+  "steps": [
+    {
+      "ID": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "schema": "dummy_init",
+      "Args": [],
+      "preconds": [],
+      "effects": [
+        {
+          "ID": "c41a4ccc-02c3-4f3c-a13f-bfef849d0975",
+          "name": "armed",
+          "Args": [
+            "41acf0d8-a03b-4a2e-b97d-72bf92b0f111"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "b39e7c29-8782-4ce7-9a65-14a89fcc494c",
+          "name": "armed",
+          "Args": [
+            "7bf60fc4-047e-434a-9c3e-2c8075928ed0"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "edfa6372-467d-437c-b778-2f5c0b49a4c7",
+          "name": "at",
+          "Args": [
+            "41acf0d8-a03b-4a2e-b97d-72bf92b0f111",
+            "9eba32ac-f131-435c-a543-6d6969cbdc41"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "e59642c7-c6b0-4e03-bc6e-c57dda413055",
+          "name": "at",
+          "Args": [
+            "41acf0d8-a03b-4a2e-b97d-72bf92b0f111",
+            "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "9956236b-eb8e-44d4-b1ba-34ec0c5f7bdf",
+          "name": "at",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41",
+            "9eba32ac-f131-435c-a543-6d6969cbdc41"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "d941fdcb-9030-4121-945f-817e59a47420",
+          "name": "alive",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "71028b21-2b73-4839-8b7f-4f59bcebf636",
+          "name": "burried",
+          "Args": [
+            "0c4b3a59-5438-4b4a-b637-845797dd7476",
+            "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "5e6143d2-1a5e-4faa-809a-7c48ac0e2f5f",
+          "name": "alive",
+          "Args": [
+            "7bf60fc4-047e-434a-9c3e-2c8075928ed0"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "1098c8b2-b240-4c0d-a332-a3adaa719c68",
+          "name": "has",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41",
+            "2489c221-36ef-4dc4-95c9-136ef71fa28f"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "58649db7-82f8-4b23-ad69-10f07e1db30e",
+          "name": "alive",
+          "Args": [
+            "41acf0d8-a03b-4a2e-b97d-72bf92b0f111"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "d91d6b72-b310-41fc-9c2e-195cd628aad9",
+          "name": "armed",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "51bdbb71-d13b-409a-9683-38d3f6026d65",
+          "name": "open",
+          "Args": [
+            "0c4b3a59-5438-4b4a-b637-845797dd7476"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "07559e11-c1fd-4933-9ac9-ff879e4f233e",
+          "name": "at",
+          "Args": [
+            "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+            "9eba32ac-f131-435c-a543-6d6969cbdc41"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "1ff20120-8451-401e-a8e6-8c6341fa313d",
+          "name": "at",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41",
+            "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "e5555dff-1d87-46d3-ab83-986f8aa2cdc6",
+          "name": "knows-location",
+          "Args": [
+            "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+            "0c4b3a59-5438-4b4a-b637-845797dd7476",
+            "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "17bfe268-9893-4ff2-99be-3a3e5f8b7947",
+          "name": "at",
+          "Args": [
+            "7bf60fc4-047e-434a-9c3e-2c8075928ed0",
+            "0420c8ad-2b51-4beb-b8f4-e7742cbe3261"
+          ],
+          "trudom": false
+        }
+      ],
+      "stepnum": 10,
+      "height": 0
+    },
+    {
+      "ID": "e3f80fb9-382c-408f-aebb-cbda32216098",
+      "schema": "dummy_goal",
+      "Args": [],
+      "preconds": [
+        {
+          "ID": "a7d2a68a-dce3-4399-919d-e5906f27ce9e",
+          "name": "open",
+          "Args": [
+            "0c4b3a59-5438-4b4a-b637-845797dd7476"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "39e900b0-3baa-4e63-924b-58d6f77e54b4",
+          "name": "alive",
+          "Args": [
+            "3d341183-c696-467e-aace-8805b388fe41"
+          ],
+          "trudom": false
+        }
+      ],
+      "effects": [],
+      "stepnum": 11,
+      "height": 0
+    },
+    {
+      "ID": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "schema": "open-ark",
+      "Args": [
+        "a4b5b0ce-36b7-4003-9212-2b65bdf5a8d6",
+        "41bb71eb-dd37-4567-9d46-53cf2a80686d"
+      ],
+      "preconds": [
+        {
+          "ID": "41164074-a5c3-4184-a438-f5334ef6c002",
+          "name": "has",
+          "Args": [
+            "a4b5b0ce-36b7-4003-9212-2b65bdf5a8d6",
+            "41bb71eb-dd37-4567-9d46-53cf2a80686d"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "87d23ba3-bc34-4d92-bcbc-88e2b837f917",
+          "name": "alive",
+          "Args": [
+            "a4b5b0ce-36b7-4003-9212-2b65bdf5a8d6"
+          ],
+          "trudom": true
+        }
+      ],
+      "effects": [
+        {
+          "ID": "4fbffd33-b23a-4783-8662-62e1cd61ce75",
+          "name": "open",
+          "Args": [
+            "41bb71eb-dd37-4567-9d46-53cf2a80686d"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "9ea67495-f149-4c11-bdff-c2991fd3427b",
+          "name": "alive",
+          "Args": [
+            "a4b5b0ce-36b7-4003-9212-2b65bdf5a8d6"
+          ],
+          "trudom": false
+        }
+      ],
+      "stepnum": 6,
+      "height": 0
+    },
+    {
+      "ID": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "schema": "give",
+      "Args": [
+        "80159004-38ed-4806-8fd8-623e02801af5",
+        "2fa22ff3-1b43-45c6-bf59-789dbd6d738a",
+        "95920776-d2f1-4265-b168-da728bb38096",
+        "cd61c03f-c07b-49c9-9a4f-377a5a17868d"
+      ],
+      "preconds": [
+        {
+          "ID": "bad15679-a763-439f-bf5b-d9c096b49a93",
+          "name": "alive",
+          "Args": [
+            "80159004-38ed-4806-8fd8-623e02801af5"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "efaa5fd3-f0b4-470e-b79b-e45e75d8dbac",
+          "name": "alive",
+          "Args": [
+            "95920776-d2f1-4265-b168-da728bb38096"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "5b5d5925-e659-4dad-bdb9-9be2b94daa90",
+          "name": "has",
+          "Args": [
+            "80159004-38ed-4806-8fd8-623e02801af5",
+            "2fa22ff3-1b43-45c6-bf59-789dbd6d738a"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "a384b547-c0b0-4592-8465-69f24453c309",
+          "name": "at",
+          "Args": [
+            "95920776-d2f1-4265-b168-da728bb38096",
+            "cd61c03f-c07b-49c9-9a4f-377a5a17868d"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "615cfa31-1e11-41e6-8e1c-e4deb52ac977",
+          "name": "at",
+          "Args": [
+            "80159004-38ed-4806-8fd8-623e02801af5",
+            "cd61c03f-c07b-49c9-9a4f-377a5a17868d"
+          ],
+          "trudom": true
+        }
+      ],
+      "effects": [
+        {
+          "ID": "b083bc8f-faab-4d10-8619-e8399affd6e5",
+          "name": "has",
+          "Args": [
+            "95920776-d2f1-4265-b168-da728bb38096",
+            "2fa22ff3-1b43-45c6-bf59-789dbd6d738a"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "80071e11-ef62-43b0-a790-27961a70a484",
+          "name": "has",
+          "Args": [
+            "80159004-38ed-4806-8fd8-623e02801af5",
+            "2fa22ff3-1b43-45c6-bf59-789dbd6d738a"
+          ],
+          "trudom": false
+        }
+      ],
+      "stepnum": 8,
+      "height": 0
+    },
+    {
+      "ID": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "schema": "travel",
+      "Args": [
+        "a05c4c20-1da2-42ff-b856-4ed1e34c72f9",
+        "6a80d076-9f1f-4576-aba0-412ba2f82abb",
+        "a8a38537-0fd0-46b8-add6-955d261f7849"
+      ],
+      "preconds": [
+        {
+          "ID": "7ae91398-f8d7-4720-b7f3-d486dcc047f6",
+          "name": "alive",
+          "Args": [
+            "a05c4c20-1da2-42ff-b856-4ed1e34c72f9"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "d925ca99-b6e0-49fb-b458-c1924edfacbe",
+          "name": "at",
+          "Args": [
+            "a05c4c20-1da2-42ff-b856-4ed1e34c72f9",
+            "6a80d076-9f1f-4576-aba0-412ba2f82abb"
+          ],
+          "trudom": true
+        }
+      ],
+      "effects": [
+        {
+          "ID": "414ed93b-52a9-4d02-ab7e-f8f7b4a3e7c2",
+          "name": "at",
+          "Args": [
+            "a05c4c20-1da2-42ff-b856-4ed1e34c72f9",
+            "6a80d076-9f1f-4576-aba0-412ba2f82abb"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "17d4b73d-093a-42d7-80c2-e3a5b3f56b68",
+          "name": "at",
+          "Args": [
+            "a05c4c20-1da2-42ff-b856-4ed1e34c72f9",
+            "a8a38537-0fd0-46b8-add6-955d261f7849"
+          ],
+          "trudom": true
+        }
+      ],
+      "stepnum": 4,
+      "height": 0
+    },
+    {
+      "ID": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "schema": "excavate",
+      "Args": [
+        "501238c0-e4f9-4c70-9373-c7efb8f9a051",
+        "8e792cf0-090a-4e49-9ecb-b081cba1ea09",
+        "67814d9d-65c0-47a4-8d50-c9bc01c8b143"
+      ],
+      "preconds": [
+        {
+          "ID": "16b734a0-8c2d-434c-9203-600eab3468a4",
+          "name": "alive",
+          "Args": [
+            "501238c0-e4f9-4c70-9373-c7efb8f9a051"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "5bcb535e-3ba1-44b5-9b59-eeb1e5fea947",
+          "name": "burried",
+          "Args": [
+            "8e792cf0-090a-4e49-9ecb-b081cba1ea09",
+            "67814d9d-65c0-47a4-8d50-c9bc01c8b143"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "94273d10-b548-4176-a5f6-a16a5d2da6ad",
+          "name": "at",
+          "Args": [
+            "501238c0-e4f9-4c70-9373-c7efb8f9a051",
+            "67814d9d-65c0-47a4-8d50-c9bc01c8b143"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "f98889f9-9c73-4cd7-bf50-58f125153223",
+          "name": "knows-location",
+          "Args": [
+            "501238c0-e4f9-4c70-9373-c7efb8f9a051",
+            "8e792cf0-090a-4e49-9ecb-b081cba1ea09",
+            "67814d9d-65c0-47a4-8d50-c9bc01c8b143"
+          ],
+          "trudom": true
+        }
+      ],
+      "effects": [
+        {
+          "ID": "ee574f63-9bcb-44a7-b712-891323907b32",
+          "name": "burried",
+          "Args": [
+            "8e792cf0-090a-4e49-9ecb-b081cba1ea09",
+            "67814d9d-65c0-47a4-8d50-c9bc01c8b143"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "f59cbd4d-3b1a-4889-8e57-b1fec2e56f8e",
+          "name": "has",
+          "Args": [
+            "501238c0-e4f9-4c70-9373-c7efb8f9a051",
+            "8e792cf0-090a-4e49-9ecb-b081cba1ea09"
+          ],
+          "trudom": true
+        }
+      ],
+      "stepnum": 3,
+      "height": 0
+    }
+  ],
+  "orderings": [
+    {
+      "source": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098"
+    },
+    {
+      "source": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed"
+    },
+    {
+      "source": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098"
+    },
+    {
+      "source": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098"
+    },
+    {
+      "source": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8"
+    },
+    {
+      "source": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c"
+    },
+    {
+      "source": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098"
+    },
+    {
+      "source": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08"
+    }
+  ],
+  "causal_links": [
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink-precondition": "a384b547-c0b0-4592-8465-69f24453c309"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink-precondition": "7ae91398-f8d7-4720-b7f3-d486dcc047f6"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink-precondition": "efaa5fd3-f0b4-470e-b79b-e45e75d8dbac"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink-precondition": "16b734a0-8c2d-434c-9203-600eab3468a4"
+    },
+    {
+      "source": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "sink-precondition": "41164074-a5c3-4184-a438-f5334ef6c002"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink-precondition": "d925ca99-b6e0-49fb-b458-c1924edfacbe"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "sink-precondition": "87d23ba3-bc34-4d92-bcbc-88e2b837f917"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink-precondition": "5bcb535e-3ba1-44b5-9b59-eeb1e5fea947"
+    },
+    {
+      "source": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink-precondition": "5b5d5925-e659-4dad-bdb9-9be2b94daa90"
+    },
+    {
+      "source": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098",
+      "sink-precondition": "a7d2a68a-dce3-4399-919d-e5906f27ce9e"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink-precondition": "bad15679-a763-439f-bf5b-d9c096b49a93"
+    },
+    {
+      "source": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink": "0bee2495-c1fb-4b0c-8e4d-58c8fbead8ed",
+      "sink-precondition": "615cfa31-1e11-41e6-8e1c-e4deb52ac977"
+    },
+    {
+      "source": "c181ef87-26f4-4e2a-85ce-f5378aed5b2d",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink-precondition": "f98889f9-9c73-4cd7-bf50-58f125153223"
+    },
+    {
+      "source": "47292ea5-d7a0-4a0a-a91a-1c18fd33bf08",
+      "sink": "fd17a8b3-b239-4a73-9b65-e6365933e1d8",
+      "sink-precondition": "94273d10-b548-4176-a5f6-a16a5d2da6ad"
+    },
+    {
+      "source": "3f83a8e9-65cb-4d6e-81b6-e59edc36d68c",
+      "sink": "e3f80fb9-382c-408f-aebb-cbda32216098",
+      "sink-precondition": "39e900b0-3baa-4e63-924b-58d6f77e54b4"
+    }
+  ],
+  "variableBindings": {
+    "symbolic": {
+      "7bf60fc4-047e-434a-9c3e-2c8075928ed0": "indiana",
+      "3d341183-c696-467e-aace-8805b388fe41": "nazis",
+      "9eba32ac-f131-435c-a543-6d6969cbdc41": "usa",
+      "0c4b3a59-5438-4b4a-b637-845797dd7476": "ark",
+      "41acf0d8-a03b-4a2e-b97d-72bf92b0f111": "army",
+      "2489c221-36ef-4dc4-95c9-136ef71fa28f": "gun",
+      "0420c8ad-2b51-4beb-b8f4-e7742cbe3261": "tanis",
+      "a4b5b0ce-36b7-4003-9212-2b65bdf5a8d6": "nazis",
+      "41bb71eb-dd37-4567-9d46-53cf2a80686d": "ark",
+      "80159004-38ed-4806-8fd8-623e02801af5": "indiana",
+      "2fa22ff3-1b43-45c6-bf59-789dbd6d738a": "ark",
+      "95920776-d2f1-4265-b168-da728bb38096": "nazis",
+      "cd61c03f-c07b-49c9-9a4f-377a5a17868d": "tanis",
+      "a05c4c20-1da2-42ff-b856-4ed1e34c72f9": "indiana",
+      "6a80d076-9f1f-4576-aba0-412ba2f82abb": "usa",
+      "a8a38537-0fd0-46b8-add6-955d261f7849": "tanis",
+      "501238c0-e4f9-4c70-9373-c7efb8f9a051": "indiana",
+      "8e792cf0-090a-4e49-9ecb-b081cba1ea09": "ark",
+      "67814d9d-65c0-47a4-8d50-c9bc01c8b143": "tanis"
+    },
+    "geometric": {}
+  }
+}
