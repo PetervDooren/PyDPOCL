@@ -345,44 +345,44 @@ class GPlan:
 
 	# Resolve Methods #
 
-	def resolve(self, new_step, s_need, p):
-		if new_step.height > 0:
-			self.resolve_with_decomp(new_step, s_need, p)
+	def resolve(self, provider, consumer, precondition):
+		if provider.height > 0:
+			self.resolve_with_decomp(provider, consumer, precondition)
 		else:
-			self.resolve_with_primitive(new_step, s_need, p)
+			self.resolve_with_primitive(provider, consumer, precondition)
 
-	def resolve_with_primitive(self, new_step, mutable_s_need, mutable_p):
-		"""resolve required precondition 'mutable_p' of step 'mutable_s_need' using step 'new_step' 
+	def resolve_with_primitive(self, provider: Operator, consumer: Operator, precondition: GLiteral) -> None:
+		"""resolve precondition of the consumer using an effect of the provider 
 
 		Args:
-			new_step (_type_): _description_
-			mutable_s_need (_type_): _description_
-			mutable_p (_type_): _description_
+			provider (Operator): action which provides the effect
+			consumer (Operator): action which requires the effect for its precondition
+			precondition (GLiteral): precondition of the consumer that is fulfilled by the provider's effect
 		"""
 		# operate on cloned plan
-		mutable_s_need.fulfill(mutable_p)
+		consumer.fulfill(precondition)
 
 		# add orderings
-		self.OrderingGraph.addEdge(new_step, mutable_s_need)
+		self.OrderingGraph.addEdge(provider, consumer)
 
 		# add causal link
 		#TODO uniquely identify the provider condition in the causal link
-		c_link = self.CausalLinkGraph.addEdge(new_step, mutable_s_need, mutable_p)
+		c_link = self.CausalLinkGraph.addEdge(provider, consumer, precondition)
 
-		mutable_s_need.update_choices(self)
+		consumer.update_choices(self)
 
 		# check if this link is threatened
-		ignore_these = {mutable_s_need.ID, new_step.ID}
+		ignore_these = {consumer.ID, provider.ID}
 		# ignore_these = {mutable_s_need.stepnum, new_step.stepnum}
 		for step in self.steps:
 			if step.ID in ignore_these:
 				continue
-			if step.stepnum not in [tup[0] for tup in mutable_s_need.threat_map[mutable_p.ID]]:
+			if step.stepnum not in [tup[0] for tup in consumer.threat_map[precondition.ID]]:
 				continue
-			if self.OrderingGraph.isPath(mutable_s_need, step):
+			if self.OrderingGraph.isPath(consumer, step):
 				continue
 			# only for reuse case, otherwise this check is superfluous
-			if self.OrderingGraph.isPath(step, new_step):
+			if self.OrderingGraph.isPath(step, provider):
 				continue
 			self.potential_tclf.append(TCLF(step, c_link))
 
@@ -398,25 +398,25 @@ class GPlan:
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(new_step, cl))
 
-	def resolve_with_decomp(self, new_step, mutable_s_need, mutable_p):
+	def resolve_with_decomp(self, provider, consumer, precondition):
 		raise DeprecationWarning("decomposition is no longer supported")
-		d_i, d_f = new_step.dummy
+		d_i, d_f = provider.dummy
 
 		# operate on cloned plan
 		# mutable_s_need = self[s_index]
 		# mutable_p = mutable_s_need.preconds[p_index]
-		mutable_s_need.fulfill(mutable_p)
+		consumer.fulfill(precondition)
 
 		# add ordering
-		self.OrderingGraph.addEdge(d_f, mutable_s_need)
+		self.OrderingGraph.addEdge(d_f, consumer)
 
 		# add causal link
-		c_link = self.CausalLinkGraph.addEdge(d_f, mutable_s_need, mutable_p)
+		c_link = self.CausalLinkGraph.addEdge(d_f, consumer, precondition)
 
-		mutable_s_need.update_choices(self)
+		consumer.update_choices(self)
 
 		# check if df -> s_need is threatened
-		ignore_these = {mutable_s_need.ID, d_f.ID, d_i.ID}
+		ignore_these = {consumer.ID, d_f.ID, d_i.ID}
 		for step in self.steps:
 			# reminder: existing steps are primitive
 
@@ -424,12 +424,12 @@ class GPlan:
 				continue
 
 			### NOT SUFFICIENT: needs to not be a threat to any sub-step added... ###
-			if step.stepnum not in mutable_s_need.threat_map[mutable_p.ID]:
+			if step.stepnum not in consumer.threat_map[precondition.ID]:
 				continue
 			# check only for d_f, in case this step occurs between d_i and d_f
 			if self.OrderingGraph.isPath(step, d_f):
 				continue
-			if self.OrderingGraph.isPath(mutable_s_need, step):
+			if self.OrderingGraph.isPath(consumer, step):
 				continue
 			self.flaws.insert(self, TCLF(step, c_link))
 
