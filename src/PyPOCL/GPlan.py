@@ -492,8 +492,13 @@ class GPlan:
 						# if the edge is unified with the threatening effect, it threatens it
 						print(f"Causal link {edge} is threatened by step {step.ID}")
 						return False
-		#TODO check that all causal links condition arguments are unified
-		# cannot be done right now as causal links only contain info on the sink-precondition, not the source effect
+		# check that all causal links condition arguments are unified
+		for edge in self.CausalLinkGraph.edges:
+			# check that the effect of the edge is unified with the precondition of the edge
+			if not self.variableBindings.is_unified(edge.label.source, edge.label.sink):
+				print(f"Causal link {edge} does not have unified effect: {edge.label.source} and precondition {edge.label.sink}")
+				return False
+			
 
 		# check that place locations are large enough for the objects
 		for area_id in self.variableBindings.geometric_vb.variables:
