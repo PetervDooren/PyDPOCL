@@ -310,8 +310,7 @@ class GLiteral:
 		return self.name == other.name and self.Args == other.Args and self.truth == other.truth
 
 	def __repr__(self):
-		args = str([arg if not isinstance(arg, Argument) else arg.name for arg in self.Args])
-		#args = str([arg.name if not isinstance(arg, Action) else arg for arg in self.Args])
+		args = str([arg.arg_name if arg.name is None else arg.name if not isinstance(arg, ElementGraph) else arg for arg in self.Args])
 		t = ''
 		if not self.truth:
 			t = 'not-'

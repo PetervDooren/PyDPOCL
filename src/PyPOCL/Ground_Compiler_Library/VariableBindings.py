@@ -121,7 +121,7 @@ class VariableBindings:
             return True
         
     def is_unified(self, provider, consumer) -> bool:
-        """check if the provider and consumer are unified
+        """check if the provider and consumer are unified. i.e. the provider implies the consumer.
 
         Args:
             provider (Argument): _description_
@@ -131,7 +131,7 @@ class VariableBindings:
             bool: True if the provider and consumer are unified
         """
         if provider.name == 'within':
-            return self.symbolic_vb.is_codesignated(provider.Args[0], consumer.Args[0]) and self.geometric_vb.is_unified(provider.Args[1], consumer.Args[1])
+            return self.symbolic_vb.is_codesignated(provider.Args[0], consumer.Args[0]) and self.geometric_vb.is_within(provider.Args[1], consumer.Args[1])
         else:
             if not len(provider.Args) == len(consumer.Args):
                 return False
