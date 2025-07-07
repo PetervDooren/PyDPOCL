@@ -237,52 +237,51 @@ class POCLPlanner:
 			flaw (Flaw): flaw of that plan to be resolved (must be open precondition)
 		"""
 
-		s_need, p = flaw.flaw
-		cndts = s_need.cndt_map[p.ID]
+		consumer, precondition = flaw.flaw
+		candidates = consumer.cndt_map[precondition.ID]
 
-		if len(cndts) == 0:
+		if len(candidates) == 0:
 			return
 
 		# need indices
-		s_index = plan.index(s_need)
-		p_index = s_need.preconds.index(p)
-		for cndt_step, cndt_eff in cndts:
+		consumer_index = plan.index(consumer)
+		precondition_index = consumer.preconds.index(precondition)
+		for candidate_operator, candidate_effect in candidates:
 
 			if RRP:
 				# the Recursive Repair Policty: only let steps with <= height repair open conditions.
-				if self.gsteps[cndt_step].height > flaw.level:
+				if self.gsteps[candidate_operator].height > flaw.level:
 					continue
 
 			# cannot add a step which is the inital step
-			if not self.gsteps[cndt_step].instantiable:
+			if not self.gsteps[candidate_operator].instantiable:
 				continue
 			# clone plan and new step
 
 			new_plan = plan.instantiate(str(self.plan_num) + '[a] ')
 
 			# use indices befoer inserting new steps
-			mutable_s_need = new_plan[s_index]
-			mutable_p = mutable_s_need.preconds[p_index]
+			new_plan_consumer = new_plan[consumer_index]
+			new_plan_precondition = new_plan_consumer.preconds[precondition_index]
 
 			# instantiate new step
-			new_step = self.gsteps[cndt_step].instantiate()
+			new_step = self.gsteps[candidate_operator].instantiate()
 
 			# pass depth to new Added step.
-			new_step.depth = mutable_s_need.depth
+			new_step.depth = new_plan_consumer.depth
 
 			# recursively insert new step and substeps into plan, adding orderings and flaws
 			new_plan.insert(new_step)
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			provider = new_step.effects[cndt_eff]
-			consumer = mutable_p
-			if not new_plan.variableBindings.unify(provider, consumer):
+			new_plan_provider = new_step.effects[candidate_effect]
+			if not new_plan.variableBindings.unify(new_plan_provider, new_plan_precondition):
 				continue
 
-			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {mutable_p} of {s_need} with effect {provider}.')
+			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {new_plan_consumer} with effect {new_plan_provider}.')
 
 			# resolve s_need with the new step
-			new_plan.resolve(new_step, mutable_s_need, mutable_p)
+			new_plan.resolve(new_step, new_plan_consumer, new_plan_precondition)
 
 			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
 			# new_plan.cost += self.max_height + 1 - new_step.height
