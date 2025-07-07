@@ -13,9 +13,10 @@ if __name__ == '__main__':
         #problem_file = 'domains/ark-domain/ark-problem.pddl'
         #worldmodel_file = None # ark problem has no geometric variables
         
-        #domain_file = 'Ground_Compiler_Library//domains/manipulation-domain-symbolic.pddl'
-        #problem_file = 'Ground_Compiler_Library//domains/manipulation-problem-symbolic.pddl'
-        
+        #domain_file = 'tests/domains/test-domain.pddl'
+        #problem_file = 'tests/domains/test-problem.pddl'
+        #worldmodel_file = 'tests/domains/test-worldmodel.json'
+
         domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
         problem_file = 'domains/manipulation-domain/manipulation-problem.pddl'
         worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel.json'

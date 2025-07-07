@@ -16,7 +16,7 @@ if __name__ == '__main__':
         domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
         problem_file = 'domains/manipulation-domain/manipulation-problem.pddl'
         worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel.json'
-        plan_file = 'plans/manipulation-domain/manipulation-problem-plan_1.json'
+        plan_file = 'plans/manipulation-domain/manipulation-problem-plan_0.json'
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
     # Load the plan from the JSON file

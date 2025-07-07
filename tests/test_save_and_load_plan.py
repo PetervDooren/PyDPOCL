@@ -20,11 +20,11 @@ class TestGPlanJson(unittest.TestCase):
         # load domain and problem
         domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-        plan = GPlan.from_json(domain, problem, "tests/test_plan.json")
-        self.assertEqual(plan.name, "test-plan")
-        self.assertEqual(plan.cost, 1)
+        plan = GPlan.from_json(domain, problem, "tests/plans/test-problem-plan_0.json")
+        self.assertEqual(plan.name, "[u]0[a] [u]0[a] [t]1[td] [u]1[r] [ug]1[g] [ug]0[g] ")
+        self.assertEqual(plan.cost, 2)
         self.assertEqual(plan.depth, 0)
-        self.assertEqual(len(plan.steps), 3)
+        self.assertEqual(len(plan.steps), 4)
 
 if __name__ == '__main__':
     unittest.main()
