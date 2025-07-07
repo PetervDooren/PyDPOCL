@@ -167,12 +167,18 @@ class POCLPlanner:
 
 			# check if any potential TCLFs are fully initialised
 			for pot_tclf in plan.potential_tclf:
-				precondition_args = pot_tclf.link.sink.Args
-				effect_args = pot_tclf.link.source.Args
-				# check if the arguments of the link are codesignated with the arguments of the
-				# threat. If so, the link is threatened.
-				for i in range(len(precondition_args)):
-					if not plan.variableBindings.is_codesignated(precondition_args[i], effect_args[i]):
+				link_args = pot_tclf.link.label.sink.Args
+				# hotfix. store this info in the causal link
+				## find matching condition #TODO make more efficient
+				matching_conditions = [e for e in pot_tclf.threat.effects if e.name == pot_tclf.link.label.sink.name and e.truth != pot_tclf.link.label.sink.truth]
+				if len(matching_conditions) < 1:
+					print(f"Error, TCLF threat: {pot_tclf.threat} contains no effect which matches {pot_tclf.link.label}")
+					continue
+				if len(matching_conditions) > 1:
+					print(f"warning more than one matching condition matching {pot_tclf.link.label}, namely: {matching_conditions}")
+				threat_args = matching_conditions[0].Args
+				for i in range(len(link_args)):
+					if not plan.variableBindings.is_codesignated(link_args[i], threat_args[i]):
 						break
 				else: # all arguments codesignate. the link is threatened
 					log_message(f"TCLF found {pot_tclf}!")

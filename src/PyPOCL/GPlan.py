@@ -487,8 +487,8 @@ class GPlan:
 				if not self.OrderingGraph.isPath(edge.source, step) or not self.OrderingGraph.isPath(step, edge.sink):
 					# if the step is not in the path between source and sink, it cannot threaten the causal link
 					continue
-				for t in [t for t in edge.sink.threat_map[edge.label.ID] if t[0] == step.stepnum]:
-					if self.variableBindings.is_unified(edge.label, step.effects[t[1]]):
+				for t in [t for t in edge.sink.threat_map[edge.label.sink.ID] if t[0] == step.stepnum]:
+					if self.variableBindings.is_unified(edge.label.sink, step.effects[t[1]]):
 						# if the edge is unified with the threatening effect, it threatens it
 						print(f"Causal link {edge} is threatened by step {step.ID}")
 						return False
