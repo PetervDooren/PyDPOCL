@@ -99,12 +99,12 @@ class TCLF(Flaw):
 		super(TCLF, self).__init__((threatening_step, causal_link_edge), 'tclf')
 		self.threat = self.flaw[0]
 		self.link = self.flaw[1]
-		self.criteria = len(str(self.threat.schema)) + len(str(self.link.label.name)) + len(str(self.link.label.truth))
-		self.tiebreaker = len(str(self.link.label.truth)) + len(str(self.link.label.name)) \
+		self.criteria = len(str(self.threat.schema)) + len(str(self.link.label.sink.name)) + len(str(self.link.label.sink.truth))
+		self.tiebreaker = len(str(self.link.label.sink.truth)) + len(str(self.link.label.sink.name)) \
 		                  + len(str(causal_link_edge.sink.schema)) - len(causal_link_edge.source.preconds)
 
 	def __hash__(self):
-		return hash(self.threat.ID) ^ hash(self.link.source.ID) ^ hash(self.link.sink.ID) ^ hash(self.link.label.ID)
+		return hash(self.threat.ID) ^ hash(self.link.source.ID) ^ hash(self.link.sink.ID) ^ hash(self.link.label.source.ID ^ hash(self.link.label.sink.ID))
 
 # class DTCLF(Flaw):
 # 	def __init__(self, dummy_init, dummy_final, causal_link_edge):

@@ -236,7 +236,7 @@ class GPlan:
 				continue
 			if self.OrderingGraph.isPath(edge.sink, new_step):
 				continue
-			if new_step.stepnum in [tup[0] for tup in edge.sink.threat_map[edge.label.ID]]:
+			if new_step.stepnum in [tup[0] for tup in edge.sink.threat_map[edge.label.sink.ID]]:
 				self.potential_tclf.append(TCLF(new_step, edge))
 
 	def insert_decomp(self, new_step):
@@ -345,18 +345,27 @@ class GPlan:
 
 	# Resolve Methods #
 
-	def resolve(self, provider, consumer, precondition):
-		if provider.height > 0:
-			self.resolve_with_decomp(provider, consumer, precondition)
-		else:
-			self.resolve_with_primitive(provider, consumer, precondition)
-
-	def resolve_with_primitive(self, provider: Operator, consumer: Operator, precondition: GLiteral) -> None:
+	def resolve(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
 		"""resolve precondition of the consumer using an effect of the provider 
 
 		Args:
 			provider (Operator): action which provides the effect
 			consumer (Operator): action which requires the effect for its precondition
+			effect (GLiteral): effect of the provider that fulfills the precondition of the consumer
+			precondition (GLiteral): precondition of the consumer that is fulfilled by the provider's effect
+		"""
+		if provider.height > 0:
+			self.resolve_with_decomp(provider, consumer, effect, precondition)
+		else:
+			self.resolve_with_primitive(provider, consumer, effect, precondition)
+
+	def resolve_with_primitive(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
+		"""resolve precondition of the consumer using an effect of the provider. Where the provider is a primitive step.
+
+		Args:
+			provider (Operator): action which provides the effect
+			consumer (Operator): action which requires the effect for its precondition
+			effect (GLiteral): effect of the provider that fulfills the precondition of the consumer
 			precondition (GLiteral): precondition of the consumer that is fulfilled by the provider's effect
 		"""
 		# operate on cloned plan
@@ -366,8 +375,7 @@ class GPlan:
 		self.OrderingGraph.addEdge(provider, consumer)
 
 		# add causal link
-		#TODO uniquely identify the provider condition in the causal link
-		c_link = self.CausalLinkGraph.addEdge(provider, consumer, precondition)
+		c_link = self.CausalLinkGraph.addEdge(provider, consumer, effect, precondition)
 
 		consumer.update_choices(self)
 
@@ -398,7 +406,7 @@ class GPlan:
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(new_step, cl))
 
-	def resolve_with_decomp(self, provider, consumer, precondition):
+	def resolve_with_decomp(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
 		raise DeprecationWarning("decomposition is no longer supported")
 		d_i, d_f = provider.dummy
 
@@ -461,7 +469,7 @@ class GPlan:
 		for step in self.steps:
 			for pre in step.preconds:
 				for edge in self.CausalLinkGraph.edges:
-					if edge.label.ID == pre.ID and edge.sink.ID == step.ID:
+					if edge.label.sink.ID == pre.ID and edge.sink.ID == step.ID:
 						break
 				else:
 					# if we did not break, then no edge was found
@@ -469,7 +477,7 @@ class GPlan:
 					return False
 		# check that no causal links are threatened
 		for edge in self.CausalLinkGraph.edges:
-			threatening_operators = [t[0] for t in  edge.sink.threat_map[edge.label.ID]]
+			threatening_operators = [t[0] for t in  edge.sink.threat_map[edge.label.sink.ID]]
 			for step in self.steps:
 				if not step.stepnum in threatening_operators:
 					continue
@@ -567,7 +575,8 @@ class GPlan:
 			return {
 				"source": str(getattr(edge.source, "ID", "")),
 				"sink": str(getattr(edge.sink, "ID", "")),
-				"sink-precondition": str(getattr(edge.label, "ID", "")),
+				"effect": str(getattr(edge.label.source, "ID", "")),
+				"precondition": str(getattr(edge.label.sink, "ID", "")),
 			}
 		
 		def variable_bindings_to_dict(vb):
@@ -679,12 +688,14 @@ class GPlan:
 		for edge_data in plan_dict["causal_links"]:
 			source_id = edge_data["source"]
 			sink_id = edge_data["sink"]
-			sink_precondition_id = edge_data["sink-precondition"]
+			effect_id = edge_data["effect"]
+			precondition_id = edge_data["precondition"]
 			source = plan.get(id_map["steps"][source_id])
 			sink = plan.get(id_map["steps"][sink_id])
-			sink_precondition = next((e for e in sink.preconds if e.ID == id_map["preconds"][sink_precondition_id]))
+			effect = next((e for e in source.effects if e.ID == id_map["effects"][effect_id]))
+			precondition = next((e for e in sink.preconds if e.ID == id_map["preconds"][precondition_id]))
 			if source and sink:
-				plan.CausalLinkGraph.addEdge(source, sink, sink_precondition)
+				plan.CausalLinkGraph.addEdge(source, sink, effect, precondition)
 		
 		# add variable bindings to the plan
 		for var, obj in plan_dict["variableBindings"]["symbolic"].items():

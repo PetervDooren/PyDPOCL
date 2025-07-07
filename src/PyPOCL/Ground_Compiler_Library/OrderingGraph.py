@@ -3,6 +3,8 @@ import collections
 from PyPOCL.Ground_Compiler_Library.Graph import Graph, Edge
 from PyPOCL.Ground_Compiler_Library.Element import Element
 
+CausalLinkLabel = collections.namedtuple('CausalLinkLabel', ['source', 'sink'])
+
 class OrderingGraph(Graph):
 	def __init__(self, ID=None, typ=None, name=None, Elements=None, Edges=None):
 		if typ is None:
@@ -132,10 +134,11 @@ class CausalLinkGraph(OrderingGraph):
 		super(CausalLinkGraph, self).__init__(ID, typ, name, Elements, Edges)
 		self.nonThreats = collections.defaultdict(set)
 
-	def addEdge(self, source, sink, condition):
+	def addEdge(self, source, sink, source_condition, sink_condition):
 		self.elements.add(source)
 		self.elements.add(sink)
-		new_link = Edge(source, sink, condition)
+		label = CausalLinkLabel(source_condition, sink_condition)
+		new_link = Edge(source, sink, label)
 		self.edges.add(new_link)
 		return new_link
 
