@@ -292,39 +292,38 @@ class POCLPlanner:
 			self.insert(new_plan)
 
 	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
-		s_need, p = flaw.flaw
+		consumer, precondition = flaw.flaw
 
 		choices = []
 		for step in plan.steps:
-			if step.stepnum in [tup[0] for tup in s_need.cndt_map[p.ID]] and not s_need.ID == step.ID and not plan.OrderingGraph.isPath(s_need, step):
-				for stepnr, effnr in s_need.cndt_map[p.ID]:
+			if step.stepnum in [tup[0] for tup in consumer.cndt_map[precondition.ID]] and not consumer.ID == step.ID and not plan.OrderingGraph.isPath(consumer, step):
+				for stepnr, effnr in consumer.cndt_map[precondition.ID]:
 					if stepnr == step.stepnum:
 						choices.append((step, effnr))
 		if len(choices) == 0:
 			return
 
 		# need indices
-		s_index = plan.index(s_need)
-		p_index = s_need.preconds.index(p)
-		for choice, eff_nr in choices:
+		consumer_index = plan.index(consumer)
+		precondition_index = consumer.preconds.index(precondition)
+		for candidate_action, effect_nr in choices:
 			# clone plan and new step
 			new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
 
 			# use indices before inserting new steps
-			mutable_s_need = new_plan[s_index]
-			mutable_p = mutable_s_need.preconds[p_index]
+			new_plan_consumer = new_plan[consumer_index]
+			new_plan_precondition = new_plan_consumer.preconds[precondition_index]
 
 			# use index to find old step
-			old_step = new_plan.steps[plan.index(choice)]
+			new_plan_provider = new_plan.steps[plan.index(candidate_action)]
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			provider = old_step.effects[eff_nr]
-			consumer = mutable_p
-			if not new_plan.variableBindings.unify(provider, consumer):
+			new_plan_effect = new_plan_provider.effects[effect_nr]
+			if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
 				continue
-			log_message(f'Reuse step {old_step} to plan {new_plan.name} to satisfy precondition {mutable_p} of {s_need} with effect {provider}.')
+			log_message(f'Reuse step {new_plan_provider} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {consumer} with effect {new_plan_effect}.')
 			# resolve open condition with old step
-			new_plan.resolve(old_step, mutable_s_need, mutable_p)
+			new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_precondition)
 
 			# insert mutated plan into frontier
 			self.insert(new_plan)
