@@ -5,7 +5,7 @@ from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
 from PyPOCL.worldmodel import Domain, Problem
-from shapely import within, Polygon
+from shapely import within, Polygon, overlaps
 import copy
 from collections import namedtuple, defaultdict
 import math
@@ -532,7 +532,29 @@ class GPlan:
 					print(f"Step {step.ID} has unsatisfied reach constraint {rc}")
 					return False
 		# check that all other areas that can occur simultaneously do not overlap
-		
+		for causal_link in self.CausalLinkGraph.edges:
+			if causal_link.label.source.name != "within":
+				continue
+			object = causal_link.label.source.Args[0]
+			sourceloc = causal_link.label.source.Args[1]
+			area = self.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+			
+			#TODO also check for overlap with objects that do not move
+			for other_link in self.CausalLinkGraph.edges:
+				if other_link.label.source.name != "within":
+					continue
+				other_object = other_link.label.source.Args[0]
+				if other_object == object:
+					continue
+				other_loc = other_link.label.source.Args[1]
+				other_area = self.variableBindings.geometric_vb.get_assigned_area(other_loc)
+				# check if the causal links overlap.
+				if not self.OrderingGraph.isPath(causal_link.sink, other_link.source) and not self.OrderingGraph.isPath(other_link.sink, causal_link.source):
+					# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
+					continue
+				if overlaps(area, other_area):
+					print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+					return False		
 		return True
 
 	def to_json(self, filepath: str):
