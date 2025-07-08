@@ -32,3 +32,5 @@ if __name__ == '__main__':
         else:
             print("Plan is valid")
         plan.to_json(f"plans/{domain.name}/{problem.name}-plan_{i}.json")
+        if domain.name == "manipulation-domain":
+            plan.to_yaml(f"plans/{domain.name}/{problem.name}-executable_plan_{i}.yaml")

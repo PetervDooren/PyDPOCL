@@ -10,6 +10,7 @@ import copy
 from collections import namedtuple, defaultdict
 import math
 import json
+import yaml
 
 dummyTuple = namedtuple('dummyTuple', ['init', 'goal'])
 # class dummyTuple:
@@ -612,6 +613,35 @@ class GPlan:
 
 		with open(filepath, "w") as f:
 			json.dump(plan_dict, f, indent=2)
+	
+	def to_yaml(self, filepath: str):
+		"""write a plan to a yaml file such that it can be executed. Plan will be collapsed to total order in this process.
+
+		Args:
+			filepath (str): _description_
+		"""
+		# conversions between planning terms and yaml terms:
+		robot_names = {"left_panda": 0,
+				 	   "right_panda": 1}
+		parcel_names = {"boxa": 0,
+				 	   "boxb": 1,
+					   "boxc": 2}
+
+		plan_dict = {"actions": []}
+		for step in self.OrderingGraph.topoSort():
+			if step.schema == "movemono": # we can only do one type now. And we should exclude init and goal.
+				robot_name = self.variableBindings.symbolic_vb.get_const(step.Args[0]).name
+				parcel_name = self.variableBindings.symbolic_vb.get_const(step.Args[1]).name
+				target_area = self.variableBindings.geometric_vb.get_assigned_area(step.Args[3])
+				target_coords = [{"x": t[0], "y": t[1]} for t in target_area.exterior.coords]
+				step_dict = {"type": "singleArm", # only have one type right now
+					"robot": robot_names[robot_name],
+					"parcel": parcel_names[parcel_name],
+					"target": target_coords
+				}
+				plan_dict["actions"].append(step_dict)
+		with open(filepath, "w") as f:
+			yaml.dump(plan_dict, f, default_flow_style=False, sort_keys=False)
 	
 	@staticmethod
 	def from_json(domain: Domain, problem: Problem, filepath: str) -> GPlan:
