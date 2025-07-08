@@ -286,5 +286,65 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         self.assertIsNotNone(area_B)
         self.assertFalse(overlaps(area_A, area_B))
 
+    def test_resolve(self):
+        """
+        test if resolve can correctly assign areas given the constraints. Uses example from the manipulation domain.
+        """
+        vb = VariableBindingsGeometric()
+
+        area_args = {"base": Argument(),
+                     "goal": Argument(),
+                     "start_pos": Argument(),
+                     "reach_left": Argument(),
+                     "reach_right": Argument()}
+        areas = {}
+        areas[area_args["base"]] = Polygon([(0, 0), (0, 3), (1, 3), (1, 0)])
+        areas[area_args["goal"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
+        areas[area_args["start_pos"]] = Polygon([(0.3, 2.3), (0.3, 2.7), (0.7, 2.7), (0.7, 2.3)])
+        areas[area_args["reach_left"]] = Polygon([(0, 0), (0, 2), (1, 2), (1, 0)])
+        areas[area_args["reach_right"]] = Polygon([(0, 1), (0, 3), (1, 3), (1, 1)])
+        vb.set_areas(areas)
+        vb.set_base_area(area_args["base"])
+
+        objects = {"A": Argument()}
+        variables = {"start1": Argument(name="start1"),
+                     "goal1": Argument(name="goal1"),
+                     "start2": Argument(name="start2"),
+                     "goal2": Argument(name="goal2")}
+        
+        vb.register_variable(variables["start1"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["goal1"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["start2"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["goal2"], objects["A"], 0.2, 0.2)
+
+        self.assertTrue(vb.unify(variables["start1"], area_args["reach_right"]), "within(start1, reach_right) could not be added")
+        self.assertTrue(vb.unify(variables["goal1"], area_args["reach_right"]), "within(goal1, reach_right) could not be added")
+        self.assertTrue(vb.unify(variables["start2"], area_args["reach_left"]), "within(start2, reach_left) could not be added")
+        self.assertTrue(vb.unify(variables["goal2"], area_args["reach_left"]), "within(goal2, reach_left) could not be added")
+
+        self.assertTrue(vb.unify(variables["start1"], area_args["start_pos"]), "within(start1, start_pos) could not be added")
+        self.assertTrue(vb.unify(variables["goal1"], variables["start2"]), "within(goal1, start2) could not be added")
+        self.assertTrue(vb.unify(variables["goal2"], area_args["goal"]), "within(goal1, goal) could not be added")
+
+        # resolve variables
+        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+
+        # check if areas are assigned correctly
+        self.assertTrue(within(vb.placelocs[variables["start1"]].area_assigned, areas[area_args["reach_right"]]),
+                        "start1 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["goal1"]].area_assigned, areas[area_args["reach_right"]]),
+                        "goal1 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["start2"]].area_assigned, areas[area_args["reach_left"]]),
+                        "start2 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["goal2"]].area_assigned, areas[area_args["reach_left"]]),
+                        "goal2 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["start1"]].area_assigned, areas[area_args["start_pos"]]),
+                        "start1 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["goal1"]].area_assigned, vb.placelocs[variables["start2"]].area_assigned),
+                        "goal1 area is not assigned correctly")
+        self.assertTrue(within(vb.placelocs[variables["goal2"]].area_assigned, areas[area_args["goal"]]),
+                        "goal2 area is not assigned correctly")
+
+
 if __name__ == '__main__':
     unittest.main()
