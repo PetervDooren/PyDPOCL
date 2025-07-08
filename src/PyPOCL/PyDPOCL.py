@@ -1,9 +1,10 @@
 from typing import Set, List
-from PyPOCL.GPlan import GPlan, math
+from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.Flaws import Flaw, TCLF
 from PyPOCL.worldmodel import Domain, Problem
 from uuid import uuid4
+import math
 from heapq import heappush, heappop
 import time
 LOG = 1

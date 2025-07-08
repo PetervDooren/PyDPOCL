@@ -1,6 +1,7 @@
 import sys
 from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
+from PyPOCL.plan_utility import check_plan, plan_to_json, plan_to_yaml
 
 if __name__ == '__main__':
     num_args = len(sys.argv)
@@ -27,10 +28,10 @@ if __name__ == '__main__':
     plans = planner.solve(k=1)
     for i in range(len(plans)):
         plan = plans[i]
-        if not plan.check_plan():
+        if not check_plan(plan):
             print("Error: plan is not valid")
         else:
             print("Plan is valid")
-        plan.to_json(f"plans/{domain.name}/{problem.name}-plan_{i}.json")
+        plan_to_json(plan, f"plans/{domain.name}/{problem.name}-plan_{i}.json")
         if domain.name == "manipulation-domain":
-            plan.to_yaml(f"plans/{domain.name}/{problem.name}-executable_plan_{i}.yaml")
+            plan_to_yaml(plan, f"plans/{domain.name}/{problem.name}-executable_plan_{i}.yaml")

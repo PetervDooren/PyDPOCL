@@ -3,6 +3,7 @@ import unittest
 
 from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
+from PyPOCL.plan_utility import check_plan
 
 class TestBenchmarks(unittest.TestCase):
     def test_all_benchmarks(self):
@@ -27,7 +28,7 @@ class TestBenchmarks(unittest.TestCase):
         plans = planner.solve(k=1)
         self.assertGreater(len(plans), 0, "No plans found")
         for plan in plans:
-            self.assertTrue(plan.check_plan(), "Plan is not valid")
+            self.assertTrue(check_plan(plan), "Plan is not valid")
 
 if __name__ == '__main__':
     unittest.main()

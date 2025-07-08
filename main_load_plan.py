@@ -1,6 +1,6 @@
 import sys
-from PyPOCL.GPlan import GPlan
 from PyPOCL.worldmodel import load_domain_and_problem
+from PyPOCL.plan_utility import check_plan, plan_from_json
 
 if __name__ == '__main__':
     num_args = len(sys.argv)
@@ -20,6 +20,6 @@ if __name__ == '__main__':
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
     # Load the plan from the JSON file
-    plan = GPlan.from_json(domain, problem, plan_file)
-    plan_valid = plan.check_plan()
+    plan = plan_from_json(domain, problem, plan_file)
+    plan_valid = check_plan(plan)
     print(f"Plan {plan.name} loaded. Valid: {plan_valid}.")
