@@ -268,31 +268,30 @@ class VariableBindingsGeometric:
         Returns:
             bool: True if A is within B, False otherwise
         """
-        if varB not in self.within_mapping[varA]:
-            return False
-        if varA not in self.inverse_within_mapping[varB]:
-            return False
+        #if varB not in self.within_mapping[varA]:
+        #    return False
+        #if varA not in self.inverse_within_mapping[varB]:
+        #    return False
 
         # check if either A or B is a defined area
         Aisarea = varA in self.defined_areas.keys()
         Bisarea = varB in self.defined_areas.keys()
 
         # check if the maximum area of A is within the maximum area of B
-        A_area = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
-        B_area = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
-        if not within(A_area, B_area):
-            print(f"Max area of {varA} is not within max area of {varB}. This should not happen!")
-            return False
+        #A_area = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
+        #B_area = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
+        #if not within(A_area, B_area):
+        #    print(f"Max area of {varA} is not within max area of {varB}. This should not happen!")
+        #    return False
         # check if the assigned area of A is within the assigned area of B
         A_area = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_assigned
         B_area = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_assigned
-        if A_area is not None or B_area is not None:
-            if A_area is None or B_area is None:
-                print(f"Area of {varA} or {varB} is None. This should not happen!")
-                return False
-            if not within(A_area, B_area):
-                print(f"Assigned area of {varA} is not within assigned area of {varB}. This should not happen!")
-                return False
+        if A_area is None or B_area is None:
+            print(f"Area of {varA} or {varB} is None. This should not happen!")
+            return False
+        if not within(A_area, B_area):
+            print(f"Assigned area of {varA} is not within assigned area of {varB}. This should not happen!")
+            return False
         return True
 
     def add_disjunction(self, varA, varB) -> bool:
