@@ -5,7 +5,7 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from PyPOCL.Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, box, difference, within
+from shapely import Polygon, box, difference, within, union
 
 # visualization
 import matplotlib.pyplot as plt
@@ -320,10 +320,41 @@ class VariableBindingsGeometric:
         sorted_list.sort(key=lambda v: self.placelocs[v].area_max.area)
         for var in sorted_list:
             ploc = self.placelocs[var]
-            disjunct_area_max = ploc.area_max
+            disjunct_area_max = self.defined_areas[self.base_area]
+            # calculate the max area using the most recent information
+            for within_var in self.within_mapping[var]:
+                if within_var in self.defined_areas.keys():
+                    disjunct_area_max = disjunct_area_max.intersection(self.defined_areas[within_var])
+                else: # within_var is a variable
+                    if self.placelocs[within_var].area_assigned is not None:
+                        disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_assigned)
+                    else:
+                        disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_max)
+            # remove all areas that are disjunct from the area_max
             for d_area in self.disjunctions[var]:
                 if self.placelocs[d_area].area_assigned is not None:
                     disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
+            if any(self.inverse_within_mapping[var]):
+            # compile a minimum area based on areas that must lie within this area
+                a_min = None
+                for inv_within_var in self.inverse_within_mapping[var]:
+                    if inv_within_var in self.defined_areas.keys():
+                        if a_min is None:
+                            a_min = self.defined_areas[inv_within_var]
+                        else:
+                            a_min = union(a_min, a_min = self.defined_areas[inv_within_var])
+                    elif self.placelocs[inv_within_var].area_assigned is not None:
+                        if a_min is None:
+                            a_min = self.placelocs[inv_within_var].area_assigned
+                        else:
+                            a_min = union(a_min, self.placelocs[inv_within_var].area_assigned)
+                if a_min is not None:
+                    if type(a_min) != Polygon: # union is a multipolygon)
+                        return False
+                    ploc.area_assigned = a_min
+                    continue # next iteration
+
+            # area is not constrained by areas that should lie within it.
             minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
             x_pos = minx # lower left coordinate
             y_pos = miny # lower left coordinate
@@ -368,7 +399,9 @@ class VariableBindingsGeometric:
             plt.fill(*area.exterior.xy, color='red', alpha=0.1)
         
         for ploc in self.placelocs.values():
-            plt.fill(*ploc.area_max.exterior.xy, color='blue', alpha=0.5)
+            plt.fill(*ploc.area_max.exterior.xy, color='blue', alpha=0.3)
+            if ploc.area_assigned is not None:
+                plt.fill(*ploc.area_assigned.exterior.xy, color='green', alpha=0.5)
         
         plt.axis('equal')
         plt.show()
