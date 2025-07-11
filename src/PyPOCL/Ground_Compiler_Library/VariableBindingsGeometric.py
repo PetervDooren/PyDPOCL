@@ -304,8 +304,9 @@ class VariableBindingsGeometric:
         Returns:
             bool: False if the non codesignation is inconsistent with the existing bindings
         """
-        self.disjunctions[varA].append(varB)
-        self.disjunctions[varB].append(varA)
+        if varB not in self.disjunctions[varA]:
+            self.disjunctions[varA].append(varB)
+            self.disjunctions[varB].append(varA)
         return True
     
     def resolve(self):
@@ -331,7 +332,9 @@ class VariableBindingsGeometric:
                         disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_max)
             # remove all areas that are disjunct from the area_max
             for d_area in self.disjunctions[var]:
-                if self.placelocs[d_area].area_assigned is not None:
+                if d_area in self.defined_areas:
+                    disjunct_area_max = difference(disjunct_area_max, self.defined_areas[d_area])
+                elif self.placelocs[d_area].area_assigned is not None:
                     disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
             
             # compile a minimum area based on areas that must lie within this area
@@ -370,7 +373,7 @@ class VariableBindingsGeometric:
                 maxy = a_min_y1 + candidate_length
             x_pos = minx # lower left coordinate
             y_pos = miny # lower left coordinate
-            while y_pos + ploc.object_length < maxy:
+            while y_pos + candidate_length <= maxy:
                 # sample acceptable pose in the area_max
                 a_candidate = box(x_pos, y_pos, x_pos+candidate_width + self.buffer, y_pos+candidate_length)
                 if within(a_candidate, disjunct_area_max):
@@ -378,7 +381,7 @@ class VariableBindingsGeometric:
                     break
                 # iterate to next position
                 x_pos += 0.1
-                if x_pos+ploc.object_width > maxx:
+                if x_pos+candidate_width > maxx:
                     x_pos = minx
                     y_pos += 0.1
             if ploc.area_assigned is None: # No solution could be found

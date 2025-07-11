@@ -449,6 +449,47 @@ class GPlan:
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(d_f, cl))
 
+	def set_disjunctions(self):
+		"""
+		Add disjunctions to the geometric variables representing placement locations such that they do not overlap.
+		"""
+		# Find all objects that are static
+		static_objs = []
+		for obj in self.variableBindings.objects:
+			if self.variableBindings.is_type(obj, 'item'):
+				for causal_link in self.CausalLinkGraph.edges:
+					if causal_link.label.source.name == "within":
+						if obj == causal_link.label.source.Args[0]:
+							break
+				else:
+					static_objs.append(obj)
+		for var in self.variableBindings.geometric_vb.variables:
+			for obj in static_objs:
+				obj_area_arg = self.variableBindings.initial_positions[obj]
+				self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
+
+		# add disjunctions between moving object locations.
+		for causal_link in self.CausalLinkGraph.edges:
+			if causal_link.label.source.name != "within":
+				continue
+			object = causal_link.label.source.Args[0]
+			sourceloc = causal_link.label.source.Args[1]
+
+			for other_link in self.CausalLinkGraph.edges:
+				if other_link.label.source.name != "within":
+					continue
+				other_object = other_link.label.source.Args[0]
+				if other_object == object:
+					continue
+				other_loc = other_link.label.source.Args[1]
+
+				# check if the causal links overlap.
+				if not self.OrderingGraph.isPath(causal_link.sink, other_link.source) and not self.OrderingGraph.isPath(other_link.sink, causal_link.source):
+					# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
+					continue
+				self.variableBindings.geometric_vb.add_disjunction(sourceloc, other_loc)	
+		return True
+	
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:
 		# 	return self.cost / (1 + math.log2(self.depth+1)) + self.heuristic < other.cost / (1 + math.log2(other.depth+1)) + other.heuristic

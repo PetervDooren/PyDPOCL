@@ -189,6 +189,7 @@ class POCLPlanner:
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.symbolic_vb.is_fully_ground():
 					print("attempting to resolve the geometric CSP")
+					plan.set_disjunctions()
 					if plan.variableBindings.geometric_vb.resolve():
 						plan.solved = True
 						# success
@@ -204,12 +205,11 @@ class POCLPlanner:
 
 						if len(completed) == k:
 							return completed
-						# if len(completed) == 6:
-						# 	print('check here')
-						continue
+					else:
+						print("Could not solve geometric CSP")
 				else: # variables are not fully ground
 					self.ground_variable(plan)
-					continue
+				continue
 
 			if time.time() - t0 > cutoff:
 				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
