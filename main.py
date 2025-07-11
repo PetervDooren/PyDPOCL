@@ -19,8 +19,8 @@ if __name__ == '__main__':
         #worldmodel_file = 'tests/domains/test-worldmodel.json'
 
         domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
-        problem_file = 'domains/manipulation-domain/manipulation-problem.pddl'
-        worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel.json'
+        problem_file = 'domains/manipulation-domain/manipulation-problem2.pddl'
+        worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel2.json'
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
