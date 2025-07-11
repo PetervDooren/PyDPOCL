@@ -333,35 +333,48 @@ class VariableBindingsGeometric:
             for d_area in self.disjunctions[var]:
                 if self.placelocs[d_area].area_assigned is not None:
                     disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
-            if any(self.inverse_within_mapping[var]):
+            
             # compile a minimum area based on areas that must lie within this area
-                a_min = None
-                for inv_within_var in self.inverse_within_mapping[var]:
-                    if inv_within_var in self.defined_areas.keys():
-                        if a_min is None:
-                            a_min = self.defined_areas[inv_within_var]
-                        else:
-                            a_min = union(a_min, a_min = self.defined_areas[inv_within_var])
-                    elif self.placelocs[inv_within_var].area_assigned is not None:
-                        if a_min is None:
-                            a_min = self.placelocs[inv_within_var].area_assigned
-                        else:
-                            a_min = union(a_min, self.placelocs[inv_within_var].area_assigned)
-                if a_min is not None:
-                    if type(a_min) != Polygon: # union is a multipolygon)
-                        return False
+            a_min = None
+            for inv_within_var in self.inverse_within_mapping[var]:
+                if inv_within_var in self.defined_areas.keys():
+                    if a_min is None:
+                        a_min = self.defined_areas[inv_within_var]
+                    else:
+                        a_min = union(a_min, a_min = self.defined_areas[inv_within_var])
+                elif self.placelocs[inv_within_var].area_assigned is not None:
+                    if a_min is None:
+                        a_min = self.placelocs[inv_within_var].area_assigned
+                    else:
+                        a_min = union(a_min, self.placelocs[inv_within_var].area_assigned)
+            if a_min is not None:
+                minx, miny, maxx, maxy = a_min.bounds
+                a_min = box(minx, miny, maxx, maxy)
+                if maxx - minx >= ploc.object_width + self.buffer and maxy - miny >= ploc.object_length + self.buffer:
                     ploc.area_assigned = a_min
                     continue # next iteration
 
-            # area is not constrained by areas that should lie within it.
-            minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
+            if a_min is None:
+                # area is not constrained by areas that should lie within it.
+                minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
+                candidate_width = ploc.object_width + self.buffer
+                candidate_length = ploc.object_length + self.buffer
+            else:
+                # choose bounds and dimensions such that the assigned area is guaranteed to include a_min
+                a_min_x1, a_min_y1, a_min_x2, a_min_y2 = a_min.bounds
+                candidate_width = max(ploc.object_width + self.buffer, a_min_x2 - a_min_x1)
+                candidate_length = max(ploc.object_length + self.buffer, a_min_y2 - a_min_y1)
+                minx = a_min_x2 - candidate_width
+                maxx = a_min_x1 + candidate_width
+                miny = a_min_y2 - candidate_length
+                maxy = a_min_y1 + candidate_length
             x_pos = minx # lower left coordinate
             y_pos = miny # lower left coordinate
             while y_pos + ploc.object_length < maxy:
                 # sample acceptable pose in the area_max
-                a_min = box(x_pos, y_pos, x_pos+ploc.object_width + self.buffer, y_pos+ploc.object_length + self.buffer)
-                if within(a_min, disjunct_area_max):
-                    ploc.area_assigned = a_min
+                a_candidate = box(x_pos, y_pos, x_pos+candidate_width + self.buffer, y_pos+candidate_length)
+                if within(a_candidate, disjunct_area_max):
+                    ploc.area_assigned = a_candidate
                     break
                 # iterate to next position
                 x_pos += 0.1
