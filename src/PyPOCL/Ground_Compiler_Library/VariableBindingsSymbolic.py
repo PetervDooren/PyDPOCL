@@ -1,5 +1,5 @@
 import copy
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 from typing import List
 from collections import defaultdict
 from PyPOCL.Ground_Compiler_Library.Element import Argument
@@ -61,7 +61,7 @@ class VariableBindingsSymbolic:
         # add unique parameter to track properties
         param = copy.deepcopy(var)
         param.arg_name = "?param"
-        param.ID == uuid4()
+        param.ID == duuid4()
         self.groups.append(param)
         self.group_mapping[var] = param
         self.group_members[param] = {var}

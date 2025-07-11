@@ -3,7 +3,7 @@ from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.Flaws import Flaw, TCLF
 from PyPOCL.worldmodel import Domain, Problem
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 import math
 from heapq import heappush, heappop
 import time
@@ -92,7 +92,7 @@ class POCLPlanner:
 			domain (Domain): domain of the planning problem
 			problem (Problem): problem of the planning problem
 		"""		
-		self.ID = uuid4()
+		self.ID = duuid4()
 
 		self.domain = domain
 		self.problem = problem

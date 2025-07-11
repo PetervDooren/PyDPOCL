@@ -1,6 +1,6 @@
 from collections import defaultdict
 import copy
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 from PyPOCL.clockdeco import clock
 
 from PyPOCL.Ground_Compiler_Library.PlanElementGraph import Action, PlanElementGraph
@@ -171,7 +171,7 @@ def decorateElm(child, DG):
 		DG.edges.add(Edge(whichElm(arg1.key.name, DG), child_elm, label))
 	elif child.key == 'linked':
 		arg1, arg2 = child.children
-		dep = Literal(arg_name='link-condition' + str(uuid4())[19:23])
+		dep = Literal(arg_name='link-condition' + str(duuid4())[19:23])
 		Src = whichElm(arg1.key.name, DG)
 		Snk = whichElm(arg2.key.name, DG)
 		DG.CausalLinkGraph.addEdge(Src, Snk, dep)
@@ -222,7 +222,7 @@ def litFromArg(arg, DG):
 		arg = arg.children[0]
 	# arg 2 is written out
 	lit_name = arg.key
-	lit_elm = Literal(name=lit_name, arg_name=lit_name + str(uuid4())[19:23], num_args=len(arg.children), truth=neg)
+	lit_elm = Literal(name=lit_name, arg_name=lit_name + str(duuid4())[19:23], num_args=len(arg.children), truth=neg)
 	for i, ch in enumerate(arg.children):
 		e_i = whichElm(ch.key.name, DG)
 		DG.edges.add(Edge(lit_elm, e_i, i))
@@ -440,7 +440,7 @@ def addNegativeInitStates(predicates, initAction, objects):
 			if pt in init_tups[p.name]:
 				continue
 			pc = copy.deepcopy(pred)
-			pc.ID = uuid4()
+			pc.ID = duuid4()
 
 			for i, arg in enumerate(pt):
 				initAction.edges.add(Edge(pc, arg, i))

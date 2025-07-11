@@ -1,7 +1,4 @@
-import copy
-from uuid import uuid4
 from typing import List
-from collections import defaultdict
 from PyPOCL.Ground_Compiler_Library.Element import Argument
 from PyPOCL.Ground_Compiler_Library.VariableBindingsSymbolic import VariableBindingsSymbolic
 from PyPOCL.Ground_Compiler_Library.VariableBindingsGeometric import VariableBindingsGeometric

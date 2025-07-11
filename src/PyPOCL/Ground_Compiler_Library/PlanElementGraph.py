@@ -1,9 +1,9 @@
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.Flaws_unused import Flaw, FlawLib, TCLF
-from uuid import uuid4
 from PyPOCL.Ground_Compiler_Library.Element import Argument, Element, Operator, Literal
 from PyPOCL.Ground_Compiler_Library.Graph import Edge
 from PyPOCL.Ground_Compiler_Library.ElementGraph import ElementGraph
+from PyPOCL.deterministic_uuid import duuid4
 import copy
 
 class Action(ElementGraph):
@@ -132,17 +132,17 @@ class Action(ElementGraph):
 		return self.root.stepnumber
 
 	def replaceInternals(self):
-		self.ID = uuid4()
+		self.ID = duuid4()
 		for elm in self.elements:
 			if not isinstance(elm, Argument):
-				elm.ID = uuid4()
+				elm.ID = duuid4()
 
 	# USE THIS ONLY when creating GROUND STEPS for first time (replacing replaced_ID)
 	def _replaceInternals(self):
-		self.ID = uuid4()
+		self.ID = duuid4()
 		for elm in self.elements:
 			if not isinstance(elm, Argument):
-				elm.replaced_ID = uuid4()
+				elm.replaced_ID = duuid4()
 
 	def deepcopy(self, replace_internals=False, _replace_internals=False):
 		new_self = copy.deepcopy(self)
@@ -248,7 +248,7 @@ class PlanElementGraph(ElementGraph):
 				 Restrictions=None):
 
 		if ID is None:
-			ID = uuid4()
+			ID = duuid4()
 		if type_graph is None:
 			type_graph = 'PlanElementGraph'
 		if Elements is None:
@@ -319,7 +319,7 @@ class PlanElementGraph(ElementGraph):
 
 	def deepcopy(self):
 		new_self = copy.deepcopy(self)
-		new_self.ID = uuid4()
+		new_self.ID = duuid4()
 		return new_self
 
 	def RemoveSubgraph(self, literal):

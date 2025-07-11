@@ -1,6 +1,6 @@
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.Flaws_unused import Flaw, FlawLib, TCLF
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 from PyPOCL.Ground_Compiler_Library.Element import Argument, Element, Operator, Literal
 from PyPOCL.Ground_Compiler_Library.Graph import Edge
 from PyPOCL.Ground_Compiler_Library.ElementGraph import ElementGraph
@@ -92,7 +92,7 @@ class Operator:
 		# Args are Argument or Actor "Element" types
 		self.Args = args
 		# ID used as "instance ID"
-		self.ID = uuid4()
+		self.ID = duuid4()
 		# preconds is a list of GCond
 		self.preconds = [p for p in preconditions if p.name != 'in_reach'] # exclude in reach preconds
 		self.effects = effects
@@ -210,10 +210,10 @@ class Operator:
 
 	def instantiate(self, default_refresh=None, default_None_is_to_refresh_open_preconds=None):
 		new_self = copy.deepcopy(self)
-		new_self.ID = uuid4()
+		new_self.ID = duuid4()
 		arg_mapping = dict()
 		for a in self.Args:
-			arg_mapping[a.ID] = uuid4()
+			arg_mapping[a.ID] = duuid4()
 		# give args new ids. Due to linking will also change refs in preconds and effects
 		for a in new_self.Args:
 			a.ID = arg_mapping[a.ID]

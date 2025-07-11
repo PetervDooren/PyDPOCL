@@ -1,5 +1,5 @@
 from PyPOCL.Ground_Compiler_Library.Restrictions import Restriction
-import uuid
+from PyPOCL.deterministic_uuid import duuid4
 from PyPOCL.Ground_Compiler_Library.Graph import Graph
 import copy
 
@@ -32,7 +32,7 @@ class ElementGraph(Graph):
 
 	def deepcopy(self):
 		new_self = copy.deepcopy(self)
-		new_self.ID = uuid.uuid4()
+		new_self.ID = duuid4()
 		return new_self
 
 	def isConsistent(self, other):

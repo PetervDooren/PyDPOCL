@@ -1,6 +1,6 @@
 from __future__ import annotations
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 from PyPOCL.Flaws import FlawLib, OPF, TCLF
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
@@ -74,7 +74,7 @@ class GPlan:
 	def __init__(self):
 		"""Initialize a GPlan with empty graphs and no steps"""
 		# plan data
-		self.ID = uuid4()
+		self.ID = duuid4()
 		self.domain = None
 		self.problem = None
 		self.steps = []
@@ -171,7 +171,7 @@ class GPlan:
 
 	def instantiate(self, add_to_name):
 		new_self = copy.deepcopy(self)
-		new_self.ID = uuid4()
+		new_self.ID = duuid4()
 		new_self.name += add_to_name
 		# refresh attributes
 		return new_self

@@ -3,7 +3,7 @@ import json
 from collections import namedtuple
 from shapely import Polygon
 from dataclasses import dataclass
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.Ground_Compiler_Library import Ground, precompile
@@ -70,7 +70,7 @@ def load_worldmodel(file, objects):
         object_dimensions[o] = (geo_objects[o.name].width, geo_objects[o.name].length)
         # create arguments to represent the initial positions of the object
         argname = o.name + "_init_pos"
-        area_arg = Argument(uuid4(), "area", argname, None)
+        area_arg = Argument(duuid4(), "area", argname, None)
         objects.add(area_arg)
         object_area_mapping[o] = area_arg
         # create an area to represent the initial position of the object
@@ -108,7 +108,7 @@ def update_init_state(init_state, area_mapping, object_area_mapping):
     # add conditions for intial positions
     for obj in object_area_mapping.keys():
         for area in object_area_mapping.values():
-            cond = GLiteral('within', [obj, area], False, uuid4(), False)
+            cond = GLiteral('within', [obj, area], False, duuid4(), False)
             init_state.effects.append(cond)
 
     for cond in init_state.effects:

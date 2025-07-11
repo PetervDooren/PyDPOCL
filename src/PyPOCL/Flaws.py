@@ -1,6 +1,5 @@
 from collections import deque
 from bisect import bisect_left
-from uuid import uuid4
 
 """
 	Flaws for plan element graphs

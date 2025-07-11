@@ -12,7 +12,7 @@
 """
 
 import copy
-from uuid import uuid4
+from PyPOCL.deterministic_uuid import duuid4
 
 
 class Element:
@@ -20,7 +20,7 @@ class Element:
 
 	def __init__(self, ID=None, typ=None, name=None, arg_name=None):
 		if ID is None:
-			ID = uuid4()
+			ID = duuid4()
 
 		# ID is a unique reference instance
 		self.ID = ID
