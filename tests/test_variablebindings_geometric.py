@@ -151,8 +151,8 @@ class TestVariableBindingsGeometric(unittest.TestCase):
                      "B": Argument(name="var_B"),
                      "C": Argument(name="var_C")}
 
-        vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["A"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["B"], objects["A"], 0.1, 0.1)
 
         self.assertTrue(vb.unify(variables["A"], area_args["A"]), "within(varA,areaA) could not be added")
         self.assertTrue(vb.unify(area_args["B"], variables["A"]), "within(areaB,varA) could not be added")
@@ -186,8 +186,8 @@ class TestVariableBindingsGeometric(unittest.TestCase):
                      "B": Argument(name="var_B"),
                      "C": Argument(name="var_C")}
 
-        vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["A"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["B"], objects["A"], 0.1, 0.1)
 
         self.assertTrue(vb.unify(variables["A"], area_args["A"]), "within(varA,areaA) could not be added")
         self.assertFalse(vb.unify(area_args["C"], variables["A"]), "within(areaC,varA) could be added, it should not be possible")
@@ -215,8 +215,8 @@ class TestVariableBindingsGeometric(unittest.TestCase):
                      "B": Argument(name="var_B"),
                      "C": Argument(name="var_C")}
 
-        vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["A"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["B"], objects["A"], 0.1, 0.1)
 
         self.assertTrue(vb.unify(area_args["C"], variables["A"]), "within(areaC,varA) could not be added")
         self.assertFalse(vb.unify(variables["A"], area_args["A"]), "within(varA,areaA) could be added, it should not be possible")
@@ -244,9 +244,9 @@ class TestVariableBindingsGeometric(unittest.TestCase):
                      "B": Argument(name="var_B"),
                      "C": Argument(name="var_C")}
 
-        vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["C"], objects["A"], 0.2, 0.2)
+        vb.register_variable(variables["A"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["B"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["C"], objects["A"], 0.1, 0.1)
 
         self.assertTrue(vb.unify(area_args["C"], variables["A"]), "within(areaC,varA) could not be added")
         self.assertTrue(vb.unify(variables["B"], variables["C"]), "within(areaC,varA) could not be added")
@@ -274,8 +274,8 @@ class TestVariableBindingsGeometric(unittest.TestCase):
                      "B": Argument(name="var_B"),
                      "C": Argument(name="var_C")}
 
-        vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
-        vb.register_variable(variables["B"], objects["B"], 0.3, 0.3)
+        vb.register_variable(variables["A"], objects["A"], 0.1, 0.1)
+        vb.register_variable(variables["B"], objects["A"], 0.3, 0.3)
 
         self.assertTrue(vb.add_disjunction(variables["A"], variables["B"]), "disjunct(A,B) could not be added")
         self.assertTrue(vb.resolve(), "could not resolve variablebindings")
