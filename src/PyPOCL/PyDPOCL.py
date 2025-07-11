@@ -188,6 +188,7 @@ class POCLPlanner:
 
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.symbolic_vb.is_fully_ground():
+					print("attempting to resolve the geometric CSP")
 					if plan.variableBindings.geometric_vb.resolve():
 						plan.solved = True
 						# success
