@@ -14,10 +14,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
         
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -38,10 +38,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -50,10 +50,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
 
@@ -69,10 +69,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -81,10 +81,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
 
@@ -100,10 +100,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -112,10 +112,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
@@ -134,10 +134,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -146,10 +146,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
@@ -169,10 +169,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -181,10 +181,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
@@ -198,10 +198,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -210,10 +210,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
@@ -227,10 +227,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -239,10 +239,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
@@ -256,10 +256,10 @@ class TestVariableBindingsGeometric(unittest.TestCase):
     def test_disjunct(self):
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "A": Argument(name="area_A"),
+                     "B": Argument(name="area_B"),
+                     "C": Argument(name="area_C")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
         areas[area_args["A"]] = Polygon([(0, 0), (0, 0.5), (0.5, 0.5), (0.5, 0)])
@@ -268,11 +268,11 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument(),
-                   "B": Argument()}
-        variables = {"A": Argument(),
-                     "B": Argument(),
-                     "C": Argument()}
+        objects = {"A": Argument(name="obj_A"),
+                   "B": Argument(name="obj_B")}
+        variables = {"A": Argument(name="var_A"),
+                     "B": Argument(name="var_B"),
+                     "C": Argument(name="var_C")}
 
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
         vb.register_variable(variables["B"], objects["B"], 0.3, 0.3)
@@ -292,11 +292,11 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         """
         vb = VariableBindingsGeometric()
 
-        area_args = {"base": Argument(),
-                     "goal": Argument(),
-                     "start_pos": Argument(),
-                     "reach_left": Argument(),
-                     "reach_right": Argument()}
+        area_args = {"base": Argument(name="area_base"),
+                     "goal": Argument(name="area_goal"),
+                     "start_pos": Argument(name="area_start_pos"),
+                     "reach_left": Argument(name="area_reach_left"),
+                     "reach_right": Argument(name="area_reach_right")}
         areas = {}
         areas[area_args["base"]] = Polygon([(0, 0), (0, 3), (1, 3), (1, 0)])
         areas[area_args["goal"]] = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
@@ -306,7 +306,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.set_areas(areas)
         vb.set_base_area(area_args["base"])
 
-        objects = {"A": Argument()}
+        objects = {"A": Argument(name="obj_A")}
         variables = {"start1": Argument(name="start1"),
                      "goal1": Argument(name="goal1"),
                      "start2": Argument(name="start2"),
