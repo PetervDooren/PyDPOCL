@@ -84,6 +84,16 @@ def check_plan(plan: GPlan) -> None:
                 print(f"Step {step.ID} has unsatisfied reach constraint {rc}")
                 return False
     # check that all other areas that can occur simultaneously do not overlap
+    static_objs = []
+    for obj in plan.variableBindings.objects:
+        if plan.variableBindings.is_type(obj, 'item'):
+            for causal_link in plan.CausalLinkGraph.edges:
+                if causal_link.label.source.name == "within":
+                    if obj == causal_link.label.source.Args[0]:
+                        break
+            else:
+                static_objs.append(obj)
+
     for causal_link in plan.CausalLinkGraph.edges:
         if causal_link.label.source.name != "within":
             continue
@@ -94,7 +104,15 @@ def check_plan(plan: GPlan) -> None:
         else:
             area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
         
-        #TODO also check for overlap with objects that do not move
+        # check overlap with static items
+        for obj in static_objs:
+            other_area_arg = plan.variableBindings.initial_positions[obj]
+            other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
+            if overlaps(area, other_area):
+                print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                return False		
+
+        # check overlap with moving items
         for other_link in plan.CausalLinkGraph.edges:
             if other_link.label.source.name != "within":
                 continue

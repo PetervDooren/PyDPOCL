@@ -18,6 +18,7 @@ class VariableBindings:
         self.geometric_vb = VariableBindingsGeometric()
 
         self.reach_constraints = []
+        self.initial_positions = {}
 
     def __contains__(self, id):
         if id in self.symbolic_vb.variables:
@@ -30,7 +31,7 @@ class VariableBindings:
     def isInternallyConsistent(self):
         return True
 
-    def set_objects(self, objects, object_types, object_dimensions):
+    def set_objects(self, objects, object_types, object_dimensions, initial_positions):
         """configure the objects present in the worldmodel
 
         Args:
@@ -48,6 +49,7 @@ class VariableBindings:
         self.object_types = object_types
         self.symbolic_vb.set_objects(objects, object_types)
         self.geometric_vb.set_object_dimensions(object_dimensions)
+        self.initial_positions = initial_positions
 
     def set_areas(self, areas):
         """Configure the areas used in the geometric part of variable bindings
@@ -64,6 +66,9 @@ class VariableBindings:
             reach_areas (dict(Argument:Argument)): mapping between robots and their reach. each represented by an argument 
         """
         self.reach_areas = reach_areas
+    
+    def is_type(self, var, type):
+        return var.typ == type or type in self.object_types[var.typ]
 
     def register_variable(self, var):
         if var.typ == 'symbol' or 'symbol' in self.object_types[var.typ]:

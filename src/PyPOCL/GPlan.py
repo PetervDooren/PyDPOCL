@@ -123,7 +123,7 @@ class GPlan:
 
 		root_plan.dummy = dummyTuple(problem.init, problem.goal)
 
-		root_plan.init = root_plan.dummy.init.preconds
+		root_plan.init = root_plan.dummy.init.effects
 		root_plan.goal = root_plan.dummy.goal.preconds
 		root_plan.steps = [root_plan.dummy.init, root_plan.dummy.goal]
 		# check if any existing steps are choices (instances of cndts of open conditions)
@@ -132,7 +132,7 @@ class GPlan:
 		root_plan.OrderingGraph.addOrdering(root_plan.dummy.init, root_plan.dummy.goal)
 
 		# register parameters
-		root_plan.variableBindings.set_objects(problem.objects, domain.object_types, problem.object_dimensions)
+		root_plan.variableBindings.set_objects(problem.objects, domain.object_types, problem.object_dimensions, problem.initial_positions)
 		root_plan.variableBindings.set_areas(problem.areas)
 		# set base area
 		base_areas = [a for a in problem.areas if a.name==problem.base_area]
