@@ -89,7 +89,10 @@ def check_plan(plan: GPlan) -> None:
             continue
         object = causal_link.label.source.Args[0]
         sourceloc = causal_link.label.source.Args[1]
-        area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+        if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+            area = plan.variableBindings.geometric_vb.defined_areas[sourceloc]
+        else:
+            area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
         
         #TODO also check for overlap with objects that do not move
         for other_link in plan.CausalLinkGraph.edges:
@@ -99,7 +102,10 @@ def check_plan(plan: GPlan) -> None:
             if other_object == object:
                 continue
             other_loc = other_link.label.source.Args[1]
-            other_area = plan.variableBindings.geometric_vb.get_assigned_area(other_loc)
+            if other_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+                other_area = plan.variableBindings.geometric_vb.defined_areas[other_loc]
+            else:
+                other_area = plan.variableBindings.geometric_vb.get_assigned_area(other_loc)
             # check if the causal links overlap.
             if not plan.OrderingGraph.isPath(causal_link.sink, other_link.source) and not plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
                 # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
