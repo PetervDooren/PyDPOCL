@@ -227,7 +227,8 @@ class POCLPlanner:
 				# only count expanded nodes as those that resolve open conditions
 				expanded += 1
 				self.add_step(plan, flaw)
-				self.reuse_step(plan, flaw)			
+				self.reuse_step(plan, flaw)
+				self.ground_in_init(plan, flaw)
 
 		raise ValueError('FAIL: No more plans to visit with {} nodes expanded'.format(expanded))
 
@@ -298,6 +299,8 @@ class POCLPlanner:
 
 		choices = []
 		for step in plan.steps:
+			if step.schema == 'dummy_init':
+				continue
 			if step.stepnum in [tup[0] for tup in consumer.cndt_map[precondition.ID]] and not consumer.ID == step.ID and not plan.OrderingGraph.isPath(consumer, step):
 				for stepnr, effnr in consumer.cndt_map[precondition.ID]:
 					if stepnr == step.stepnum:
@@ -305,7 +308,7 @@ class POCLPlanner:
 		if len(choices) == 0:
 			return
 
-		# need indices
+		# consumer indices
 		consumer_index = plan.index(consumer)
 		precondition_index = consumer.preconds.index(precondition)
 		for candidate_action, effect_nr in choices:
@@ -329,6 +332,77 @@ class POCLPlanner:
 
 			# insert mutated plan into frontier
 			self.insert(new_plan)
+
+	def ground_in_init(self, plan: GPlan, flaw: Flaw) -> None:
+		"""Similar to reuse step. But specifically for grounding an unsupported condition in the initial state.
+
+		Args:
+			plan (GPlan): root plan to iterate on
+			flaw (Flaw): flaw to resolve
+		"""
+		consumer, precondition = flaw.flaw
+
+		choices = []
+		step = plan.dummy.init
+		if step.stepnum in [tup[0] for tup in consumer.cndt_map[precondition.ID]]:
+			for stepnr, effnr in consumer.cndt_map[precondition.ID]:
+				if stepnr == step.stepnum:
+					choices.append((step, effnr))
+		if len(choices) == 0:
+			return
+
+		# consumer indices
+		consumer_index = plan.index(consumer)
+		precondition_index = consumer.preconds.index(precondition)
+		if precondition.name == "within":
+			# clone plan and new step
+			new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
+
+			# use indices before inserting new steps
+			new_plan_consumer = new_plan[consumer_index]
+			new_plan_precondition = new_plan_consumer.preconds[precondition_index]
+
+			# use index to find old step
+			new_plan_provider = new_plan.dummy.init
+
+			# find the initial position of the object
+			obj_var = precondition.Args[0]
+			obj = new_plan.variableBindings.symbolic_vb.get_const(obj_var)
+			if obj is None:
+				print("Fuck! the object is not grounded yet!")
+			init_pos = new_plan.variableBindings.initial_positions[obj]
+			init_pos_effect = next((lit for lit in new_plan.init if lit.Args[0] == obj and lit.Args[1] == init_pos and lit.name == "within"))
+
+			# check that provided condition can be codesignated with the required(consumed) condition
+			if new_plan.variableBindings.unify(init_pos_effect, new_plan_precondition):
+				log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
+				# resolve open condition with old step
+				new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition)
+
+				# insert mutated plan into frontier
+				self.insert(new_plan)
+		else:
+			for candidate_action, effect_nr in choices:
+				# clone plan and new step
+				new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
+
+				# use indices before inserting new steps
+				new_plan_consumer = new_plan[consumer_index]
+				new_plan_precondition = new_plan_consumer.preconds[precondition_index]
+
+				# use index to find old step
+				new_plan_provider = new_plan.steps[plan.index(candidate_action)]
+
+				# check that provided condition can be codesignated with the required(consumed) condition
+				new_plan_effect = new_plan_provider.effects[effect_nr]
+				if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
+					continue
+				log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {new_plan_effect}.')
+				# resolve open condition with old step
+				new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
+
+				# insert mutated plan into frontier
+				self.insert(new_plan)
 
 	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)
