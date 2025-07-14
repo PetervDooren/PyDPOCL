@@ -65,7 +65,7 @@ def load_worldmodel(file, objects):
         area_mapping[a] = areas[a.name]
 
     # link objects to their arguments
-    physical_objects = [a for a in objects if a.typ=='item']
+    physical_objects = [a for a in objects if a.typ=='physical_item']
     for o in physical_objects:
         object_dimensions[o] = (geo_objects[o.name].width, geo_objects[o.name].length)
         # create arguments to represent the initial positions of the object

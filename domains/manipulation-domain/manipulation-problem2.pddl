@@ -1,7 +1,7 @@
 (define (problem manipulation-problem)
   (:domain manipulation)
   (:objects left_panda right_panda - robot
-            boxa boxb boxc - item
+            boxa boxb boxc - physical_item
             goal_left goal_right table reach_left_panda reach_right_panda - area
             )
   (:init )

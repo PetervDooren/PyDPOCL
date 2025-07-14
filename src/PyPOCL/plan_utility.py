@@ -86,7 +86,7 @@ def check_plan(plan: GPlan) -> None:
     # check that all other areas that can occur simultaneously do not overlap
     static_objs = []
     for obj in plan.variableBindings.objects:
-        if plan.variableBindings.is_type(obj, 'item'):
+        if plan.variableBindings.is_type(obj, 'physical_item'):
             for causal_link in plan.CausalLinkGraph.edges:
                 if causal_link.label.source.name == "within":
                     if obj == causal_link.label.source.Args[0]:
