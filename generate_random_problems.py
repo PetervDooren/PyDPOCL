@@ -5,8 +5,8 @@ from shapely import box, overlaps
 
 def generate_problem(name):
     n_robots = 2
-    n_objects = 5
-    n_goals = 3
+    n_objects = random.randint(2, 8)
+    n_goals = random.randint(1, n_objects)
     min_obj_size = 0.1
     max_obj_size = 0.4
     buffer = 0.1 # goal areas should be this much larger than the object
