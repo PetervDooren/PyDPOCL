@@ -33,25 +33,36 @@ def plot_object(ax, obj, color='orange', edgecolor='red', alpha=0.7):
     ax.text(x, y, obj['name'], ha='center', va='center', fontsize=8, color='black')
 
 def main():
-    filename = 'domains/manipulation-domain-batch/test_0_worldmodel.json'
-    data = load_worldmodel(filename)
+    filenames = ['domains/manipulation-domain-batch/test_0_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_1_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_2_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_3_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_4_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_5_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_6_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_7_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_8_worldmodel.json',
+                 'domains/manipulation-domain-batch/test_9_worldmodel.json',
+                 ]
+    for filename in filenames:
+        data = load_worldmodel(filename)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+        fig, ax = plt.subplots(figsize=(8, 6))
 
-    # Plot areas
-    for area in data['areas']:
-        plot_area(ax, area, label=area['name'])
+        # Plot areas
+        for area in data['areas']:
+            plot_area(ax, area, label=area['name'])
 
-    # Plot objects
-    for obj in data['objects']:
-        plot_object(ax, obj)
+        # Plot objects
+        for obj in data['objects']:
+            plot_object(ax, obj)
 
-    ax.set_aspect('equal')
-    ax.autoscale()
-    ax.set_title('Worldmodel Visualization')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.show()
+        ax.set_aspect('equal')
+        ax.autoscale()
+        ax.set_title(f'Worldmodel Visualization: {filename}')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
 
 if __name__ == '__main__':
     main()
