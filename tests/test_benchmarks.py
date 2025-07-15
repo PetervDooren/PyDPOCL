@@ -25,7 +25,7 @@ class TestBenchmarks(unittest.TestCase):
         domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
         planner = POCLPlanner(domain, problem)
-        plans = planner.solve(k=1)
+        plans, _ = planner.solve(k=1)
         self.assertGreater(len(plans), 0, "No plans found")
         for plan in plans:
             self.assertTrue(check_plan(plan), "Plan is not valid")

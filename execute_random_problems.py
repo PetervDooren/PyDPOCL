@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Prepare CSV file
     csv_filename = "test_results.csv"
     with open(csv_filename, mode="w", newline="") as csvfile:
-        fieldnames = ["iteration", "testname", "status", "plan_file"]
+        fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -44,11 +44,7 @@ if __name__ == '__main__':
             domain, problem_obj = load_domain_and_problem(domain_file, problem.problem, problem.worldmodel)
 
             planner = POCLPlanner(domain, problem_obj)
-            try:
-                plans = planner.solve(k=1, cutoff=60)
-            except ValueError:
-                # valueerror raised. So planner ran out of plans to try
-                plans = []
+            plans, planning_report = planner.solve(k=1, cutoff=60)
 
             if len(plans) == 0:
                 print("no plans could be found")
@@ -57,7 +53,12 @@ if __name__ == '__main__':
                     "iteration": iteration,
                     "testname": testname,
                     "status": "no_plan_found",
-                    "plan_file": ""
+                    "plan_file": "",
+                    "planning_time": planning_report.planning_time,
+                    "expanded": planning_report.expanded,
+                    "visited": planning_report.visited,
+                    "terminated": planning_report.terminated,
+                    "plans_found": planning_report.plans_found,
                 })
             for i in range(len(plans)):
                 plan = plans[i]
@@ -75,7 +76,12 @@ if __name__ == '__main__':
                     "iteration": iteration,
                     "testname": testname,
                     "status": status,
-                    "plan_file": plan_file
+                    "plan_file": plan_file,
+                    "planning_time": planning_report.planning_time,
+                    "expanded": planning_report.expanded,
+                    "visited": planning_report.visited,
+                    "terminated": planning_report.terminated,
+                    "plans_found": planning_report.plans_found,
                 })
             iteration += 1
     print(f"Done running. ran {iteration} iterations")

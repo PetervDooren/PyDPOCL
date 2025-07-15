@@ -1,4 +1,5 @@
 from typing import Set, List
+from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
@@ -11,6 +12,8 @@ import time
 LOG = 0
 REPORT = 1
 RRP = 0
+
+PlanningReport = namedtuple("PlanningReport", ["planning_time", "expanded", "visited", "terminated", "plans_found"])
 
 def log_message(message):
 	if LOG:
@@ -151,8 +154,11 @@ class POCLPlanner:
 				print(f'{delay}\t{expanded}\t{len(self)+expanded}\t{leaves}')
 				t_report = time.time()
 			if time.time() - t0 > cutoff:
-				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
-				return []
+				elapsed = time.time() - t0
+				delay = str('%0.8f' % elapsed)
+				print(f'timedout: {delay}\t {expanded}\t{len(self)+expanded}\t{leaves}')
+				planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+				return [], planning_report
 
 			plan = self.pop()
 			expanded += 1
@@ -223,7 +229,8 @@ class POCLPlanner:
 						plan.print()
 
 					if len(completed) == k:
-						return completed						
+						planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+						return completed, planning_report
 				else: # variables are not fully ground
 					self.ground_variable(plan)
 				continue
@@ -240,8 +247,12 @@ class POCLPlanner:
 				self.add_step(plan, flaw)
 				self.reuse_step(plan, flaw)
 				self.ground_in_init(plan, flaw)
-
-		raise ValueError('FAIL: No more plans to visit with {} nodes expanded'.format(expanded))
+		# frontier is empty
+		print(f'FAIL: No more plans to visit with {expanded} nodes expanded')
+		elapsed = time.time() - t0
+		delay = str('%0.8f' % elapsed)
+		planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+		return [], planning_report
 
 	def add_step(self, plan: GPlan, flaw: Flaw) -> None:
 		"""add a new step to resolve a flaw in the plan. Will add one or more plans to the
