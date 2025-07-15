@@ -37,6 +37,7 @@ def generate_problem(name):
     # generate objects and their initial positions
     obj_geometry = []
     obj_list = []
+    goal_geometry = []
     goal_list = []
     for i in range(n_objects):
         redo = True
@@ -60,11 +61,20 @@ def generate_problem(name):
                 "length": length
             })
         if i < n_goals:
-            goal_width = random.uniform(width+buffer, max_goal_size)
-            goal_length = random.uniform(length+buffer, max_goal_size)
-            x_goal = random.uniform(0, table_width-goal_width)
-            y_goal = random.uniform(0, table_length-goal_length)
+            redo = True
+            while redo:
+                goal_width = random.uniform(width+buffer, max_goal_size)
+                goal_length = random.uniform(length+buffer, max_goal_size)
+                x_goal = random.uniform(0, table_width-goal_width)
+                y_goal = random.uniform(0, table_length-goal_length)
 
+                goal_box = box(x_goal, y_goal, x_goal+goal_width, y_goal+goal_length)
+                for other_goal in goal_geometry:
+                    if overlaps(goal_box, other_goal):
+                        continue
+                # object does not overlap with another
+                redo = False
+            goal_geometry.append(goal_box)
             goal_list.append({"name": f"goal_{i}",
                               "coords": [
                                         [x_goal, y_goal],
