@@ -45,7 +45,7 @@ def check_connections_in_plan(plan: GPlan) -> bool:
         reach_area = plan.variableBindings.geometric_vb.defined_areas[plan.variableBindings.reach_areas[robot_obj]]
         object_width, object_length = plan.variableBindings.geometric_vb.object_dimensions[plan.variableBindings.symbolic_vb.get_const(step.Args[1])]
         if not check_is_connected(start_area, goal_area, reach_area, obst_areas, object_width, object_length):
-            print(f"No connection between start and end of {step}.")
+            #print(f"No connection between start and end of {step}.")
             return False
     # no step was found to not have a connection between start and end
     return True

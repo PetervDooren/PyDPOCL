@@ -8,7 +8,7 @@ from PyPOCL.deterministic_uuid import duuid4
 import math
 from heapq import heappush, heappop
 import time
-LOG = 1
+LOG = 0
 REPORT = 1
 RRP = 0
 
@@ -141,9 +141,15 @@ class POCLPlanner:
 		tclf_visits = 0
 
 		t0 = time.time()
+		t_report = time.time()
 		print('k={}'.format(str(k)))
 		print('time\texpanded\tvisited\tterminated\tdepth\tcost\ttrace')
 		while len(self) > 0:
+			if time.time() - t_report > 1: # report every second
+				elapsed = time.time() - t0
+				delay = str('%0.8f' % elapsed)
+				print(f'{delay}\t{expanded}\t{len(self)+expanded}\t{leaves}')
+				t_report = time.time()
 			if time.time() - t0 > cutoff:
 				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
 				return []
@@ -193,13 +199,15 @@ class POCLPlanner:
 
 			if len(plan.flaws) == 0:
 				if plan.variableBindings.symbolic_vb.is_fully_ground():
-					print("attempting to resolve the geometric CSP")
+					log_message("attempting to resolve the geometric CSP")
 					plan.set_disjunctions()
 					if not plan.variableBindings.geometric_vb.resolve():
-						print("Could not solve geometric CSP")
+						log_message(f"Could not solve geometric CSP. pruning {plan.name}")
+						leaves += 1
 						continue
 					if not check_connections_in_plan(plan):
-						print("Not all paths between start and end positions could be found")
+						log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
+						leaves += 1
 						continue
 					plan.solved = True
 					# success
