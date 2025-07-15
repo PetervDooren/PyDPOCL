@@ -155,6 +155,7 @@ class POCLPlanner:
 				return []
 
 			plan = self.pop()
+			expanded += 1
 			self.plan_num = 0 # reset branch counter
 
 			if not plan.isInternallyConsistent():
@@ -236,8 +237,6 @@ class POCLPlanner:
 				tclf_visits += 1
 				self.resolve_threat(plan, flaw)
 			else: # must be open precondition flaw (OPF)
-				# only count expanded nodes as those that resolve open conditions
-				expanded += 1
 				self.add_step(plan, flaw)
 				self.reuse_step(plan, flaw)
 				self.ground_in_init(plan, flaw)
