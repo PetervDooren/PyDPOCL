@@ -1,7 +1,7 @@
 import sys
 import random
 import json
-from shapely import box, overlaps
+from shapely import box, intersects
 
 def generate_problem(name):
     n_robots = 2
@@ -50,7 +50,7 @@ def generate_problem(name):
 
             obj_box = box(x_pos, y_pos, x_pos+width, y_pos+length)
             for other_obj in obj_geometry:
-                if overlaps(obj_box, other_obj):
+                if intersects(obj_box, other_obj):
                     break
             else: # object does not overlap with another
                 redo = False
@@ -74,7 +74,7 @@ def generate_problem(name):
                 # ensure the goal does not overlap with previous goals
                 goal_box = box(x_goal, y_goal, x_goal+goal_width, y_goal+goal_length)
                 for other_goal in goal_geometry:
-                    if overlaps(goal_box, other_goal):
+                    if intersects(goal_box, other_goal):
                         break
                 # object does not overlap with another
                 else:
