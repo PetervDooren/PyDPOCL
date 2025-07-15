@@ -132,7 +132,7 @@ class POCLPlanner:
 		self.plan_num += 1
 
 	# @clock
-	def solve(self, k: int=4, cutoff: int=6000) -> List[GPlan]:
+	def solve(self, k: int=4, cutoff: int=60) -> List[GPlan]:
 		# find k solutions to problem
 
 		completed = []
@@ -144,6 +144,10 @@ class POCLPlanner:
 		print('k={}'.format(str(k)))
 		print('time\texpanded\tvisited\tterminated\tdepth\tcost\ttrace')
 		while len(self) > 0:
+			if time.time() - t0 > cutoff:
+				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
+				return []
+
 			plan = self.pop()
 			self.plan_num = 0 # reset branch counter
 
@@ -214,10 +218,6 @@ class POCLPlanner:
 				else: # variables are not fully ground
 					self.ground_variable(plan)
 				continue
-
-			if time.time() - t0 > cutoff:
-				print('timedout: {}\t{}\t{}'.format(expanded, len(self) + expanded, leaves))
-				return
 
 			# Select Flaw
 			flaw = plan.flaws.next()
