@@ -1,6 +1,7 @@
 from typing import Set, List
 from PyPOCL.GPlan import GPlan
-from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
+from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
+from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
 from PyPOCL.Flaws import Flaw, TCLF
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
@@ -190,23 +191,26 @@ class POCLPlanner:
 				if plan.variableBindings.symbolic_vb.is_fully_ground():
 					print("attempting to resolve the geometric CSP")
 					plan.set_disjunctions()
-					if plan.variableBindings.geometric_vb.resolve():
-						plan.solved = True
-						# success
-						elapsed = time.time() - t0
-						delay = str('%0.8f' % elapsed)
-						completed.append(plan)
-	
-						trace = math.floor(len(plan.name.split('['))/2)
-						print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
-						if REPORT:
-							print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
-							plan.print()
-
-						if len(completed) == k:
-							return completed
-					else:
+					if not plan.variableBindings.geometric_vb.resolve():
 						print("Could not solve geometric CSP")
+						continue
+					if not check_connections_in_plan(plan):
+						print("Not all paths between start and end positions could be found")
+						continue
+					plan.solved = True
+					# success
+					elapsed = time.time() - t0
+					delay = str('%0.8f' % elapsed)
+					completed.append(plan)
+
+					trace = math.floor(len(plan.name.split('['))/2)
+					print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
+					if REPORT:
+						print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
+						plan.print()
+
+					if len(completed) == k:
+						return completed						
 				else: # variables are not fully ground
 					self.ground_variable(plan)
 				continue
