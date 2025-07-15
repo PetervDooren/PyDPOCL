@@ -11,6 +11,7 @@ def generate_problem(name):
     max_obj_size = 0.4
     buffer = 0.1 # goal areas should be this much larger than the object
     max_goal_size = 1
+    goal_overlap_allowed = False
     table_width = 2.5
     table_length = 1.5
 
@@ -50,9 +51,9 @@ def generate_problem(name):
             obj_box = box(x_pos, y_pos, x_pos+width, y_pos+length)
             for other_obj in obj_geometry:
                 if overlaps(obj_box, other_obj):
-                    continue
-            # object does not overlap with another
-            redo = False
+                    break
+            else: # object does not overlap with another
+                redo = False
         obj_geometry.append(obj_box)
         obj_list.append({
                 "name": f"box_{i}",
@@ -68,12 +69,16 @@ def generate_problem(name):
                 x_goal = random.uniform(0, table_width-goal_width)
                 y_goal = random.uniform(0, table_length-goal_length)
 
+                if goal_overlap_allowed:
+                    break # exit the while loop
+                # ensure the goal does not overlap with previous goals
                 goal_box = box(x_goal, y_goal, x_goal+goal_width, y_goal+goal_length)
                 for other_goal in goal_geometry:
                     if overlaps(goal_box, other_goal):
-                        continue
+                        break
                 # object does not overlap with another
-                redo = False
+                else:
+                    redo = False
             goal_geometry.append(goal_box)
             goal_list.append({"name": f"goal_{i}",
                               "coords": [
