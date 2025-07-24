@@ -456,7 +456,7 @@ class GPlan:
 		# Find all objects that are static
 		static_objs = []
 		for obj in self.variableBindings.objects:
-			if self.variableBindings.is_type(obj, 'item'):
+			if self.variableBindings.is_type(obj, 'physical_item'):
 				for causal_link in self.CausalLinkGraph.edges:
 					if causal_link.label.source.name == "within":
 						if obj == causal_link.label.source.Args[0]:
