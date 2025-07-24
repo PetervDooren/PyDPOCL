@@ -127,7 +127,7 @@ def check_plan(plan: GPlan) -> None:
             else:
                 other_area = plan.variableBindings.geometric_vb.get_assigned_area(other_loc)
             # check if the causal links overlap.
-            if not plan.OrderingGraph.isPath(causal_link.sink, other_link.source) and not plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
+            if plan.OrderingGraph.isPath(causal_link.sink, other_link.source) or plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
                 # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
                 continue
             if overlaps(area, other_area):

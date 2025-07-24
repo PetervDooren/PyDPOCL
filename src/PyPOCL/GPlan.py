@@ -484,7 +484,7 @@ class GPlan:
 				other_loc = other_link.label.source.Args[1]
 
 				# check if the causal links overlap.
-				if not self.OrderingGraph.isPath(causal_link.sink, other_link.source) and not self.OrderingGraph.isPath(other_link.sink, causal_link.source):
+				if self.OrderingGraph.isPath(causal_link.sink, other_link.source) or self.OrderingGraph.isPath(other_link.sink, causal_link.source):
 					# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
 					continue
 				self.variableBindings.geometric_vb.add_disjunction(sourceloc, other_loc)	
