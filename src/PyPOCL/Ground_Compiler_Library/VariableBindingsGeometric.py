@@ -314,6 +314,7 @@ class VariableBindingsGeometric:
         Returns:
             _type_: _description_
         """
+        HELPER_VIZ = False # only use when debugging
         # sort the list by size of area_max
         sorted_list = self.variables.copy()
         sorted_list.sort(key=lambda v: self.placelocs[v].area_max.area)
@@ -375,6 +376,8 @@ class VariableBindingsGeometric:
             while y_pos + candidate_length <= maxy:
                 # sample acceptable pose in the area_max
                 a_candidate = box(x_pos, y_pos, x_pos+candidate_width + self.buffer, y_pos+candidate_length)
+                if HELPER_VIZ:
+                    self.helper_show_resolve_step(disjunct_area_max, a_candidate)
                 if within(a_candidate, disjunct_area_max):
                     ploc.area_assigned = a_candidate
                     break
@@ -387,6 +390,23 @@ class VariableBindingsGeometric:
                 return False
         return True
     
+    def helper_show_resolve_step(self, disjunct_area_max=None, a_candidate=None):
+        plt.figure(1)
+        plt.cla()
+        # plot base area
+        base_polygon = self.defined_areas[self.base_area]
+        plt.fill(*base_polygon.exterior.xy, color='grey')
+
+        if disjunct_area_max:
+            plt.fill(*disjunct_area_max.exterior.xy, color='blue')
+            for hole in disjunct_area_max.interiors:
+                plt.fill(*hole.xy, color='gray')
+        if a_candidate:
+            if within(a_candidate, disjunct_area_max):
+                plt.fill(*a_candidate.exterior.xy, color='green')
+            else:
+                plt.fill(*a_candidate.exterior.xy, color='red')            
+
     def print_var(self, var):
         print(f"variable: {var}")
         if self.const[self.group_mapping[var]] is not None:
