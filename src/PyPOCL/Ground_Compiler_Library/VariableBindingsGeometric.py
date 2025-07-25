@@ -375,7 +375,7 @@ class VariableBindingsGeometric:
             y_pos = miny # lower left coordinate
             while y_pos + candidate_length <= maxy:
                 # sample acceptable pose in the area_max
-                a_candidate = box(x_pos, y_pos, x_pos+candidate_width + self.buffer, y_pos+candidate_length)
+                a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
                 if HELPER_VIZ:
                     self.helper_show_resolve_step(disjunct_area_max, a_candidate)
                 if within(a_candidate, disjunct_area_max):
