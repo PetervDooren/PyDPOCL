@@ -135,14 +135,10 @@ class GPlan:
 		root_plan.variableBindings.set_objects(problem.objects, domain.object_types, problem.object_dimensions, problem.initial_positions)
 		root_plan.variableBindings.set_areas(problem.areas)
 		# set base area
-		base_areas = [a for a in problem.areas if a.name==problem.base_area]
-		if len(base_areas) == 0:
-			if len(problem.areas) == 0:
-				print(f"Problem has defined no areas. Assuming problem is purely symbolic.")
-			else:
-				raise ValueError(f"Base area {problem.base_area} not found in problem areas {problem.areas}")
+		if problem.base_area is None:
+			print(f"Problem has defined no areas. Assuming problem is purely symbolic.")
 		else:
-			root_plan.variableBindings.geometric_vb.set_base_area(base_areas[0])
+			root_plan.variableBindings.geometric_vb.set_base_area(problem.base_area)
 		
 		root_plan.variableBindings.set_reach(problem.robot_reach)
 

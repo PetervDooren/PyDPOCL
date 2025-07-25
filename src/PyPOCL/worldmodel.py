@@ -33,7 +33,12 @@ def load_worldmodel(file, objects):
         objects (set(Arguments)): list of symbolic objects in the planning problem
 
     Returns:
-        _type_: _description_
+        objects: List[Argument]: list of symbolic objects
+        area_mapping: dict[Argument: Polygon]: mapping between area type arguments and their polygon representations
+        object_dimensions: dict[Argument: Tuple(x, y)]: mapping between physical_item type arguments and their dimensions in width, length
+        object_area_mapping: dict[Argument: Argument]: mapping between physical_item type arguments and the area type argument representing their initial position.
+        robot_reach_mapping: dict[Argument: Argument]: mapping between robot type arguments and the area type argument representing their reach.
+        base_area: Argument: area argument representing the workspace bounds. 
     """
     with open(file, 'r') as file:
         data = json.load(file)
@@ -55,6 +60,7 @@ def load_worldmodel(file, objects):
             geo_objects[o["name"]] = world_object(o["name"], o["width"], o["length"], o["initial_pose"][0], o["initial_pose"][1])
 
     area_mapping = {} # mapping of arguments to a polygon
+    base_area_arg = None
     object_dimensions = {} # mapping of arguments to their dimensions (width, length)
     object_area_mapping = {} # mapping of object argument to inital area argument
     robot_reach_mapping = {} # mapping between a robot argument and an area argument representing its reach
@@ -63,6 +69,10 @@ def load_worldmodel(file, objects):
     area_objects = [a for a in objects if a.typ=='area']
     for a in area_objects:
         area_mapping[a] = areas[a.name]
+        if a.name == base_area:
+             if base_area_arg is not None:
+                  raise ValueError(f"Multiple base areas defined: {a} and {base_area_arg}")
+             base_area_arg = a
 
     # link objects to their arguments
     physical_objects = [a for a in objects if a.typ=='physical_item']
@@ -92,7 +102,7 @@ def load_worldmodel(file, objects):
         reach_area = [a for a in area_objects if a.name == robot_reach[r.name]]
         robot_reach_mapping[r] = reach_area[0] 
 
-    return objects, area_mapping, object_dimensions, object_area_mapping, robot_reach_mapping, base_area
+    return objects, area_mapping, object_dimensions, object_area_mapping, robot_reach_mapping, base_area_arg
 
 def update_init_state(init_state, area_mapping, object_area_mapping):
     """update the truth conditions of the initial state using the geometry
