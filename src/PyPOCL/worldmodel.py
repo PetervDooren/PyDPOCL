@@ -168,8 +168,8 @@ def create_collision_free_goal_state(goal_state, area_mapping, object_area_mappi
         # check if the object can still fit in the area.
         # try to fit the object in the area
         minx, miny, maxx, maxy = disjunct_goal_area.bounds  # returns (minx, miny, maxx, maxy)
-        candidate_width = object_dimensions[obj][0] + 0.02
-        candidate_length = object_dimensions[obj][1] + 0.02
+        candidate_width = object_dimensions[cond.Args[0]][0] + 0.02
+        candidate_length = object_dimensions[cond.Args[0]][1] + 0.02
         x_pos = minx # lower left coordinate
         y_pos = miny # lower left coordinate
         obj_fits = False
