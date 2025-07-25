@@ -1,7 +1,7 @@
 import os
 import json
 from collections import namedtuple
-from shapely import Polygon
+from shapely import Polygon, intersects, difference, within, box
 from dataclasses import dataclass
 from PyPOCL.deterministic_uuid import duuid4
 
@@ -132,6 +132,83 @@ def update_init_state(init_state, area_mapping, object_area_mapping):
                 cond.truth = False
     return init_state
 
+def create_collision_free_goal_state(goal_state, area_mapping, object_area_mapping, object_dimensions, base_area):
+    """ Create a goal state where each object has a goal region which is free of other objects and which lies within the original goal state.
+
+    Args:
+        goal_state (Operator): goal state to be modified
+        area_mapping (dict(Argument: Polygon)): mapping of area_arguments to a polygon
+        object_area_mapping (dict(Argument:Argument)): mapping of object arguments to inital area argument
+
+    Returns:
+        _type_: initial state with updated truth values on its effects.
+    """
+    goal_state = goal_state
+    manipulated_objects = []
+    static_objects = []
+    for cond in goal_state.preconds:
+        if cond.name != "within":
+            continue
+        if cond.Args[0] not in manipulated_objects:
+            manipulated_objects.append(cond.Args[0])
+    static_objects = [obj for obj in object_area_mapping.keys() if obj not in manipulated_objects]
+    additional_manipulated_objects = [] # list of objects that need to be manipulated in order to make space.
+    # check if goal locations of objects are free enough
+    for cond in goal_state.preconds:
+        if cond.name != "within":
+            continue
+        goal_area = area_mapping[cond.Args[1]]
+        disjunct_goal_area = goal_area
+        overlapping_objs = []
+        for obj in static_objects:
+             obj_area = area_mapping[object_area_mapping[obj]]
+             if intersects(goal_area, obj_area):
+                  disjunct_goal_area = difference(disjunct_goal_area, obj_area)
+                  overlapping_objs.append(obj)
+        # check if the object can still fit in the area.
+        # try to fit the object in the area
+        minx, miny, maxx, maxy = disjunct_goal_area.bounds  # returns (minx, miny, maxx, maxy)
+        candidate_width = object_dimensions[obj][0] + 0.02
+        candidate_length = object_dimensions[obj][1] + 0.02
+        x_pos = minx # lower left coordinate
+        y_pos = miny # lower left coordinate
+        obj_fits = False
+        while y_pos + candidate_length <= maxy:
+            # sample acceptable pose in the area_max
+            a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
+            if within(a_candidate, disjunct_goal_area):
+                obj_fits = True
+                break
+            # iterate to next position
+            x_pos += 0.1
+            if x_pos+candidate_width > maxx:
+                x_pos = minx
+                y_pos += 0.1
+        if not obj_fits: # no solution could be found
+            #TODO find which object to move
+            for obj in overlapping_objs:
+                 additional_manipulated_objects.append(obj)
+                 static_objects.remove(obj)
+    # add goals to move the additional items
+    if len(additional_manipulated_objects) > 0:
+         print(f"Moving items {additional_manipulated_objects} to make the goal feasible.")
+         # create an area to move the objects to
+         new_area = area_mapping[base_area]
+         for obj in static_objects:
+              obj_area = area_mapping[object_area_mapping[obj]]
+              new_area = difference(new_area, obj_area)
+         for goalcond in goal_state.preconds:
+              goal_area = area_mapping[goalcond.Args[1]]
+              new_area = difference(new_area, goal_area)
+         # add goal conditions to move the other objects
+         for obj in additional_manipulated_objects:
+            new_area_arg = Argument(typ='area', name=f'secgoal_{obj.name}')
+            cond = GLiteral('within', [obj, new_area_arg], True, duuid4(), False)
+            goal_state.preconds.append(cond)
+            # register new_area
+            area_mapping[new_area_arg] = new_area
+    return goal_state, area_mapping
+
 def pre_process_operators(operators):
 		"""pre processes operators with the relations between them.
 		updates properties cndts, cndt_map, threat_map, and threats
@@ -193,6 +270,7 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
         # load worldmodel
         objects, area_mapping, object_dimensions, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
         init_state = update_init_state(init_state, area_mapping, object_area_mapping)
+        goal_state, area_mapping = create_collision_free_goal_state(goal_state, area_mapping, object_area_mapping, object_dimensions, base_area)
         pre_process_operators(ground_steps)
 
     # domain and problem names
