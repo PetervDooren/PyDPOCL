@@ -4,7 +4,7 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from PyPOCL.Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, box, difference, within, union
+from shapely import Polygon, box, difference, within, union, intersects
 
 # visualization
 import matplotlib.pyplot as plt
@@ -303,7 +303,21 @@ class VariableBindingsGeometric:
         Returns:
             bool: False if the non codesignation is inconsistent with the existing bindings
         """
-        if varB not in self.disjunctions[varA]:
+        if varB in self.disjunctions[varA]:
+            return True
+        
+        # check if the areas can overlap
+        # check if either A or B is a defined area
+        Aisarea = varA in self.defined_areas.keys()
+        Bisarea = varB in self.defined_areas.keys()
+        A_area = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
+        B_area = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
+        
+        if A_area is None or B_area is None:
+            print(f"Area of {varA} or {varB} is None. This should not happen!")
+            return False
+
+        if intersects(A_area, B_area):
             self.disjunctions[varA].append(varB)
             self.disjunctions[varB].append(varA)
         return True
