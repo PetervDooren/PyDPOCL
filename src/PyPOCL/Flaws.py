@@ -177,6 +177,9 @@ class Flawque:
 
 
 class FlawTypes:
+	""" 
+	A collection of all flaws in order of priority.
+	"""
 	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable):
 		self._list = [statics, inits, threats, unsafe, reusable, nonreusable]
 
@@ -273,9 +276,9 @@ class FlawLib:
 
 	@property
 	def flaws(self):
+		""" Return all OPF flaws. i.e. every flaw not in 'restricted_names' """
 		return [flaw for i, flaw_set in enumerate(self.typs) for flaw in flaw_set if flaw_set.name not in
 				self.restricted_names]
-
 
 	def counts_for_heuristic(self, flaw_set):
 		if len(flaw_set) == 0:
@@ -308,6 +311,7 @@ class FlawLib:
 		return None
 
 	#@clock
+	# I think this method is unused. 
 	def addCndtsAndRisks(self, plan, action):
 		""" For each effect of Action, add to open-condition mapping if consistent"""
 
@@ -328,7 +332,7 @@ class FlawLib:
 	#@clock
 	def insert(self, plan, flaw):
 		''' for each effect of an existing step, check and update mapping to consistent effects'''
-
+		# TODO make a better way of distinguishing the flaws.
 		if flaw.name == 'tclf':
 			#if flaw not in self.threats:
 			self.threats.add(flaw)
@@ -338,6 +342,7 @@ class FlawLib:
 		# 	self.decomps.add(flaw)
 		# 	return
 
+		# flaw is an open precondition. Evaluate it in context for use in heuristics and ordering.
 		#unpack flaw
 		s_need, pre = flaw.flaw
 		# use height to determine which steps are to be considered
