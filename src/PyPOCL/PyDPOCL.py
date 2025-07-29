@@ -3,7 +3,7 @@ from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
-from PyPOCL.Flaws import Flaw, TCLF
+from PyPOCL.Flaws import Flaw, OPF, TCLF, UGSV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
@@ -232,7 +232,7 @@ class POCLPlanner:
 						planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
 						return completed, planning_report
 				else: # variables are not fully ground
-					self.ground_variable(plan)
+					raise RuntimeError("deprecated piece of code. This should never be reached!")
 				continue
 
 			# Select Flaw
@@ -243,10 +243,15 @@ class POCLPlanner:
 			if isinstance(flaw, TCLF):
 				tclf_visits += 1
 				self.resolve_threat(plan, flaw)
-			else: # must be open precondition flaw (OPF)
+			elif isinstance(flaw, UGSV):
+				self.ground_variable(plan, flaw)
+			elif isinstance(flaw, OPF):
 				self.add_step(plan, flaw)
 				self.reuse_step(plan, flaw)
 				self.ground_in_init(plan, flaw)
+			else:
+				raise ValueError(f"Unknown flaw type. Dont know how to resolve: flaw: {flaw} of type {type(flaw)}")
+
 		# frontier is empty
 		print(f'FAIL: No more plans to visit with {expanded} nodes expanded')
 		elapsed = time.time() - t0
@@ -457,23 +462,27 @@ class POCLPlanner:
 		threat.update_choices(new_plan)
 		self.insert(new_plan)
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
-
-	def ground_variable(self, plan: GPlan):
+	
+	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		plan.name += '[ug]'
 
-		# ground a symbolic parameter
-		for var in plan.variableBindings.get_var_per_group():
-			if plan.variableBindings.is_ground(var):
+		# ground the symbolic parameter
+		arg = flaw.arg
+		if plan.variableBindings.is_ground(arg):
+			obj = plan.variableBindings.symbolic_vb.get_const(arg)
+			log_message(f'Variable {arg} is already ground to object {obj}.')
+			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
+			self.insert(new_plan)
+			return
+		for obj in plan.variableBindings.objects:
+			if not plan.variableBindings.can_codesignate(arg, obj):
 				continue
-			for obj in plan.variableBindings.objects:
-				if not plan.variableBindings.can_codesignate(var,obj):
-					continue
-				# add potential plan with codesignation
-				new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
-				if not new_plan.variableBindings.add_codesignation(var, obj): # due to the geometric consequences of grounding variables can_codesignate is no longer complete.
-					continue
-				log_message(f'Grounding variable {var} to object {obj}.')
-				self.insert(new_plan)
+			# add potential plan with codesignation
+			new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+			if not new_plan.variableBindings.add_codesignation(arg, obj): # due to the geometric consequences of grounding variables can_codesignate is no longer complete.
+				continue
+			log_message(f'Grounding variable {arg} to object {obj}.')
+			self.insert(new_plan)
 
 	# Heuristic Methods #
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral, Operator
 from PyPOCL.deterministic_uuid import duuid4
-from PyPOCL.Flaws import FlawLib, OPF, TCLF
+from PyPOCL.Flaws import FlawLib, OPF, TCLF, UGSV
 from PyPOCL.Ground_Compiler_Library.OrderingGraph import OrderingGraph, CausalLinkGraph
 from PyPOCL.Ground_Compiler_Library.VariableBindings import VariableBindings
 from PyPOCL.worldmodel import Domain, Problem
@@ -215,6 +215,14 @@ class GPlan:
 		# add open conditions for new step
 		for pre in new_step.open_preconds:
 			self.flaws.insert(self, OPF(new_step, pre))
+		
+		# add ungrounded variables for new step
+		for arg in new_step.Args:
+			if self.variableBindings.is_type(arg, 'area'):
+				# cant do this yet, move on
+				continue
+			elif self.variableBindings.is_type(arg, 'symbol'):
+				self.flaws.insert(self, UGSV(arg))
 
 		# check for causal link threats
 		for edge in self.CausalLinkGraph.edges:

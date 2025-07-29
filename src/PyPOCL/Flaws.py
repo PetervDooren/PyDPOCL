@@ -126,6 +126,22 @@ class DCF(Flaw):
 		steps = [''.join(str(step) + ', ' for step in self.flaw.Step_Graphs)]
 		return 'DCF(' + ''.join(['{}'.format(step) for step in steps]) + 'criteria ={}, tb={})'.format(
 			self.criteria, self.tiebreaker)
+	
+class UGSV(Flaw):
+	"""
+	Represents an ungrounded symbolic variable flaw. 
+
+	Attributes:
+		flaw (Tuple[1]): The argument of the symbolic variable that still needs to be grounded.
+	"""
+	def __init__(self, arg):
+		super(UGSV, self).__init__((arg,), f'Ungrounded_variable_{arg}')
+		self.arg = self.flaw[0]
+		self.criteria = 1 #TODO base on number of options available in symbolic variable bindings.
+		self.tiebreaker = 1 
+
+	def __repr__(self):
+		return f'Ungrounded Symbolic Variable ({self.flaw[0]})'
 
 class Flawque:
 	""" A deque which pretends to be a set, and keeps everything sorted, highest-value first"""
@@ -180,8 +196,8 @@ class FlawTypes:
 	""" 
 	A collection of all flaws in order of priority.
 	"""
-	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable):
-		self._list = [statics, inits, threats, unsafe, reusable, nonreusable]
+	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols):
+		self._list = [statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols]
 
 	def __len__(self):
 		return len(self._list)
@@ -262,8 +278,11 @@ class FlawLib:
 		#nonreusable = open conditions inconsistent with existing effect sorted by number of cndts
 		self.nonreusable = Flawque('nonreusable')
 
-		self.typs = FlawTypes(self.statics, self.threats, self.inits, self.unsafe, self.reusable, self.nonreusable)
-		self.restricted_names = ['threats', 'decomps']
+		# ungrounded symbolic variables
+		self.ungrounded_symbolic_variables = Flawque('ungrounded_symbolic_variables')
+
+		self.typs = FlawTypes(self.statics, self.threats, self.inits, self.unsafe, self.reusable, self.nonreusable, self.ungrounded_symbolic_variables)
+		self.restricted_names = ['threats', 'decomps', 'ungrounded_symbolic_variables']
 
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)
@@ -336,6 +355,9 @@ class FlawLib:
 		if flaw.name == 'tclf':
 			#if flaw not in self.threats:
 			self.threats.add(flaw)
+			return
+		if isinstance(flaw, UGSV):
+			self.ungrounded_symbolic_variables.add(flaw)
 			return
 
 		# if flaw.name == 'dcf':
