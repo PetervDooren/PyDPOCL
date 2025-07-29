@@ -30,7 +30,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
 
         self.assertTrue(vb.unify(area_args["B"], area_args["A"]), "within(A,B) could not be added")
         self.assertFalse(vb.unify(area_args["C"], area_args["A"]), "within(A,C) could be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
     def test_unify_area_variable(self):
         """
@@ -58,7 +58,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
 
         self.assertTrue(vb.unify(area_args["A"], variables["A"]), "within(area,var) could not be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
         area_A = vb.placelocs[variables["A"]].area_assigned
         self.assertIsNotNone(area_A)
@@ -89,7 +89,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.register_variable(variables["A"], objects["A"], 0.2, 0.2)
 
         self.assertTrue(vb.unify(variables["A"], area_args["A"]), "within(var,area) could not be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
         area_A = vb.placelocs[variables["A"]].area_assigned
         self.assertIsNotNone(area_A)
@@ -121,7 +121,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.register_variable(variables["B"], objects["A"], 0.2, 0.2)
 
         self.assertTrue(vb.unify(variables["A"], variables["B"]), "within(A,B) could not be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
         area_A = vb.placelocs[variables["A"]].area_assigned
         area_B = vb.placelocs[variables["B"]].area_assigned
@@ -156,7 +156,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
 
         self.assertTrue(vb.unify(variables["A"], area_args["A"]), "within(varA,areaA) could not be added")
         self.assertTrue(vb.unify(area_args["B"], variables["A"]), "within(areaB,varA) could not be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
         area_A = vb.placelocs[variables["A"]].area_assigned
         self.assertIsNotNone(area_A)
@@ -278,7 +278,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         vb.register_variable(variables["B"], objects["A"], 0.3, 0.3)
 
         self.assertTrue(vb.add_disjunction(variables["A"], variables["B"]), "disjunct(A,B) could not be added")
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
         
         area_A = vb.placelocs[variables["A"]].area_assigned
         area_B = vb.placelocs[variables["B"]].area_assigned
@@ -327,7 +327,7 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         self.assertTrue(vb.unify(variables["goal2"], area_args["goal"]), "within(goal1, goal) could not be added")
 
         # resolve variables
-        self.assertTrue(vb.resolve(), "could not resolve variablebindings")
+        self.assertTrue(vb.resolve_all(), "could not resolve variablebindings")
 
         # check if areas are assigned correctly
         self.assertTrue(within(vb.placelocs[variables["start1"]].area_assigned, areas[area_args["reach_right"]]),

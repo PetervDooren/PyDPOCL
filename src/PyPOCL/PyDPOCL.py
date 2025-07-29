@@ -3,7 +3,7 @@ from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
-from PyPOCL.Flaws import Flaw, OPF, TCLF, UGSV
+from PyPOCL.Flaws import Flaw, OPF, TCLF, UGSV, UGGV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
@@ -207,7 +207,7 @@ class POCLPlanner:
 			if len(plan.flaws) == 0:
 				log_message("attempting to resolve the geometric CSP")
 				plan.set_disjunctions()
-				if not plan.variableBindings.geometric_vb.resolve():
+				if not plan.variableBindings.geometric_vb.resolve_all():
 					log_message(f"Could not solve geometric CSP. pruning {plan.name}")
 					leaves += 1
 					continue
@@ -242,6 +242,8 @@ class POCLPlanner:
 				self.resolve_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
 				self.ground_variable(plan, flaw)
+			elif isinstance(flaw, UGGV):
+				self.ground_geometric_variable(plan, flaw)
 			elif isinstance(flaw, OPF):
 				self.add_step(plan, flaw)
 				self.reuse_step(plan, flaw)
@@ -461,9 +463,9 @@ class POCLPlanner:
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
-		plan.name += '[ug]'
+		plan.name += '[ugsv]'
 
-		# ground the symbolic parameter
+		# ground the symbolic variable
 		arg = flaw.arg
 		if plan.variableBindings.is_ground(arg):
 			obj = plan.variableBindings.symbolic_vb.get_const(arg)
@@ -480,6 +482,24 @@ class POCLPlanner:
 				continue
 			log_message(f'Grounding variable {arg} to object {obj}.')
 			self.insert(new_plan)
+		
+	def ground_geometric_variable(self, plan: GPlan, flaw: UGSV):
+		plan.name += '[uggv]'
+
+		# ground the geometric variable
+		arg = flaw.arg
+		if plan.variableBindings.geometric_vb.is_ground(arg):
+			log_message(f'Variable {arg} is already ground. This should not happen!')
+			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
+			self.insert(new_plan)
+			return
+		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+		if plan.variableBindings.geometric_vb.resolve(arg):
+			log_message(f'Grounding variable {arg}.')
+			self.insert(new_plan)
+		else:
+			log_message(f"could not resolve geometric arg {arg}. pruning")
+			self.leaves += 1
 
 	# Heuristic Methods #
 

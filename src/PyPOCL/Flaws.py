@@ -143,6 +143,22 @@ class UGSV(Flaw):
 	def __repr__(self):
 		return f'Ungrounded Symbolic Variable ({self.flaw[0]})'
 
+class UGGV(Flaw):
+	"""
+	Represents an ungrounded geometric variable flaw. 
+
+	Attributes:
+		flaw (Tuple[1]): The argument of the geometric variable that still needs to be grounded.
+	"""
+	def __init__(self, arg):
+		super(UGGV, self).__init__((arg,), f'Ungrounded_variable_{arg}')
+		self.arg = self.flaw[0]
+		self.criteria = 1 #TODO base on number of options available in symbolic variable bindings.
+		self.tiebreaker = 1 
+
+	def __repr__(self):
+		return f'Ungrounded Geometric Variable ({self.flaw[0]})'
+
 class Flawque:
 	""" A deque which pretends to be a set, and keeps everything sorted, highest-value first"""
 
@@ -196,8 +212,8 @@ class FlawTypes:
 	""" 
 	A collection of all flaws in order of priority.
 	"""
-	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols):
-		self._list = [statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols]
+	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols, ungrounded_geometry):
+		self._list = [statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols, ungrounded_geometry]
 
 	def __len__(self):
 		return len(self._list)
@@ -218,8 +234,10 @@ class FlawLib:
         unsafe (Flawque): A queue for OPF flaws whose condition may create a TCLF.
         reusable (Flawque): A queue for OPF flaws whose condition is consistent with at least one existing effect.
         nonreusable (Flawque): A queue for OPF flaws whose condition is inconsistent with any existing effect.
-        typs (FlawTypes): An collection of all the above flaw queues.
-        restricted_names (list): A list of flaw set names that are restricted from certain operations, e.g., 'threats' and 'decomps'.
+		ungrounded_symbolic_variables (Flawque): A queue for UGSV flaws.
+		ungrounded_geometric_variables (Flawque): A queue for UGGV flaws.
+        typs (FlawTypes): A collection of all the above flaw queues.
+        opf_names (list): A list of flaw set names that represent open preconditions. Used to exclude others from certain operations.
 
     Methods:
         __len__(self):
@@ -282,8 +300,18 @@ class FlawLib:
 		# ungrounded symbolic variables
 		self.ungrounded_symbolic_variables = Flawque('ungrounded_symbolic_variables')
 
-		self.typs = FlawTypes(self.statics, self.threats, self.inits, self.unsafe, self.reusable, self.nonreusable, self.ungrounded_symbolic_variables)
-		
+		# ungrounded geometric variables
+		self.ungrounded_geometric_variables = Flawque('ungrounded_geometric_variables')
+
+		self.typs = FlawTypes(self.statics,
+						      self.threats,
+						      self.inits,
+							  self.unsafe,
+							  self.reusable,
+							  self.nonreusable,
+							  self.ungrounded_symbolic_variables,
+							  self.ungrounded_geometric_variables)
+
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)
 
@@ -345,6 +373,8 @@ class FlawLib:
 			self.threats.add(flaw)
 		elif isinstance(flaw, UGSV):
 			self.ungrounded_symbolic_variables.add(flaw)
+		elif isinstance(flaw, UGGV):
+			self.ungrounded_geometric_variables.add(flaw)
 		#elif isinstance(flaw, DCF):
 		# 	self.decomps.add(flaw)
 		# 	return

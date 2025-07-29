@@ -321,86 +321,97 @@ class VariableBindingsGeometric:
             self.disjunctions[varA].append(varB)
             self.disjunctions[varB].append(varA)
         return True
-    
-    def resolve(self):
+
+    def resolve(self, var):
+        """ground the variable into a concrete description of an area which fits the constrainst specified.
+
+        Returns:
+            bool: True if resolving succeeded. False otherwise.
+        """
+        HELPER_VIZ = False # only use when debugging
+        ploc = self.placelocs[var]
+
+        # calculate the max area using the most recent information
+        disjunct_area_max = self.defined_areas[self.base_area]
+        for within_var in self.within_mapping[var]:
+            if within_var in self.defined_areas.keys():
+                disjunct_area_max = disjunct_area_max.intersection(self.defined_areas[within_var])
+            else: # within_var is a variable
+                if self.placelocs[within_var].area_assigned is not None:
+                    disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_assigned)
+                else:
+                    disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_max)
+
+        # remove all areas that are disjunct from the area_max
+        for d_area in self.disjunctions[var]:
+            if d_area in self.defined_areas:
+                disjunct_area_max = difference(disjunct_area_max, self.defined_areas[d_area])
+            elif self.placelocs[d_area].area_assigned is not None:
+                disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
+        
+        # compile a minimum area based on areas that must lie within this area
+        a_min = None
+        for inv_within_var in self.inverse_within_mapping[var]:
+            if inv_within_var in self.defined_areas.keys():
+                if a_min is None:
+                    a_min = self.defined_areas[inv_within_var]
+                else:
+                    a_min = union(a_min, a_min = self.defined_areas[inv_within_var])
+            elif self.placelocs[inv_within_var].area_assigned is not None:
+                if a_min is None:
+                    a_min = self.placelocs[inv_within_var].area_assigned
+                else:
+                    a_min = union(a_min, self.placelocs[inv_within_var].area_assigned)
+        if a_min is not None:
+            minx, miny, maxx, maxy = a_min.bounds
+            a_min = box(minx, miny, maxx, maxy)
+            if maxx - minx >= ploc.object_width + self.buffer and maxy - miny >= ploc.object_length + self.buffer:
+                ploc.area_assigned = a_min
+                return True
+
+        if a_min is None:
+            # area is not constrained by areas that should lie within it.
+            minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
+            candidate_width = ploc.object_width + self.buffer
+            candidate_length = ploc.object_length + self.buffer
+        else:
+            # choose bounds and dimensions such that the assigned area is guaranteed to include a_min
+            a_min_x1, a_min_y1, a_min_x2, a_min_y2 = a_min.bounds
+            candidate_width = max(ploc.object_width + self.buffer, a_min_x2 - a_min_x1)
+            candidate_length = max(ploc.object_length + self.buffer, a_min_y2 - a_min_y1)
+            minx = a_min_x2 - candidate_width
+            maxx = a_min_x1 + candidate_width
+            miny = a_min_y2 - candidate_length
+            maxy = a_min_y1 + candidate_length
+        x_pos = minx # lower left coordinate
+        y_pos = miny # lower left coordinate
+        while y_pos + candidate_length <= maxy:
+            # sample acceptable pose in the area_max
+            a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
+            if HELPER_VIZ:
+                self.helper_show_resolve_step(disjunct_area_max, a_candidate)
+            if within(a_candidate, disjunct_area_max):
+                ploc.area_assigned = a_candidate
+                return True
+            # iterate to next position
+            x_pos += 0.1
+            if x_pos+candidate_width > maxx:
+                x_pos = minx
+                y_pos += 0.1
+        # No solution could be found
+        return False
+
+    def resolve_all(self):
         """ground all variables into a concrete description of an area which fits the constrainst specified.
 
         Returns:
             _type_: _description_
         """
-        HELPER_VIZ = False # only use when debugging
         # sort the list by size of area_max
         sorted_list = self.variables.copy()
         sorted_list.sort(key=lambda v: self.placelocs[v].area_max.area)
         for var in sorted_list:
-            ploc = self.placelocs[var]
-            disjunct_area_max = self.defined_areas[self.base_area]
-            # calculate the max area using the most recent information
-            for within_var in self.within_mapping[var]:
-                if within_var in self.defined_areas.keys():
-                    disjunct_area_max = disjunct_area_max.intersection(self.defined_areas[within_var])
-                else: # within_var is a variable
-                    if self.placelocs[within_var].area_assigned is not None:
-                        disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_assigned)
-                    else:
-                        disjunct_area_max = disjunct_area_max.intersection(self.placelocs[within_var].area_max)
-            # remove all areas that are disjunct from the area_max
-            for d_area in self.disjunctions[var]:
-                if d_area in self.defined_areas:
-                    disjunct_area_max = difference(disjunct_area_max, self.defined_areas[d_area])
-                elif self.placelocs[d_area].area_assigned is not None:
-                    disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
-            
-            # compile a minimum area based on areas that must lie within this area
-            a_min = None
-            for inv_within_var in self.inverse_within_mapping[var]:
-                if inv_within_var in self.defined_areas.keys():
-                    if a_min is None:
-                        a_min = self.defined_areas[inv_within_var]
-                    else:
-                        a_min = union(a_min, a_min = self.defined_areas[inv_within_var])
-                elif self.placelocs[inv_within_var].area_assigned is not None:
-                    if a_min is None:
-                        a_min = self.placelocs[inv_within_var].area_assigned
-                    else:
-                        a_min = union(a_min, self.placelocs[inv_within_var].area_assigned)
-            if a_min is not None:
-                minx, miny, maxx, maxy = a_min.bounds
-                a_min = box(minx, miny, maxx, maxy)
-                if maxx - minx >= ploc.object_width + self.buffer and maxy - miny >= ploc.object_length + self.buffer:
-                    ploc.area_assigned = a_min
-                    continue # next iteration
-
-            if a_min is None:
-                # area is not constrained by areas that should lie within it.
-                minx, miny, maxx, maxy = disjunct_area_max.bounds  # returns (minx, miny, maxx, maxy)
-                candidate_width = ploc.object_width + self.buffer
-                candidate_length = ploc.object_length + self.buffer
-            else:
-                # choose bounds and dimensions such that the assigned area is guaranteed to include a_min
-                a_min_x1, a_min_y1, a_min_x2, a_min_y2 = a_min.bounds
-                candidate_width = max(ploc.object_width + self.buffer, a_min_x2 - a_min_x1)
-                candidate_length = max(ploc.object_length + self.buffer, a_min_y2 - a_min_y1)
-                minx = a_min_x2 - candidate_width
-                maxx = a_min_x1 + candidate_width
-                miny = a_min_y2 - candidate_length
-                maxy = a_min_y1 + candidate_length
-            x_pos = minx # lower left coordinate
-            y_pos = miny # lower left coordinate
-            while y_pos + candidate_length <= maxy:
-                # sample acceptable pose in the area_max
-                a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
-                if HELPER_VIZ:
-                    self.helper_show_resolve_step(disjunct_area_max, a_candidate)
-                if within(a_candidate, disjunct_area_max):
-                    ploc.area_assigned = a_candidate
-                    break
-                # iterate to next position
-                x_pos += 0.1
-                if x_pos+candidate_width > maxx:
-                    x_pos = minx
-                    y_pos += 0.1
-            if ploc.area_assigned is None: # No solution could be found
+            if not self.resolve(var):
                 return False
         return True
     
