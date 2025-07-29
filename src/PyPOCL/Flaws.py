@@ -277,13 +277,13 @@ class FlawLib:
 
 		#nonreusable = open conditions inconsistent with existing effect sorted by number of cndts
 		self.nonreusable = Flawque('nonreusable')
+		self.opf_names = ['statics', 'inits', 'unsafe', 'reusable']
 
 		# ungrounded symbolic variables
 		self.ungrounded_symbolic_variables = Flawque('ungrounded_symbolic_variables')
 
 		self.typs = FlawTypes(self.statics, self.threats, self.inits, self.unsafe, self.reusable, self.nonreusable, self.ungrounded_symbolic_variables)
-		self.restricted_names = ['threats', 'decomps', 'ungrounded_symbolic_variables']
-
+		
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)
 
@@ -295,32 +295,21 @@ class FlawLib:
 
 	@property
 	def flaws(self):
-		""" Return all OPF flaws. i.e. every flaw not in 'restricted_names' """
-		return [flaw for i, flaw_set in enumerate(self.typs) for flaw in flaw_set if flaw_set.name not in
-				self.restricted_names]
+		""" Return all OPF flaws. """
+		return [flaw for i, flaw_set in enumerate(self.typs) for flaw in flaw_set if flaw_set.name in
+				self.opf_names]
 
 	def counts_for_heuristic(self, flaw_set):
 		if len(flaw_set) == 0:
 			return False
-		if flaw_set.name in self.restricted_names:
+		if flaw_set.name not in self.opf_names:
 			return False
 		return True
 
 	def OC_gen(self):
 		''' Generator for open conditions'''
-		# for flaw_set in self.typs:
-		# 	if not self.counts_for_heuristic(flaw_set):
 		return [flaw for flaw_set in self.typs for flaw in flaw_set
 		        if self.counts_for_heuristic(flaw_set) and flaw.flaw[0].height == 0]
-		# for i, flaw_set in enumerate(self.typs):
-		# 	if len(flaw_set) == 0:
-		# 		continue
-		# 	if flaw_set.name in self.restricted_names:
-		# 		continue
-		# 	# if flaw_set.name == 'statics':
-		# 	# 	continue
-		# 	return (flaw for flaw in flaw_set if flaw.flaw[0].height == 0)
-			# return(g)
 
 	def next(self):
 		''' Returns flaw with highest priority, and removes'''
@@ -351,54 +340,52 @@ class FlawLib:
 	#@clock
 	def insert(self, plan, flaw):
 		''' for each effect of an existing step, check and update mapping to consistent effects'''
-		# TODO make a better way of distinguishing the flaws.
-		if flaw.name == 'tclf':
+		if isinstance(flaw, TCLF):
 			#if flaw not in self.threats:
 			self.threats.add(flaw)
-			return
-		if isinstance(flaw, UGSV):
+		elif isinstance(flaw, UGSV):
 			self.ungrounded_symbolic_variables.add(flaw)
-			return
-
-		# if flaw.name == 'dcf':
+		#elif isinstance(flaw, DCF):
 		# 	self.decomps.add(flaw)
 		# 	return
+		elif isinstance(flaw, OPF):
+			# flaw is an open precondition. Evaluate it in context for use in heuristics and ordering.
+			#unpack flaw
+			s_need, pre = flaw.flaw
+			# use height to determine which steps are to be considered
 
-		# flaw is an open precondition. Evaluate it in context for use in heuristics and ordering.
-		#unpack flaw
-		s_need, pre = flaw.flaw
-		# use height to determine which steps are to be considered
+			#if pre.predicate is static
+			if pre.is_static:
+				self.statics.add(flaw)
+				return
 
-		#if pre.predicate is static
-		if pre.is_static:
-			self.statics.add(flaw)
-			return
+			for step in plan.steps:
+				if step.ID == s_need.ID:
+					continue
+				if plan.OrderingGraph.isPath(s_need, step):
+					continue
+				if step.stepnum in [tup[0] for tup in s_need.cndt_map[pre.ID]]:
+					flaw.cndts += 1
+				if step.stepnum in [tup[0] for tup in s_need.threat_map[pre.ID]]:
+					flaw.risks += 1
 
-		for step in plan.steps:
-			if step.ID == s_need.ID:
-				continue
-			if plan.OrderingGraph.isPath(s_need, step):
-				continue
-			if step.stepnum in [tup[0] for tup in s_need.cndt_map[pre.ID]]:
-				flaw.cndts += 1
-			if step.stepnum in [tup[0] for tup in s_need.threat_map[pre.ID]]:
-				flaw.risks += 1
+			if pre in plan.init:
+				self.inits.add(flaw)
+				return
 
-		if pre in plan.init:
-			self.inits.add(flaw)
-			return
+			if flaw.risks > 0:
+				self.unsafe.add(flaw)
+				return
 
-		if flaw.risks > 0:
-			self.unsafe.add(flaw)
-			return
+			#if not static but has cndts, then reusable
+			if flaw.cndts > 0:
+				self.reusable.add(flaw)
+				return
 
-		#if not static but has cndts, then reusable
-		if flaw.cndts > 0:
-			self.reusable.add(flaw)
-			return
-
-		#last, must be nonreusable
-		self.nonreusable.add(flaw)
+			#last, must be nonreusable
+			self.nonreusable.add(flaw)
+		else: # unknown flaw type
+			raise TypeError(f"Unknown flaw type {type(flaw)} of flaw {flaw}")
 
 	def __repr__(self):
 		F = [('|' + ''.join([str(flaw) + '\n|' for flaw in T]) , T.name) for T in self.typs if len(T) > 0]
