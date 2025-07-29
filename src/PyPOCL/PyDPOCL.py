@@ -515,11 +515,12 @@ class POCLPlanner:
 			return True
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions(arg)
-		if plan.variableBindings.geometric_vb.resolve(arg):
+		if new_plan.variableBindings.geometric_vb.resolve(arg):
 			log_message(f'Grounding variable {arg}.')
 			self.insert(new_plan)
 			return True
 		else:
+			log_message(f"could not ground variable {arg}, it conflicts with areas: {new_plan.variableBindings.geometric_vb.disjunctions[arg]}")
 			return False
 
 	# Heuristic Methods #

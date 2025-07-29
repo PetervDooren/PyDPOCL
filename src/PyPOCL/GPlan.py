@@ -468,6 +468,9 @@ class GPlan:
 					static_objs.append(obj)		
 		for obj in static_objs:
 			obj_area_arg = self.variableBindings.initial_positions[obj]
+			if not self.variableBindings.geometric_vb.can_intersect(var, obj_area_arg):
+				# the areas do not overlap. No need to add an explicit disjunction.
+				continue
 			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
 
 		# find the causal link that places the object at the goal location represented by var
