@@ -241,9 +241,13 @@ class POCLPlanner:
 				tclf_visits += 1
 				self.resolve_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
-				self.ground_variable(plan, flaw)
+				if not self.ground_variable(plan, flaw):
+					log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
+					leaves += 1
 			elif isinstance(flaw, UGGV):
-				self.ground_geometric_variable(plan, flaw)
+				if not self.ground_geometric_variable(plan, flaw):
+					log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
+					leaves += 1
 			elif isinstance(flaw, OPF):
 				self.add_step(plan, flaw)
 				self.reuse_step(plan, flaw)
@@ -463,6 +467,15 @@ class POCLPlanner:
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
+		""" create branch plans by grounding a symbolic variable.
+
+		Args:
+			plan (GPlan): _description_
+			flaw (UGSV): _description_
+
+		Returns:
+			bool: True if at least one branch was made.
+		"""
 		plan.name += '[ugsv]'
 
 		# ground the symbolic variable
@@ -472,7 +485,9 @@ class POCLPlanner:
 			log_message(f'Variable {arg} is already ground to object {obj}.')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
 			self.insert(new_plan)
-			return
+			return True
+
+		grounding_success = False # should be True if at least one branch is created
 		for obj in plan.variableBindings.objects:
 			if not plan.variableBindings.can_codesignate(arg, obj):
 				continue
@@ -482,8 +497,19 @@ class POCLPlanner:
 				continue
 			log_message(f'Grounding variable {arg} to object {obj}.')
 			self.insert(new_plan)
+			grounding_success = True
+		return grounding_success
 		
-	def ground_geometric_variable(self, plan: GPlan, flaw: UGSV):
+	def ground_geometric_variable(self, plan: GPlan, flaw: UGSV) -> bool:
+		""" create branch plans by grounding a geometric variable. Will create only one branch at most.
+
+		Args:
+			plan (GPlan): _description_
+			flaw (UGSV): _description_
+
+		Returns:
+			bool: True if at least one branch was made.
+		"""
 		plan.name += '[uggv]'
 
 		# ground the geometric variable
@@ -492,15 +518,15 @@ class POCLPlanner:
 			log_message(f'Variable {arg} is already ground. This should not happen!')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
 			self.insert(new_plan)
-			return
+			return True
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions(arg)
 		if plan.variableBindings.geometric_vb.resolve(arg):
 			log_message(f'Grounding variable {arg}.')
 			self.insert(new_plan)
+			return True
 		else:
-			log_message(f"could not resolve geometric arg {arg}. pruning")
-			self.leaves += 1
+			return False
 
 	# Heuristic Methods #
 
