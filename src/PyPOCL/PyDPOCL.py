@@ -205,34 +205,31 @@ class POCLPlanner:
 					plan.potential_tclf.remove(pot_tclf)
 
 			if len(plan.flaws) == 0:
-				if plan.variableBindings.symbolic_vb.is_fully_ground():
-					log_message("attempting to resolve the geometric CSP")
-					plan.set_disjunctions()
-					if not plan.variableBindings.geometric_vb.resolve():
-						log_message(f"Could not solve geometric CSP. pruning {plan.name}")
-						leaves += 1
-						continue
-					if not check_connections_in_plan(plan):
-						log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
-						leaves += 1
-						continue
-					plan.solved = True
-					# success
-					elapsed = time.time() - t0
-					delay = str('%0.8f' % elapsed)
-					completed.append(plan)
+				log_message("attempting to resolve the geometric CSP")
+				plan.set_disjunctions()
+				if not plan.variableBindings.geometric_vb.resolve():
+					log_message(f"Could not solve geometric CSP. pruning {plan.name}")
+					leaves += 1
+					continue
+				if not check_connections_in_plan(plan):
+					log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
+					leaves += 1
+					continue
+				plan.solved = True
+				# success
+				elapsed = time.time() - t0
+				delay = str('%0.8f' % elapsed)
+				completed.append(plan)
 
-					trace = math.floor(len(plan.name.split('['))/2)
-					print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
-					if REPORT:
-						print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
-						plan.print()
+				trace = math.floor(len(plan.name.split('['))/2)
+				print('{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(delay, expanded, len(self) + expanded, leaves, str(plan.depth), plan.cost, trace))
+				if REPORT:
+					print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
+					plan.print()
 
-					if len(completed) == k:
-						planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
-						return completed, planning_report
-				else: # variables are not fully ground
-					raise RuntimeError("deprecated piece of code. This should never be reached!")
+				if len(completed) == k:
+					planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+					return completed, planning_report
 				continue
 
 			# Select Flaw
