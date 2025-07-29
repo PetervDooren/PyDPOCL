@@ -152,7 +152,6 @@ class VariableBindingsGeometric:
         if self.placelocs[var].area_assigned is not None:
             return True
         else:
-            print(f"Variable {var} is not ground. area_assigned is None")
             return False
         
     def is_fully_ground(self) -> bool:
