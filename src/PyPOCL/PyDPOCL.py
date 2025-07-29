@@ -205,12 +205,6 @@ class POCLPlanner:
 					plan.potential_tclf.remove(pot_tclf)
 
 			if len(plan.flaws) == 0:
-				log_message("attempting to resolve the geometric CSP")
-				plan.set_disjunctions_all()
-				if not plan.variableBindings.geometric_vb.resolve_all():
-					log_message(f"Could not solve geometric CSP. pruning {plan.name}")
-					leaves += 1
-					continue
 				if not check_connections_in_plan(plan):
 					log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
 					leaves += 1
