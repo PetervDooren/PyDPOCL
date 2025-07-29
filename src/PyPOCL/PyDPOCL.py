@@ -206,7 +206,7 @@ class POCLPlanner:
 
 			if len(plan.flaws) == 0:
 				log_message("attempting to resolve the geometric CSP")
-				plan.set_disjunctions()
+				plan.set_disjunctions_all()
 				if not plan.variableBindings.geometric_vb.resolve_all():
 					log_message(f"Could not solve geometric CSP. pruning {plan.name}")
 					leaves += 1
@@ -494,6 +494,7 @@ class POCLPlanner:
 			self.insert(new_plan)
 			return
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+		new_plan.set_disjunctions(arg)
 		if plan.variableBindings.geometric_vb.resolve(arg):
 			log_message(f'Grounding variable {arg}.')
 			self.insert(new_plan)

@@ -292,6 +292,33 @@ class VariableBindingsGeometric:
             print(f"Assigned area of {varA} is not within assigned area of {varB}. This should not happen!")
             return False
         return True
+    
+    def can_intersect(self, varA, varB) -> bool:
+        # check if the areas can overlap
+        # check if either A or B is a defined area
+        Aisarea = varA in self.defined_areas.keys()
+        Bisarea = varB in self.defined_areas.keys()
+        Aisassigned = not Aisarea and self.placelocs[varA].area_assigned is not None
+        Bisassigned = not Bisarea and self.placelocs[varB].area_assigned is not None
+        
+        if Aisarea:
+            A_area = self.defined_areas[varA]
+        elif Aisassigned:
+            A_area = self.placelocs[varA].area_assigned
+        else:
+            A_area = self.placelocs[varA].area_max
+        
+        if Bisarea:
+            B_area = self.defined_areas[varB]
+        elif Bisassigned:
+            B_area = self.placelocs[varB].area_assigned
+        else:
+            B_area = self.placelocs[varB].area_max
+        
+        if A_area is None or B_area is None:
+            raise KeyError(f"Area of {varA} or {varB} is None. This should not happen!")
+
+        return intersects(A_area, B_area)
 
     def add_disjunction(self, varA, varB) -> bool:
         """add a constraint that area A must be disjunct from area B
@@ -306,20 +333,8 @@ class VariableBindingsGeometric:
         if varB in self.disjunctions[varA]:
             return True
         
-        # check if the areas can overlap
-        # check if either A or B is a defined area
-        Aisarea = varA in self.defined_areas.keys()
-        Bisarea = varB in self.defined_areas.keys()
-        A_area = self.defined_areas[varA] if Aisarea else self.placelocs[varA].area_max
-        B_area = self.defined_areas[varB] if Bisarea else self.placelocs[varB].area_max
-        
-        if A_area is None or B_area is None:
-            print(f"Area of {varA} or {varB} is None. This should not happen!")
-            return False
-
-        if intersects(A_area, B_area):
-            self.disjunctions[varA].append(varB)
-            self.disjunctions[varB].append(varA)
+        self.disjunctions[varA].append(varB)
+        self.disjunctions[varB].append(varA)
         return True
 
     def resolve(self, var):

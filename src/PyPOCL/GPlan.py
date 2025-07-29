@@ -452,7 +452,58 @@ class GPlan:
 		# 		continue
 		# 	self.flaws.insert(self, TCLF(d_f, cl))
 
-	def set_disjunctions(self):
+	def set_disjunctions(self, var):
+		"""
+		Add disjunctions to the geometric variable var representing a placement location such that they do not overlap.
+		"""
+		# Find all objects that are static
+		static_objs = []
+		for obj in self.variableBindings.objects:
+			if self.variableBindings.is_type(obj, 'physical_item'):
+				for causal_link in self.CausalLinkGraph.edges:
+					if causal_link.label.source.name == "within":
+						if obj == causal_link.label.source.Args[0]:
+							break
+				else:
+					static_objs.append(obj)		
+		for obj in static_objs:
+			obj_area_arg = self.variableBindings.initial_positions[obj]
+			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
+
+		# find the causal link that places the object at the goal location represented by var
+		for causal_link in self.CausalLinkGraph.edges:
+			if causal_link.label.source.name != "within":
+				continue
+			if causal_link.label.source.Args[1] == var:
+				break
+			if causal_link.label.sink.Args[1] == var:
+				# var is a startarea. No disjunctions need to be set. #TODO check if correct
+				return True
+		else:
+			raise LookupError(f"Could not find {var} in the causal links")
+		
+		# add disjunctions between var and moving object locations.
+		object = causal_link.label.source.Args[0]
+
+		for other_link in self.CausalLinkGraph.edges:
+			if other_link.label.source.name != "within":
+				continue
+			other_object = other_link.label.source.Args[0]
+			if other_object == object:
+				continue
+			other_loc = other_link.label.source.Args[1]
+
+			# check if the causal links overlap.
+			if self.OrderingGraph.isPath(causal_link.sink, other_link.source) or self.OrderingGraph.isPath(other_link.sink, causal_link.source):
+				# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
+				continue
+			if not self.variableBindings.geometric_vb.can_intersect(var, other_loc):
+				# the areas do not overlap. No need to add an explicit disjunction.
+				continue
+			self.variableBindings.geometric_vb.add_disjunction(var, other_loc)	
+		return True
+
+	def set_disjunctions_all(self):
 		"""
 		Add disjunctions to the geometric variables representing placement locations such that they do not overlap.
 		"""
