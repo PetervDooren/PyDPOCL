@@ -30,7 +30,7 @@ if __name__ == '__main__':
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
     planner = POCLPlanner(domain, problem)
-    plans, _ = planner.solve(k=1)
+    plans, _ = planner.solve(k=1, cutoff=0)
     for i in range(len(plans)):
         plan = plans[i]
         if not check_plan(plan):

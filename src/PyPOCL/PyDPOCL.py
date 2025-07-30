@@ -153,7 +153,7 @@ class POCLPlanner:
 				delay = str('%0.8f' % elapsed)
 				print(f'{delay}\t{expanded}\t{len(self)+expanded}\t{leaves}')
 				t_report = time.time()
-			if time.time() - t0 > cutoff:
+			if cutoff > 0 and time.time() - t0 > cutoff:
 				elapsed = time.time() - t0
 				delay = str('%0.8f' % elapsed)
 				print(f'timedout: {delay}\t {expanded}\t{len(self)+expanded}\t{leaves}')
