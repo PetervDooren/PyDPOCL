@@ -105,6 +105,37 @@ class TCLF(Flaw):
 	def __hash__(self):
 		return hash(self.threat.ID) ^ hash(self.link.source.ID) ^ hash(self.link.sink.ID) ^ hash(self.link.label.source.ID ^ hash(self.link.label.sink.ID))
 
+class GTF(Flaw):
+	"""
+    Represents a geometric threat flaw
+    A GTF occurs when an occupied area cannot coexist with another area.
+
+    Attributes:
+        threat (Step): The step identified as the threatening step, which could potentially break the causal link.
+        link (CausalLink): The causal link being threatened by the threatening step.
+        criteria (int): A computed metric used for evaluating the severity of the flaw, based on the schema of the threatening step
+                        and the label of the causal link.
+        tiebreaker (int): A computed metric used to break ties between multiple TCLFs, based on the causal link's label and the
+                          sink and source of the link.
+
+    Methods:
+        __hash__(): Computes a unique hash value for the TCLF instance, combining the hash of the threat, link source, sink,
+                    and link label to ensure the uniqueness of the instance in hash-based collections.
+
+    Args:
+        threatening_step (Step): The step that threatens the validity of the causal link.
+        causal_link_edge (CausalLink): The causal link that is being threatened by the step.
+    """
+	def __init__(self, threatening_area, threatened_area):
+		super(GTF, self).__init__((threatening_area, threatened_area), 'gtf')
+		self.threat = self.flaw[0]
+		self.area = self.flaw[1]
+		self.criteria = 1
+		self.tiebreaker = 1
+
+	def __repr__(self):
+		return f'GTF(threatening area {self.threat}, threatened area {self.area})'
+
 # class DTCLF(Flaw):
 # 	def __init__(self, dummy_init, dummy_final, causal_link_edge):
 # 		super(DTCLF, self).__init__(((dummy_init, dummy_final), causal_link_edge), 'tclf')
@@ -212,8 +243,8 @@ class FlawTypes:
 	""" 
 	A collection of all flaws in order of priority.
 	"""
-	def __init__(self, statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols, ungrounded_geometry):
-		self._list = [statics, inits, threats, unsafe, reusable, nonreusable, ungrounded_symbols, ungrounded_geometry]
+	def __init__(self, list):
+		self._list = list
 
 	def __len__(self):
 		return len(self._list)
@@ -297,20 +328,22 @@ class FlawLib:
 		self.nonreusable = Flawque('nonreusable')
 		self.opf_names = ['statics', 'inits', 'unsafe', 'reusable']
 
+		self.geometric_threats = Flawque('geometric_threats')
 		# ungrounded symbolic variables
 		self.ungrounded_symbolic_variables = Flawque('ungrounded_symbolic_variables')
 
 		# ungrounded geometric variables
 		self.ungrounded_geometric_variables = Flawque('ungrounded_geometric_variables')
 
-		self.typs = FlawTypes(self.statics,
+		self.typs = FlawTypes([self.statics,
 						      self.threats,
+							  self.geometric_threats,
 						      self.inits,
 							  self.unsafe,
 							  self.reusable,
 							  self.nonreusable,
 							  self.ungrounded_symbolic_variables,
-							  self.ungrounded_geometric_variables)
+							  self.ungrounded_geometric_variables])
 
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)
@@ -371,6 +404,8 @@ class FlawLib:
 		if isinstance(flaw, TCLF):
 			#if flaw not in self.threats:
 			self.threats.add(flaw)
+		elif isinstance(flaw, GTF):
+			self.geometric_threats.add(flaw)
 		elif isinstance(flaw, UGSV):
 			self.ungrounded_symbolic_variables.add(flaw)
 		elif isinstance(flaw, UGGV):

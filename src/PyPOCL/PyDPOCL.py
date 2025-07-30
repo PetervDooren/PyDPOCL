@@ -3,7 +3,7 @@ from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
-from PyPOCL.Flaws import Flaw, OPF, TCLF, UGSV, UGGV
+from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, UGSV, UGGV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
@@ -234,6 +234,8 @@ class POCLPlanner:
 			if isinstance(flaw, TCLF):
 				tclf_visits += 1
 				self.resolve_threat(plan, flaw)
+			elif isinstance(flaw, GTF):
+				self.resolve_geometric_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
 				if not self.ground_variable(plan, flaw):
 					log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
@@ -460,6 +462,65 @@ class POCLPlanner:
 		self.insert(new_plan)
 		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
+	def resolve_geometric_threat(self, plan: GPlan, gtf: GTF) -> None:
+		# find out if the threatening area is a static object or not.
+		threatening_area = gtf.threat
+		threatened_area = gtf.area
+
+		area_is_static = True
+		for causal_link in plan.CausalLinkGraph.edges:
+			if causal_link.label.source.name == "within":
+				if threatening_area == causal_link.label.source.Args[1]:
+					area_is_static = False
+					break
+		if area_is_static:
+			self.resolve_geometric_threat_static(plan, gtf)
+		else:
+			self.resolve_geometric_threat_dynamic(plan, gtf, causal_link)
+
+	def resolve_geometric_threat_static(self, plan: GPlan, gtf: GTF) -> None:
+		pass
+
+	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threatening_link) -> None:
+		threatened_area = gtf.area
+		# find the causal link corresponding to the threatened area
+		for causal_link in plan.CausalLinkGraph.edges:
+			if causal_link.label.source.name == "within":
+				if threatened_area == causal_link.label.source.Args[1]:
+					break
+		else:
+			raise LookupError(f"Could not find area {threatened_area} in any of the causal links")
+		src_index_1 = plan.index(causal_link.source)
+		snk_index_1 = plan.index(causal_link.sink)
+		src_index_2 = plan.index(threatening_link.source)
+		snk_index_2 = plan.index(threatening_link.sink)
+		# Promotion place 2 before 1
+		new_plan = plan.instantiate(str(self.plan_num)+ '[tp] ')
+		source_1 = new_plan[src_index_1]
+		sink_2 = new_plan[snk_index_2]
+		new_plan.OrderingGraph.addEdge(sink_2, source_1)
+		if hasattr(source_1, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_2, source_1.sibling)
+		if hasattr(sink_2, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
+		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
+		self.insert(new_plan)
+		log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
+
+
+		# Demotion place 2 after 1
+		new_plan = plan.instantiate(str(self.plan_num) + '[td] ')
+		source_2 = new_plan[src_index_2]
+		sink_1 = new_plan[snk_index_1]
+		new_plan.OrderingGraph.addEdge(sink_1, source_2)
+		if hasattr(source_2, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_1, source_2.sibling)
+		if hasattr(sink_1, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
+		sink_1.update_choices(new_plan) #TODO check if needed?
+		self.insert(new_plan)
+		log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
+	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		""" create branch plans by grounding a symbolic variable.
 
@@ -520,7 +581,15 @@ class POCLPlanner:
 			self.insert(new_plan)
 			return True
 		else:
-			log_message(f"could not ground variable {arg}, it conflicts with areas: {new_plan.variableBindings.geometric_vb.disjunctions[arg]}")
+			offending_areas = new_plan.variableBindings.geometric_vb.disjunctions[arg]
+			log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
+			new_new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+			if new_new_plan.variableBindings.geometric_vb.resolve(arg):
+				for area in offending_areas:
+					new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
+				log_message(f"grounding variable {arg}. Moving areas {offending_areas}")
+				self.insert(new_new_plan)
+				return True
 			return False
 
 	# Heuristic Methods #
