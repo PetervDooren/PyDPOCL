@@ -4,7 +4,7 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from PyPOCL.Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, box, difference, within, union, intersects
+from shapely import Polygon, box, difference, within, union, intersects, buffer
 
 # visualization
 import matplotlib.pyplot as plt
@@ -350,6 +350,7 @@ class VariableBindingsGeometric:
         Returns:
             bool: True if resolving succeeded. False otherwise.
         """
+        MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
         HELPER_VIZ = False # only use when debugging
         ploc = self.placelocs[var]
 
@@ -370,7 +371,8 @@ class VariableBindingsGeometric:
                 disjunct_area_max = difference(disjunct_area_max, self.defined_areas[d_area])
             elif self.placelocs[d_area].area_assigned is not None:
                 disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
-        
+
+        buffered_disjunct_area_max = buffer(disjunct_area_max, MARGIN_OF_ERROR)
         # compile a minimum area based on areas that must lie within this area
         a_min = None
         for inv_within_var in self.inverse_within_mapping[var]:
@@ -387,7 +389,7 @@ class VariableBindingsGeometric:
         if a_min is not None:
             minx, miny, maxx, maxy = a_min.bounds
             a_min = box(minx, miny, maxx, maxy)
-            if maxx - minx >= ploc.object_width + self.buffer and maxy - miny >= ploc.object_length + self.buffer:
+            if maxx - minx - (ploc.object_width + self.buffer) >= -MARGIN_OF_ERROR and maxy - miny - (ploc.object_length + self.buffer) >= -MARGIN_OF_ERROR:
                 ploc.area_assigned = a_min
                 return True
 
@@ -412,7 +414,7 @@ class VariableBindingsGeometric:
             a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
             if HELPER_VIZ:
                 self.helper_show_resolve_step(disjunct_area_max, a_candidate)
-            if within(a_candidate, disjunct_area_max):
+            if within(a_candidate, buffered_disjunct_area_max):
                 ploc.area_assigned = a_candidate
                 return True
             # iterate to next position
