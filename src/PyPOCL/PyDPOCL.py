@@ -479,7 +479,71 @@ class POCLPlanner:
 			self.resolve_geometric_threat_dynamic(plan, gtf, causal_link)
 
 	def resolve_geometric_threat_static(self, plan: GPlan, gtf: GTF) -> None:
-		pass
+		threatened_area = gtf.area
+		# find the causal link corresponding to the threatened area
+		for causal_link in plan.CausalLinkGraph.edges:
+			if causal_link.label.source.name == "within":
+				if threatened_area == causal_link.label.source.Args[1]:
+					break
+		else:
+			raise LookupError(f"Could not find area {threatened_area} in any of the causal links")
+		consumer_index = plan.index(causal_link.source)
+		precondition_index = None # free (yadayada) is not an explicit condition
+
+		threatening_area = gtf.threat
+		for obj, area in plan.variableBindings.initial_positions.items():
+			if area == threatening_area:
+				break
+		else:
+			raise LookupError(f"Could not find object belonging to initial area {threatening_area}")
+		threatening_obj = obj
+
+		# add a step to the plan to move the object
+		candidates = []
+		for o in self.gsteps:
+			# cannot add a step which is the inital step
+			if not o.instantiable:
+				continue
+			for e in o.effects:
+				if e.name == 'within' and e.truth:
+					candidates.append((o.stepnum, o.effects.index(e)))
+
+		if len(candidates) == 0:
+			return
+
+		# need indices
+		for candidate_operator, candidate_effect in candidates:
+			# clone plan and new step
+
+			new_plan = plan.instantiate(str(self.plan_num) + '[a] ')
+
+			# use indices befoer inserting new steps
+			new_plan_consumer = new_plan[consumer_index]
+			#new_plan_precondition = new_plan_consumer.preconds[precondition_index]
+
+			# instantiate new step
+			new_step = self.gsteps[candidate_operator].instantiate()
+
+			# pass depth to new Added step.
+			new_step.depth = new_plan_consumer.depth
+
+			# recursively insert new step and substeps into plan, adding orderings and flaws
+			new_plan.insert(new_step)
+
+			new_plan.OrderingGraph.addEdge(new_step, new_plan_consumer)
+			#new_plan.CausalLinkGraph.addEdge(new_step, new_plan_consumer, new_step.effects[candidate_effect], None)
+			new_goal_object = new_step.effects[candidate_effect].Args[0]
+			new_goal_area = new_step.effects[candidate_effect].Args[1]
+			new_plan.variableBindings.add_codesignation(new_goal_object, threatening_obj)
+			new_plan.variableBindings.geometric_vb.add_disjunction(threatened_area, new_goal_area)
+			#TODO unify new_step goalarea with NOT threatened_area
+
+			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy area conflict of {new_plan_consumer}.')
+
+			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
+
+			# insert our new mutated plan into the frontier
+			self.insert(new_plan)
 
 	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threatening_link) -> None:
 		threatened_area = gtf.area
