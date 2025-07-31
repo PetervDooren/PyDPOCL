@@ -1,3 +1,4 @@
+import sys
 import json
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon as MplPolygon
@@ -44,6 +45,11 @@ def main():
                  'domains/manipulation-domain-batch/test_8_worldmodel.json',
                  'domains/manipulation-domain-batch/test_9_worldmodel.json',
                  ]
+
+    num_args = len(sys.argv)
+    if num_args > 1:
+        filenames = [filenames[int(i)] for i in sys.argv[1:]]
+
     for filename in filenames:
         data = load_worldmodel(filename)
 
