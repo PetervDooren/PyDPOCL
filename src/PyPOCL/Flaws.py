@@ -232,6 +232,10 @@ class Flawque:
 		self._flaws.appendleft(flaw)
 		self._flaws.rotate(index)
 
+	def sort(self):
+		# Sort the flaws in-place by converting to a list, sorting, and reassigning to deque
+		self._flaws = deque(sorted(self._flaws))
+
 	def __getitem__(self, position):
 		return self._flaws[position]
 

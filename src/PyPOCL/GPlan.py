@@ -547,6 +547,35 @@ class GPlan:
 				self.variableBindings.geometric_vb.add_disjunction(sourceloc, other_loc)	
 		return True
 	
+	def update_flaws(self):
+		"""
+		Update the criteria for flaws
+		"""
+		# ungrounded geometric variables
+		for flaw in self.flaws.ungrounded_geometric_variables:
+			flaw.criteria = 1 / self.variableBindings.geometric_vb.get_max_area(flaw.arg).area
+		self.flaws.ungrounded_geometric_variables.sort()
+
+		# check if any potential TCLFs are fully initialised
+		for pot_tclf in self.potential_tclf:
+			link_args = pot_tclf.link.label.sink.Args
+			# hotfix. store this info in the causal link
+			## find matching condition #TODO make more efficient
+			matching_conditions = [e for e in pot_tclf.threat.effects if e.name == pot_tclf.link.label.sink.name and e.truth != pot_tclf.link.label.sink.truth]
+			if len(matching_conditions) < 1:
+				print(f"Error, TCLF threat: {pot_tclf.threat} contains no effect which matches {pot_tclf.link.label}")
+				continue
+			if len(matching_conditions) > 1:
+				print(f"warning more than one matching condition matching {pot_tclf.link.label}, namely: {matching_conditions}")
+			threat_args = matching_conditions[0].Args
+			for i in range(len(link_args)):
+				if not self.variableBindings.is_codesignated(link_args[i], threat_args[i]):
+					break
+			else: # all arguments codesignate. the link is threatened
+				#print(f"TCLF found {pot_tclf}!")
+				self.flaws.insert(self, pot_tclf)
+				self.potential_tclf.remove(pot_tclf)
+	
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:
 		# 	return self.cost / (1 + math.log2(self.depth+1)) + self.heuristic < other.cost / (1 + math.log2(other.depth+1)) + other.heuristic
