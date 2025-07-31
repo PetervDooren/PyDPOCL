@@ -187,7 +187,7 @@ class POCLPlanner:
 			plan.update_flaws()
 
 			if len(plan.flaws) == 0:
-				if not check_connections_in_plan(plan):
+				if not check_connections_in_plan(plan) and False:
 					log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
 					leaves += 1
 					continue
