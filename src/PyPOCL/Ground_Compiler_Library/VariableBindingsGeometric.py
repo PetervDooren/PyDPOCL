@@ -242,8 +242,14 @@ class VariableBindingsGeometric:
                 return False
             if new_poly.area < 0.0001:
                 return False
+            if self.placelocs[varA].object_width > 0: # object is defined
+                minx, miny, maxx, maxy = new_poly.bounds
+                if maxx - minx < self.placelocs[varA].object_width + self.buffer:
+                    return False
+                if maxy - miny < self.placelocs[varA].object_length + self.buffer:
+                    return False
+
             self.placelocs[varA].area_max = new_poly
-            #TODO check if new_poly is still large enough to house the object
 
             # chain the new area_max A to everything with a relation to it. Starting with the variables
             for areaC in self.inverse_within_mapping[varA]:
