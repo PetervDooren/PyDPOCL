@@ -615,9 +615,12 @@ class POCLPlanner:
 			log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
 			new_new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 			if new_new_plan.variableBindings.geometric_vb.resolve(arg):
+				moved_areas = []
 				for area in offending_areas:
-					new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
-				log_message(f"grounding variable {arg}. Moving areas {offending_areas}")
+					if new_new_plan.variableBindings.geometric_vb.can_intersect(area, arg):
+						new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
+						moved_areas.append(area)
+				log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
 				self.insert(new_new_plan)
 				return True
 			return False
