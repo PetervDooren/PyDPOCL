@@ -270,7 +270,7 @@ def load_domain_and_problem(domain_file, problem_file, worldmodel_file):
         # load worldmodel
         objects, area_mapping, object_dimensions, object_area_mapping, robot_reach, base_area = load_worldmodel(worldmodel_file, objects)
         init_state = update_init_state(init_state, area_mapping, object_area_mapping)
-        goal_state, area_mapping = create_collision_free_goal_state(goal_state, area_mapping, object_area_mapping, object_dimensions, base_area)
+        #goal_state, area_mapping = create_collision_free_goal_state(goal_state, area_mapping, object_area_mapping, object_dimensions, base_area)
         pre_process_operators(ground_steps)
 
     # domain and problem names
