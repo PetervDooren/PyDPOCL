@@ -478,6 +478,8 @@ class GPlan:
 		
 		# add disjunctions between var and moving object locations.
 		for other_var in self.variableBindings.geometric_vb.variables:
+			if other_var == var:
+				continue
 			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
 			if other_var not in other_src.Args: # only add goal locations to the disjunction list.
 				continue
