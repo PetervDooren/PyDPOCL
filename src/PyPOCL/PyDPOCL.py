@@ -446,19 +446,13 @@ class POCLPlanner:
 	
 	def resolve_geometric_threat(self, plan: GPlan, gtf: GTF) -> None:
 		# find out if the threatening area is a static object or not.
-		threatening_area = gtf.threat
-		threatened_area = gtf.area
-
-		area_is_static = True
-		for causal_link in plan.CausalLinkGraph.edges:
-			if causal_link.label.source.name == "within":
-				if threatening_area == causal_link.label.source.Args[1]:
-					area_is_static = False
-					break
+		threat_source, threat_sink = GPlan.find_place_in_plan(plan, gtf.threat)
+		
+		area_is_static = threat_source == plan.dummy.init and threat_sink == plan.dummy.goal
 		if area_is_static:
 			self.resolve_geometric_threat_static(plan, gtf)
 		else:
-			self.resolve_geometric_threat_dynamic(plan, gtf, causal_link)
+			self.resolve_geometric_threat_dynamic(plan, gtf, threat_source, threat_sink)
 
 	def resolve_geometric_threat_static(self, plan: GPlan, gtf: GTF) -> None:
 		threatened_area = gtf.area
@@ -521,14 +515,14 @@ class POCLPlanner:
 			# insert our new mutated plan into the frontier
 			self.insert(new_plan)
 
-	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threatening_link) -> None:
+	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threat_source, threat_sink) -> None:
 		threatened_area = gtf.area
 		# find the causal link corresponding to the threatened area
 		src, snk = GPlan.find_place_in_plan(plan, threatened_area)
 		src_index_1 = plan.index(src)
 		snk_index_1 = plan.index(snk)
-		src_index_2 = plan.index(threatening_link.source)
-		snk_index_2 = plan.index(threatening_link.sink)
+		src_index_2 = plan.index(threat_source)
+		snk_index_2 = plan.index(threat_sink)
 
 		# Promotion place 2 before 1
 		new_plan = plan.instantiate(str(self.plan_num)+ '[tp] ')
