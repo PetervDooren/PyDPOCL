@@ -513,7 +513,6 @@ class POCLPlanner:
 			new_goal_area = new_step.effects[candidate_effect].Args[1]
 			new_plan.variableBindings.add_codesignation(new_goal_object, threatening_obj)
 			new_plan.variableBindings.geometric_vb.add_disjunction(threatened_area, new_goal_area)
-			#TODO unify new_step goalarea with NOT threatened_area
 
 			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy area conflict of {new_plan_consumer}.')
 
