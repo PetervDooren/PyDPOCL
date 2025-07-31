@@ -256,6 +256,8 @@ class VariableBindings:
     def repr_arg(self, var):
         if var in self.symbolic_vb.variables:
             return self.symbolic_vb.repr_arg(var)
+        elif var in self.geometric_vb.variables:
+            return self.geometric_vb.repr_arg(var)
         else:
             return var
         

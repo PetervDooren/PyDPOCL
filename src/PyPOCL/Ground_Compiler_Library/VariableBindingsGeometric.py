@@ -437,7 +437,7 @@ class VariableBindingsGeometric:
                 return False
         return True
     
-    def helper_show_resolve_step(self, disjunct_area_max=None, a_candidate=None):
+    def helper_show_resolve_step(self, disjunct_area_max=None, a_min=None, a_candidate=None):
         plt.figure(1)
         plt.cla()
         # plot base area
@@ -449,23 +449,28 @@ class VariableBindingsGeometric:
             for hole in disjunct_area_max.interiors:
                 plt.fill(*hole.xy, color='gray')
         if a_candidate:
-            if within(a_candidate, disjunct_area_max):
-                plt.fill(*a_candidate.exterior.xy, color='green')
+            if within(a_candidate, disjunct_area_max) and (a_min is None or within(a_min, a_candidate)):
+                    plt.fill(*a_candidate.exterior.xy, color='green')
             else:
-                plt.fill(*a_candidate.exterior.xy, color='red')            
+                plt.fill(*a_candidate.exterior.xy, color='red')
+        if a_min:
+            if isinstance(a_min, Polygon):
+                plt.fill(*a_min.exterior.xy, color='cyan')                     
 
-    def print_var(self, var):
-        print(f"variable: {var}")
-        if self.const[self.group_mapping[var]] is not None:
-            print(f"ground as {self.const[var]}")
-        else:
-            print(f"codesignations: {self.group_members[self.group_mapping[var]]}")
-            print(f"non_codesignations: {self.non_codesignations[self.group_mapping[var]]}")
-    
     def repr_arg(self, var):
-        if self.const[self.group_mapping[var]] is not None:
-            return self.const[self.group_mapping[var]].name
-        return self.group_mapping[var]
+        shrt_id = str(var.ID)[19:23]
+        if var.arg_name is None:
+            arg_name = ''
+        else:
+            arg_name = '-' + var.arg_name
+        if var.name is None:
+            name = ''
+        else:
+            name = '-' + self.name
+        if self.placelocs[var].area_assigned is not None:
+            return f"ground{name}{arg_name}-{shrt_id}"
+        else:
+            return f"area{name}{arg_name}-{shrt_id}"
     
     def plot(self):
         plt.figure()
