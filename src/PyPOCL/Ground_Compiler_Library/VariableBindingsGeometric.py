@@ -240,6 +240,8 @@ class VariableBindingsGeometric:
             new_poly = area_A.intersection(area_B)
             if type(new_poly) != Polygon: # intersection is a linesegment (or a multipolygon)
                 return False
+            if new_poly.area < 0.0001:
+                return False
             self.placelocs[varA].area_max = new_poly
             #TODO check if new_poly is still large enough to house the object
 
