@@ -474,36 +474,20 @@ class GPlan:
 			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
 
 		# find the causal link that places the object at the goal location represented by var
-		for causal_link in self.CausalLinkGraph.edges:
-			if causal_link.label.source.name != "within":
-				continue
-			if causal_link.label.source.Args[1] == var:
-				break
-			if causal_link.label.sink.Args[1] == var:
-				# var is a startarea. No disjunctions need to be set. #TODO check if correct
-				return True
-		else:
-			raise LookupError(f"Could not find {var} in the causal links")
+		source, sink = GPlan.find_place_in_plan(self, var)
 		
 		# add disjunctions between var and moving object locations.
-		object = causal_link.label.source.Args[0]
-
-		for other_link in self.CausalLinkGraph.edges:
-			if other_link.label.source.name != "within":
+		for other_var in self.variableBindings.geometric_vb.variables:
+			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
+			if other_var not in other_src.Args: # only add goal locations to the disjunction list.
 				continue
-			other_object = other_link.label.source.Args[0]
-			if other_object == object:
-				continue
-			other_loc = other_link.label.source.Args[1]
-
-			# check if the causal links overlap.
-			if self.OrderingGraph.isPath(causal_link.sink, other_link.source) or self.OrderingGraph.isPath(other_link.sink, causal_link.source):
+			if self.OrderingGraph.isPath(sink, other_src) or self.OrderingGraph.isPath(other_snk, source):
 				# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
 				continue
-			if not self.variableBindings.geometric_vb.can_intersect(var, other_loc):
+			if not self.variableBindings.geometric_vb.can_intersect(var, other_var):
 				# the areas do not overlap. No need to add an explicit disjunction.
 				continue
-			self.variableBindings.geometric_vb.add_disjunction(var, other_loc)	
+			self.variableBindings.geometric_vb.add_disjunction(var, other_var)
 		return True
 
 	def set_disjunctions_all(self):
@@ -576,6 +560,42 @@ class GPlan:
 				self.flaws.insert(self, pot_tclf)
 				self.potential_tclf.remove(pot_tclf)
 	
+	@staticmethod
+	def find_place_in_plan(plan, area_arg):
+		"""
+		Find the place in the plan where an area is occupied
+
+		Args:
+			plan (_type_): _description_
+			area_arg (_type_): The area variable. can be a startlocation or a goallocation
+		
+		Returns:
+			tuple(creator, consumer): The actions in the plan which create and destroy the condition.
+		
+		Raises:
+			LookupError: if the area_arg could not be found in the plan.
+		"""
+		source = plan.dummy.init
+		sink = plan.dummy.goal
+		for causal_link in plan.CausalLinkGraph.edges:
+			if causal_link.label.source.name == "within":
+				if area_arg == causal_link.label.source.Args[1] or area_arg == causal_link.label.sink.Args[1]:
+					source = causal_link.source
+					sink = causal_link.sink
+					return (source, sink)
+		# could not find area in causal links
+		for step in plan.steps:
+			if area_arg in step.Args:
+				# check wether the action creates or destroys the area. 
+				for effect in step.effects:
+					if effect.name == "within":
+						if effect.Args[1] == area_arg:
+							if effect.truth:
+								source = step
+							else:
+								sink = step
+		return (source, sink)
+
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:
 		# 	return self.cost / (1 + math.log2(self.depth+1)) + self.heuristic < other.cost / (1 + math.log2(other.depth+1)) + other.heuristic

@@ -463,13 +463,8 @@ class POCLPlanner:
 	def resolve_geometric_threat_static(self, plan: GPlan, gtf: GTF) -> None:
 		threatened_area = gtf.area
 		# find the causal link corresponding to the threatened area
-		for causal_link in plan.CausalLinkGraph.edges:
-			if causal_link.label.source.name == "within":
-				if threatened_area == causal_link.label.source.Args[1]:
-					break
-		else:
-			raise LookupError(f"Could not find area {threatened_area} in any of the causal links")
-		consumer_index = plan.index(causal_link.source)
+		source, sink = GPlan.find_place_in_plan(plan, threatened_area)
+		consumer_index = plan.index(source)
 		precondition_index = None # free (yadayada) is not an explicit condition
 
 		threatening_area = gtf.threat
@@ -530,16 +525,12 @@ class POCLPlanner:
 	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threatening_link) -> None:
 		threatened_area = gtf.area
 		# find the causal link corresponding to the threatened area
-		for causal_link in plan.CausalLinkGraph.edges:
-			if causal_link.label.source.name == "within":
-				if threatened_area == causal_link.label.source.Args[1]:
-					break
-		else:
-			raise LookupError(f"Could not find area {threatened_area} in any of the causal links")
-		src_index_1 = plan.index(causal_link.source)
-		snk_index_1 = plan.index(causal_link.sink)
+		src, snk = GPlan.find_place_in_plan(plan, threatened_area)
+		src_index_1 = plan.index(src)
+		snk_index_1 = plan.index(snk)
 		src_index_2 = plan.index(threatening_link.source)
 		snk_index_2 = plan.index(threatening_link.sink)
+
 		# Promotion place 2 before 1
 		new_plan = plan.instantiate(str(self.plan_num)+ '[tp] ')
 		source_1 = new_plan[src_index_1]
