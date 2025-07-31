@@ -19,13 +19,18 @@ if __name__ == '__main__':
         #worldmodel_file = 'tests/domains/test-worldmodel.json'
 
         #domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
-        #problem_file = 'domains/manipulation-domain/manipulation-problem2.pddl'
-        #worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel2.json'
+        #problem_file = 'domains/manipulation-domain/manipulation-problem3.pddl'
+        #worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel3.json'
 
-        test_i = 0
+        test_i = 4
         domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
         problem_file = f'domains/manipulation-domain-batch/test_{test_i}_problem.pddl'
         worldmodel_file = f'domains/manipulation-domain-batch/test_{test_i}_worldmodel.json'
+
+        # benchmarks
+        #domain_file = 'tests/benchmarks/manipulation-domain-geometric-threats/domain.pddl'
+        #problem_file = 'tests/benchmarks/manipulation-domain-geometric-threats/problem.pddl'
+        #worldmodel_file = 'tests/benchmarks/manipulation-domain-geometric-threats/worldmodel.json'
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
@@ -37,6 +42,6 @@ if __name__ == '__main__':
             print("Error: plan is not valid")
         else:
             print("Plan is valid")
-        plan_to_json(plan, f"plans/{domain.name}/{problem.name}-plan_{i}.json")
+        #plan_to_json(plan, f"plans/{domain.name}/{problem.name}-plan_{i}.json")
         #if domain.name == "manipulation-domain":
         #    plan_to_yaml(plan, f"plans/{domain.name}/{problem.name}-executable_plan_{i}.yaml")
