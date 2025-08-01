@@ -96,6 +96,8 @@ class GPlan:
 		self.depth = 0
 		self.potential_tclf = []
 
+		self.log = False
+
 	def __len__(self):
 		return len(self.steps)
 
@@ -541,7 +543,7 @@ class GPlan:
 		for flaw in self.flaws.ungrounded_symbolic_variables:
 			if self.variableBindings.symbolic_vb.is_ground(flaw.arg):
 				# remove flaw from flawlist
-				#print(f"removing flaw {flaw} as variable is already ground.")
+				self.log_message(f"removing flaw {flaw} as variable is already ground.")
 				self.flaws.ungrounded_symbolic_variables.remove(flaw)
 
 		# ungrounded geometric variables
@@ -643,6 +645,11 @@ class GPlan:
 			args = str([self.variableBindings.repr_arg(arg) for arg in step.Args])
 			print(str(step.schema) + args + '_{}'.format(str(step.ID)[-4:]))
 		print('\n')
+
+	# logging
+	def log_message(self, message):
+		if self.log:
+			print(message)
 
 	def __str__(self):
 		return self.name

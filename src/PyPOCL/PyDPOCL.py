@@ -84,7 +84,7 @@ class POCLPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, domain: Domain, problem: Problem) -> None:
+	def __init__(self, domain: Domain, problem: Problem, log=0) -> None:
 		"""construct planner
 
 		Args:
@@ -92,7 +92,7 @@ class POCLPlanner:
 			problem (Problem): problem of the planning problem
 		"""	
 		self.ID = duuid4()
-		self.log = 0 # defines log level
+		self.log = log # defines log level
 
 		self.domain = domain
 		self.problem = problem
@@ -108,6 +108,7 @@ class POCLPlanner:
 		self._frontier = Frontier()
 		self.plan_num = 0
 		root_plan = GPlan.make_root_plan(domain, problem)
+		root_plan.log = log
 		self.insert(root_plan)
 		self._h_visited = []
 		self.max_height = self.gsteps[-3].height

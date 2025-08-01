@@ -36,8 +36,7 @@ if __name__ == '__main__':
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-    planner = POCLPlanner(domain, problem)
-    planner.log = LOG
+    planner = POCLPlanner(domain, problem, LOG)
     plans, _ = planner.solve(k=1, cutoff=0)
     for i in range(len(plans)):
         plan = plans[i]
