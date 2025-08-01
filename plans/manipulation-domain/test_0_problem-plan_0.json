@@ -1,5 +1,5 @@
 {
-  "ID": "a175a9c3-d7b1-02a9-2332-a50e6992896e",
+  "ID": "d6cd3155-08a8-ac7f-8621-38ad0f09105c",
   "name": "[u]0[a] [u]0[a] [u]1[r] [u]0[a] [u]1[r] [u]1[r] [u][ugsv]0[g] [u][ugsv]0[ag] [u][ugsv]0[g] [u][ugsv]0[ag] [u][ugsv]0[g] [u][ugsv]0[ag] [u][uggv]0[g] [u][uggv]0[g] [g]0[a] [u]1[r] [u][ugsv]0[g] [u][ugsv]0[ag] [u][uggv]0[g] [u][uggv]0[g] [u][uggv]0[g] [u][uggv]0[g] [u][uggv]0[g] [u][uggv]0[g] ",
   "domain": "manipulation-domain",
   "problem": "test_0_problem",
@@ -8,17 +8,17 @@
   "heuristic": 0,
   "depth": 0,
   "init_state": {
-    "ID": "6b352f85-504e-2687-70e7-e75604d9145e",
+    "ID": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
     "schema": "dummy_init",
     "Args": [],
     "preconds": [],
     "effects": [
       {
-        "ID": "b5a5f8e6-b639-1f04-2852-4385d9f2dd0d",
-        "name": "within",
+        "ID": "8ccc9cea-109f-d8ee-b5a4-720058f0dd23",
+        "name": "in_reach",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
+          "97674900-4651-0367-cbdc-43184d85a3d2"
         ],
         "trudom": false
       },
@@ -26,62 +26,35 @@
         "ID": "b7b8c1a5-9a45-693d-7227-890e4e76833a",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "a3b442bd-4649-4296-6f58-42c3ff86cc31",
-        "name": "within",
-        "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "ad973b67-9b89-e5cb-d942-644c248d31ec",
-        "name": "within",
-        "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
         ],
         "trudom": true
       },
       {
-        "ID": "2e326567-d284-f54e-febe-c0db9a3a6103",
-        "name": "within",
+        "ID": "f7b217c7-ae92-ea71-cf7d-cb431679742f",
+        "name": "in_reach",
         "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
+          "97674900-4651-0367-cbdc-43184d85a3d2"
         ],
         "trudom": false
       },
       {
-        "ID": "bff9507d-cd14-a03e-8359-9af65d01f55f",
-        "name": "within",
-        "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "f31046dc-6202-bee6-5cb5-e69c5dc7b3e6",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "a52964ff-c74c-c890-3c6a-3174113634a5",
+        "ID": "1a43db54-523a-e993-4b34-46bc8ba435cc",
         "name": "within",
         "Args": [
           "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "2c913a7c-a340-4f08-b341-91b8ed6522b4",
+        "name": "in_reach",
+        "Args": [
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
         ],
         "trudom": false
       },
@@ -89,260 +62,8 @@
         "ID": "7092947d-be49-69ec-6667-d3bbe3b56360",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "4baf0f5e-a932-0094-53f2-8f11147f6570",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "9d66e815-5a41-53b3-e95f-176cdebac186",
-        "name": "within",
-        "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "cac4d0eb-3373-730e-fc31-a5971f119c0f",
-        "name": "within",
-        "Args": [
           "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "3967e60a-823d-d107-5c8a-c066cb2fafa3",
-        "name": "within",
-        "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
           "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "56cb1ab0-62fb-26d7-f4db-ca07e506f670",
-        "name": "within",
-        "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "06a241af-1d0a-f7f7-f5e4-a4713fe68c9c",
-        "name": "within",
-        "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "45f18619-54f9-0429-a7de-02ccdda4f4a7",
-        "name": "within",
-        "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "4cc9f5f2-e42e-5037-4a55-2ea08acbbe09",
-        "name": "within",
-        "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "2c33350c-73b9-11d8-12f5-131ada52d2ee",
-        "name": "within",
-        "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "1e2595b8-8fc9-c86b-e9dd-ebf563119aca",
-        "name": "in_reach",
-        "Args": [
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "ffa623d0-ea9e-5c8d-b1a8-b71f491b90e9",
-        "name": "in_reach",
-        "Args": [
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "e25df9a8-9ca8-a5c4-2138-afe08d38bbd8",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "493e904d-30ec-2796-a59b-457fc0d7ac73",
-        "name": "within",
-        "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "15260718-cd18-0a82-4447-ceab84ef4324",
-        "name": "in_reach",
-        "Args": [
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "848af440-7fc1-5858-2fa0-d842bc55300b",
-        "name": "in_reach",
-        "Args": [
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "0eaf04b5-f2a9-dc8a-ca9e-4a62fae3114b",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "9ca3fbb3-ff11-c8ba-36ee-1640723ef466",
-        "name": "in_reach",
-        "Args": [
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "71a3fad2-b094-6d2a-2aa9-3b436d15f16f",
-        "name": "within",
-        "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "ff4c96d6-71f2-ce8f-b69f-68c3e60fd420",
-        "name": "within",
-        "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "0c3ce284-c7e5-3bbb-dcb5-1c535b62a8df",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "9280c5aa-8dd4-595b-5c63-b6f306ba8cd3",
-        "name": "in_reach",
-        "Args": [
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "7e7838c9-ca55-e38b-3c9a-be10238d6f44",
-        "name": "in_reach",
-        "Args": [
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "2c913a7c-a340-4f08-b341-91b8ed6522b4",
-        "name": "within",
-        "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "d0be73ee-fd37-2539-65f2-02f983f02dc7",
-        "name": "within",
-        "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-        ],
-        "trudom": true
-      },
-      {
-        "ID": "aaf78c67-51d0-8109-fc90-2838d8741408",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "07f8d4f0-f3ea-0184-28f4-e3ceadedda80",
-        "name": "within",
-        "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "22bf18f5-1f65-2a87-333e-e3447dbf4bc1",
-        "name": "in_reach",
-        "Args": [
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "fba6abf7-cdbc-c653-77a7-e8b75e70f65f",
-        "name": "in_reach",
-        "Args": [
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
         ],
         "trudom": false
       },
@@ -350,98 +71,53 @@
         "ID": "5df06e8c-878a-aed9-233f-fc8292ec89af",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
         ],
         "trudom": true
       },
       {
-        "ID": "b43bd27f-42a2-59a6-c664-12854303cbc1",
-        "name": "in_reach",
-        "Args": [
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "2747b93c-9ae7-7eab-084a-67809136f1f8",
+        "ID": "d0be73ee-fd37-2539-65f2-02f983f02dc7",
         "name": "within",
         "Args": [
           "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "cc1b4157-ec9f-9c54-5e0a-72ab7f5db163",
-        "name": "within",
-        "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          "30307633-a6de-d1d8-9258-17b7cf501889"
         ],
         "trudom": true
       },
       {
-        "ID": "20509c62-08e8-95d7-702c-1821c8040fb7",
-        "name": "within",
-        "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "4758367b-a649-9cdc-507b-907265e58f34",
-        "name": "within",
-        "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "4f612217-eef1-6694-50ca-e32d0aba590e",
+        "ID": "aaf78c67-51d0-8109-fc90-2838d8741408",
         "name": "in_reach",
         "Args": [
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251",
-          "497de16d-d4ea-120a-5e65-96540e9058b6"
+          "30307633-a6de-d1d8-9258-17b7cf501889",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
         ],
         "trudom": false
       },
       {
-        "ID": "095ffa81-40d9-2bce-7930-ba208b040f49",
+        "ID": "e2c328aa-3310-7475-ca86-22250b36e356",
         "name": "within",
         "Args": [
           "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
-        "ID": "1a43db54-523a-e993-4b34-46bc8ba435cc",
+        "ID": "0c3ce284-c7e5-3bbb-dcb5-1c535b62a8df",
         "name": "within",
         "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
         ],
         "trudom": false
       },
       {
-        "ID": "6e3c4532-1434-8f62-6cac-028cba220065",
-        "name": "in_reach",
-        "Args": [
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
-          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "5ef787b8-f2e6-195f-732e-2016add702c9",
+        "ID": "9ca3fbb3-ff11-c8ba-36ee-1640723ef466",
         "name": "within",
         "Args": [
           "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
         ],
         "trudom": false
       },
@@ -449,17 +125,80 @@
         "ID": "6fdc0bad-5e36-8127-cca1-b45c1fdd980a",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
           "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
         ],
         "trudom": false
       },
       {
-        "ID": "8ccc9cea-109f-d8ee-b5a4-720058f0dd23",
+        "ID": "1e2595b8-8fc9-c86b-e9dd-ebf563119aca",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "30307633-a6de-d1d8-9258-17b7cf501889"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "339b77a8-4b1f-0d7b-0977-c513752a7d25",
+        "name": "within",
+        "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "cc1b4157-ec9f-9c54-5e0a-72ab7f5db163",
         "name": "within",
         "Args": [
           "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+          "30307633-a6de-d1d8-9258-17b7cf501889"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "4baf0f5e-a932-0094-53f2-8f11147f6570",
+        "name": "within",
+        "Args": [
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "b12b6680-7f07-2cb9-2fd3-40c0f945f2fd",
+        "name": "in_reach",
+        "Args": [
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "9d66e815-5a41-53b3-e95f-176cdebac186",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "45f18619-54f9-0429-a7de-02ccdda4f4a7",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "0eaf04b5-f2a9-dc8a-ca9e-4a62fae3114b",
+        "name": "within",
+        "Args": [
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
         ],
         "trudom": false
       },
@@ -468,51 +207,339 @@
         "name": "within",
         "Args": [
           "949077c2-7674-456f-626d-719d81cf3252",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
         ],
         "trudom": false
       },
       {
-        "ID": "b12b6680-7f07-2cb9-2fd3-40c0f945f2fd",
+        "ID": "4758367b-a649-9cdc-507b-907265e58f34",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "bff9507d-cd14-a03e-8359-9af65d01f55f",
+        "name": "within",
+        "Args": [
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "30307633-a6de-d1d8-9258-17b7cf501889"
         ],
         "trudom": true
       },
       {
-        "ID": "f7b217c7-ae92-ea71-cf7d-cb431679742f",
+        "ID": "2747b93c-9ae7-7eab-084a-67809136f1f8",
         "name": "within",
         "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "cac4d0eb-3373-730e-fc31-a5971f119c0f",
+        "name": "in_reach",
+        "Args": [
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "97674900-4651-0367-cbdc-43184d85a3d2"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "b5a5f8e6-b639-1f04-2852-4385d9f2dd0d",
+        "name": "in_reach",
+        "Args": [
           "30307633-a6de-d1d8-9258-17b7cf501889",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+          "97674900-4651-0367-cbdc-43184d85a3d2"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "2e326567-d284-f54e-febe-c0db9a3a6103",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "ffa623d0-ea9e-5c8d-b1a8-b71f491b90e9",
+        "name": "within",
+        "Args": [
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "06a241af-1d0a-f7f7-f5e4-a4713fe68c9c",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
         ],
         "trudom": true
+      },
+      {
+        "ID": "4f612217-eef1-6694-50ca-e32d0aba590e",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "493e904d-30ec-2796-a59b-457fc0d7ac73",
+        "name": "within",
+        "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "15260718-cd18-0a82-4447-ceab84ef4324",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "ff4c96d6-71f2-ce8f-b69f-68c3e60fd420",
+        "name": "in_reach",
+        "Args": [
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
+          "97674900-4651-0367-cbdc-43184d85a3d2"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "22bf18f5-1f65-2a87-333e-e3447dbf4bc1",
+        "name": "within",
+        "Args": [
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "30307633-a6de-d1d8-9258-17b7cf501889"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "20509c62-08e8-95d7-702c-1821c8040fb7",
+        "name": "within",
+        "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "30307633-a6de-d1d8-9258-17b7cf501889"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "5ef787b8-f2e6-195f-732e-2016add702c9",
+        "name": "within",
+        "Args": [
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "a3b442bd-4649-4296-6f58-42c3ff86cc31",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "ad973b67-9b89-e5cb-d942-644c248d31ec",
+        "name": "within",
+        "Args": [
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "095ffa81-40d9-2bce-7930-ba208b040f49",
+        "name": "within",
+        "Args": [
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "b43bd27f-42a2-59a6-c664-12854303cbc1",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "f1901b7e-c6b4-69ef-b74e-ba9310275b53",
+        "name": "within",
+        "Args": [
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "2c33350c-73b9-11d8-12f5-131ada52d2ee",
+        "name": "within",
+        "Args": [
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "7e7838c9-ca55-e38b-3c9a-be10238d6f44",
+        "name": "in_reach",
+        "Args": [
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "71a3fad2-b094-6d2a-2aa9-3b436d15f16f",
+        "name": "within",
+        "Args": [
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "07f8d4f0-f3ea-0184-28f4-e3ceadedda80",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "30307633-a6de-d1d8-9258-17b7cf501889"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "f31046dc-6202-bee6-5cb5-e69c5dc7b3e6",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "848af440-7fc1-5858-2fa0-d842bc55300b",
+        "name": "within",
+        "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+        ],
+        "trudom": true
+      },
+      {
+        "ID": "3967e60a-823d-d107-5c8a-c066cb2fafa3",
+        "name": "in_reach",
+        "Args": [
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "97674900-4651-0367-cbdc-43184d85a3d2"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "6e3c4532-1434-8f62-6cac-028cba220065",
+        "name": "within",
+        "Args": [
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "ba108217-0ad7-c9a2-7277-16ec59fefbbc",
+        "name": "within",
+        "Args": [
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "4cc9f5f2-e42e-5037-4a55-2ea08acbbe09",
+        "name": "in_reach",
+        "Args": [
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "56cb1ab0-62fb-26d7-f4db-ca07e506f670",
+        "name": "in_reach",
+        "Args": [
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
+          "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+        ],
+        "trudom": false
       },
       {
         "ID": "13aec376-c359-810a-71a6-014c5f3c44dc",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "7a768555-a987-b218-ff84-faef5336723b",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": true
+      },
+      {
+        "ID": "f4e95734-5052-1700-6077-96a38685abaa",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
+        ],
+        "trudom": false
+      },
+      {
+        "ID": "887b03e5-e980-f808-75ac-824c2c55aef7",
+        "name": "within",
+        "Args": [
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+        ],
+        "trudom": false
       },
       {
         "ID": "ad05b912-5ab2-8d4a-8bd8-8fcd57a2be4e",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
           "9c89d374-c664-95a7-8077-3e33690e7e62"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "ae455cc6-b88e-830f-de1e-994ac5a11f5c",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
           "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
         ],
         "trudom": false
@@ -521,7 +548,7 @@
         "ID": "43ad3d62-b17c-fb21-cdbc-2c1ca4afe7bd",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
           "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
         ],
         "trudom": false
@@ -530,7 +557,7 @@
         "ID": "f5141058-3138-3975-7bf3-3a349c2dfa97",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
           "8f964685-3514-5890-84c8-6c4623595fa4"
         ],
         "trudom": false
@@ -539,8 +566,8 @@
         "ID": "4c6a70f4-8ede-c44d-476c-f68c3f1be0d0",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": false
       },
@@ -548,17 +575,17 @@
         "ID": "fb756923-f910-abb3-f105-32523990e2c9",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
-        "trudom": false
+        "trudom": true
       },
       {
         "ID": "b4746349-49fc-2cd8-c56b-ad4c4c3077c4",
         "name": "within",
         "Args": [
-          "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
         "trudom": false
       },
@@ -578,7 +605,7 @@
           "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
           "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "b8beff3d-cb9f-af6d-ef3a-6f27ef06fccb",
@@ -602,8 +629,8 @@
         "ID": "e5508ea2-6133-a34d-8b0e-8eb1ad371d9e",
         "name": "within",
         "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": false
       },
@@ -611,8 +638,8 @@
         "ID": "585abefb-d181-2f77-6500-1423faebcd19",
         "name": "within",
         "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
         "trudom": false
       },
@@ -620,10 +647,10 @@
         "ID": "257f7595-cdfb-4db9-c5e7-8b23f4613f09",
         "name": "within",
         "Args": [
-          "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "98159d6c-9d71-3084-171d-abf9daf481a7",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
-        "trudom": false
+        "trudom": true
       },
       {
         "ID": "f48f709c-49a2-2441-0ac4-de854a5b1aff",
@@ -650,7 +677,7 @@
           "98159d6c-9d71-3084-171d-abf9daf481a7",
           "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "d3f4a49b-33ba-ba88-36c7-d6fa7aa4f052",
@@ -665,8 +692,8 @@
         "ID": "8fe069b6-eeda-a802-4568-f42689e03e22",
         "name": "within",
         "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": false
       },
@@ -674,8 +701,8 @@
         "ID": "1bf645f6-2324-5211-4588-fc1bb2384849",
         "name": "within",
         "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
         "trudom": false
       },
@@ -683,8 +710,8 @@
         "ID": "3d4196fe-963a-8617-bdab-07e79d9d028e",
         "name": "within",
         "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "949077c2-7674-456f-626d-719d81cf3252",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
         "trudom": false
       },
@@ -695,7 +722,7 @@
           "949077c2-7674-456f-626d-719d81cf3252",
           "9c89d374-c664-95a7-8077-3e33690e7e62"
         ],
-        "trudom": false
+        "trudom": true
       },
       {
         "ID": "3b9b2d45-a350-55e4-39c5-9df987f255d6",
@@ -722,14 +749,14 @@
           "949077c2-7674-456f-626d-719d81cf3252",
           "8f964685-3514-5890-84c8-6c4623595fa4"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "f6eab3a0-0153-9221-2331-0a28c550eca8",
         "name": "within",
         "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": false
       },
@@ -737,8 +764,8 @@
         "ID": "286ed390-edd9-7a1a-fa58-5b278ce3e7c3",
         "name": "within",
         "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
         "trudom": false
       },
@@ -746,8 +773,8 @@
         "ID": "e1721c83-ef5e-4376-a723-fb72682b163a",
         "name": "within",
         "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
         "trudom": false
       },
@@ -755,7 +782,7 @@
         "ID": "a689b424-7a3a-10e1-79c7-73a0e0decc3d",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
           "9c89d374-c664-95a7-8077-3e33690e7e62"
         ],
         "trudom": false
@@ -764,16 +791,16 @@
         "ID": "4988e418-f6c3-1218-c183-6315330f8be1",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
           "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
         ],
-        "trudom": false
+        "trudom": true
       },
       {
         "ID": "0f25477d-a559-90e7-4910-fade52380bf2",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
           "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
         ],
         "trudom": false
@@ -782,7 +809,7 @@
         "ID": "a6fd0cb1-16e6-e5c0-c4cb-294fe86e8e63",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
           "8f964685-3514-5890-84c8-6c4623595fa4"
         ],
         "trudom": false
@@ -791,17 +818,17 @@
         "ID": "bd1a8f4b-88ff-bd40-3b72-c86d92fa675f",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "098c60b3-efc9-909e-d9af-6e09b91e3d6e",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
         "trudom": false
       },
@@ -809,8 +836,8 @@
         "ID": "6afa828c-2cd1-0b9f-ebe5-841fe9c96c52",
         "name": "within",
         "Args": [
-          "30307633-a6de-d1d8-9258-17b7cf501889",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "bd29ede9-cab4-923b-f448-83858de7ad6c",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
         "trudom": false
       },
@@ -839,7 +866,7 @@
           "bd29ede9-cab4-923b-f448-83858de7ad6c",
           "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
         ],
-        "trudom": false
+        "trudom": true
       },
       {
         "ID": "df4e713e-f64e-3dfc-bfbe-ac7aefc59738",
@@ -854,8 +881,8 @@
         "ID": "0997623a-e072-3d96-4a1a-81f5ed10f004",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "7a768555-a987-b218-ff84-faef5336723b"
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
         ],
         "trudom": false
       },
@@ -863,17 +890,17 @@
         "ID": "9a4ffc0c-9165-f2ed-4c63-6e95025f5543",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "f4e95734-5052-1700-6077-96a38685abaa"
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "6b352f85-504e-2687-70e7-e75604d9145e"
         ],
-        "trudom": true
+        "trudom": false
       },
       {
         "ID": "55c551fc-fba5-7cc8-edaf-37661b780ede",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
         ],
         "trudom": false
       },
@@ -881,7 +908,7 @@
         "ID": "a42d0cd7-fd35-9f6a-7450-388748d90846",
         "name": "within",
         "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
           "9c89d374-c664-95a7-8077-3e33690e7e62"
         ],
         "trudom": false
@@ -890,7 +917,7 @@
         "ID": "e3a68a70-7e71-0b55-8639-bd418b15bd94",
         "name": "within",
         "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
           "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
         ],
         "trudom": false
@@ -899,7 +926,7 @@
         "ID": "811414f8-d9df-0d0e-225a-ed6cf0458043",
         "name": "within",
         "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
           "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
         ],
         "trudom": false
@@ -908,35 +935,8 @@
         "ID": "cf0e6d2b-315c-167a-45d8-a6ad77d0359e",
         "name": "within",
         "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
           "8f964685-3514-5890-84c8-6c4623595fa4"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "bb2aa146-2999-394c-54a7-b69b1cd66b09",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "7a768555-a987-b218-ff84-faef5336723b"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "b7f60cdf-41dc-1c60-a5f6-0735757b6b29",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "f4e95734-5052-1700-6077-96a38685abaa"
-        ],
-        "trudom": false
-      },
-      {
-        "ID": "564cfbd2-bc92-fd81-039b-058c2faabe0b",
-        "name": "within",
-        "Args": [
-          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-          "887b03e5-e980-f808-75ac-824c2c55aef7"
         ],
         "trudom": true
       }
@@ -945,34 +945,34 @@
     "height": 0
   },
   "goal_state": {
-    "ID": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6",
+    "ID": "9293f705-0815-0147-3e00-980eae441e21",
     "schema": "dummy_goal",
     "Args": [],
     "preconds": [
       {
-        "ID": "5cce5ba9-31d4-ee09-8fd3-3afc91fdfa4f",
+        "ID": "673ba8bd-c38c-1dec-5da3-9a73ba3df7ff",
         "name": "within",
         "Args": [
-          "98159d6c-9d71-3084-171d-abf9daf481a7",
-          "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          "497de16d-d4ea-120a-5e65-96540e9058b6",
+          "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
         ],
         "trudom": true
       },
       {
-        "ID": "62e7c1a6-12d2-fa06-49e1-cd138da00495",
+        "ID": "0d18ab95-668c-8477-0b95-017c5dae1201",
         "name": "within",
         "Args": [
-          "949077c2-7674-456f-626d-719d81cf3252",
-          "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+          "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
         ],
         "trudom": true
       },
       {
-        "ID": "8cc36f3b-c3af-fcfe-734a-6ca38116e3fc",
+        "ID": "43b47ee5-e1e8-9e7e-2249-8f666e51484d",
         "name": "within",
         "Args": [
-          "bd29ede9-cab4-923b-f448-83858de7ad6c",
-          "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+          "09a0a0f6-73b0-a091-7634-c1694f76e388",
+          "80599b93-79c2-d2e4-9ae1-a991524f93ff"
         ],
         "trudom": true
       }
@@ -983,17 +983,17 @@
   },
   "steps": [
     {
-      "ID": "6b352f85-504e-2687-70e7-e75604d9145e",
+      "ID": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
       "schema": "dummy_init",
       "Args": [],
       "preconds": [],
       "effects": [
         {
-          "ID": "b5a5f8e6-b639-1f04-2852-4385d9f2dd0d",
-          "name": "within",
+          "ID": "8ccc9cea-109f-d8ee-b5a4-720058f0dd23",
+          "name": "in_reach",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
+            "97674900-4651-0367-cbdc-43184d85a3d2"
           ],
           "trudom": false
         },
@@ -1001,62 +1001,35 @@
           "ID": "b7b8c1a5-9a45-693d-7227-890e4e76833a",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "a3b442bd-4649-4296-6f58-42c3ff86cc31",
-          "name": "within",
-          "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "ad973b67-9b89-e5cb-d942-644c248d31ec",
-          "name": "within",
-          "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
           ],
           "trudom": true
         },
         {
-          "ID": "2e326567-d284-f54e-febe-c0db9a3a6103",
-          "name": "within",
+          "ID": "f7b217c7-ae92-ea71-cf7d-cb431679742f",
+          "name": "in_reach",
           "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
+            "97674900-4651-0367-cbdc-43184d85a3d2"
           ],
           "trudom": false
         },
         {
-          "ID": "bff9507d-cd14-a03e-8359-9af65d01f55f",
-          "name": "within",
-          "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "f31046dc-6202-bee6-5cb5-e69c5dc7b3e6",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "a52964ff-c74c-c890-3c6a-3174113634a5",
+          "ID": "1a43db54-523a-e993-4b34-46bc8ba435cc",
           "name": "within",
           "Args": [
             "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "2c913a7c-a340-4f08-b341-91b8ed6522b4",
+          "name": "in_reach",
+          "Args": [
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
           ],
           "trudom": false
         },
@@ -1064,260 +1037,8 @@
           "ID": "7092947d-be49-69ec-6667-d3bbe3b56360",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "4baf0f5e-a932-0094-53f2-8f11147f6570",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "9d66e815-5a41-53b3-e95f-176cdebac186",
-          "name": "within",
-          "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "cac4d0eb-3373-730e-fc31-a5971f119c0f",
-          "name": "within",
-          "Args": [
             "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "3967e60a-823d-d107-5c8a-c066cb2fafa3",
-          "name": "within",
-          "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
             "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "56cb1ab0-62fb-26d7-f4db-ca07e506f670",
-          "name": "within",
-          "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "06a241af-1d0a-f7f7-f5e4-a4713fe68c9c",
-          "name": "within",
-          "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "45f18619-54f9-0429-a7de-02ccdda4f4a7",
-          "name": "within",
-          "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "4cc9f5f2-e42e-5037-4a55-2ea08acbbe09",
-          "name": "within",
-          "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "2c33350c-73b9-11d8-12f5-131ada52d2ee",
-          "name": "within",
-          "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "1e2595b8-8fc9-c86b-e9dd-ebf563119aca",
-          "name": "in_reach",
-          "Args": [
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "ffa623d0-ea9e-5c8d-b1a8-b71f491b90e9",
-          "name": "in_reach",
-          "Args": [
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "e25df9a8-9ca8-a5c4-2138-afe08d38bbd8",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "493e904d-30ec-2796-a59b-457fc0d7ac73",
-          "name": "within",
-          "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "15260718-cd18-0a82-4447-ceab84ef4324",
-          "name": "in_reach",
-          "Args": [
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "848af440-7fc1-5858-2fa0-d842bc55300b",
-          "name": "in_reach",
-          "Args": [
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "0eaf04b5-f2a9-dc8a-ca9e-4a62fae3114b",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "9ca3fbb3-ff11-c8ba-36ee-1640723ef466",
-          "name": "in_reach",
-          "Args": [
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "71a3fad2-b094-6d2a-2aa9-3b436d15f16f",
-          "name": "within",
-          "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "ff4c96d6-71f2-ce8f-b69f-68c3e60fd420",
-          "name": "within",
-          "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "0c3ce284-c7e5-3bbb-dcb5-1c535b62a8df",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "9280c5aa-8dd4-595b-5c63-b6f306ba8cd3",
-          "name": "in_reach",
-          "Args": [
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "7e7838c9-ca55-e38b-3c9a-be10238d6f44",
-          "name": "in_reach",
-          "Args": [
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "2c913a7c-a340-4f08-b341-91b8ed6522b4",
-          "name": "within",
-          "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "d0be73ee-fd37-2539-65f2-02f983f02dc7",
-          "name": "within",
-          "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
-          ],
-          "trudom": true
-        },
-        {
-          "ID": "aaf78c67-51d0-8109-fc90-2838d8741408",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "07f8d4f0-f3ea-0184-28f4-e3ceadedda80",
-          "name": "within",
-          "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "22bf18f5-1f65-2a87-333e-e3447dbf4bc1",
-          "name": "in_reach",
-          "Args": [
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "fba6abf7-cdbc-c653-77a7-e8b75e70f65f",
-          "name": "in_reach",
-          "Args": [
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
           ],
           "trudom": false
         },
@@ -1325,98 +1046,53 @@
           "ID": "5df06e8c-878a-aed9-233f-fc8292ec89af",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
           ],
           "trudom": true
         },
         {
-          "ID": "b43bd27f-42a2-59a6-c664-12854303cbc1",
-          "name": "in_reach",
-          "Args": [
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "2747b93c-9ae7-7eab-084a-67809136f1f8",
+          "ID": "d0be73ee-fd37-2539-65f2-02f983f02dc7",
           "name": "within",
           "Args": [
             "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "cc1b4157-ec9f-9c54-5e0a-72ab7f5db163",
-          "name": "within",
-          "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+            "30307633-a6de-d1d8-9258-17b7cf501889"
           ],
           "trudom": true
         },
         {
-          "ID": "20509c62-08e8-95d7-702c-1821c8040fb7",
-          "name": "within",
-          "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "4758367b-a649-9cdc-507b-907265e58f34",
-          "name": "within",
-          "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "4f612217-eef1-6694-50ca-e32d0aba590e",
+          "ID": "aaf78c67-51d0-8109-fc90-2838d8741408",
           "name": "in_reach",
           "Args": [
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251",
-            "497de16d-d4ea-120a-5e65-96540e9058b6"
+            "30307633-a6de-d1d8-9258-17b7cf501889",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
           ],
           "trudom": false
         },
         {
-          "ID": "095ffa81-40d9-2bce-7930-ba208b040f49",
+          "ID": "e2c328aa-3310-7475-ca86-22250b36e356",
           "name": "within",
           "Args": [
             "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
-          "ID": "1a43db54-523a-e993-4b34-46bc8ba435cc",
+          "ID": "0c3ce284-c7e5-3bbb-dcb5-1c535b62a8df",
           "name": "within",
           "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
           ],
           "trudom": false
         },
         {
-          "ID": "6e3c4532-1434-8f62-6cac-028cba220065",
-          "name": "in_reach",
-          "Args": [
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
-            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "5ef787b8-f2e6-195f-732e-2016add702c9",
+          "ID": "9ca3fbb3-ff11-c8ba-36ee-1640723ef466",
           "name": "within",
           "Args": [
             "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
           ],
           "trudom": false
         },
@@ -1424,17 +1100,80 @@
           "ID": "6fdc0bad-5e36-8127-cca1-b45c1fdd980a",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
             "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
           ],
           "trudom": false
         },
         {
-          "ID": "8ccc9cea-109f-d8ee-b5a4-720058f0dd23",
+          "ID": "1e2595b8-8fc9-c86b-e9dd-ebf563119aca",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "30307633-a6de-d1d8-9258-17b7cf501889"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "339b77a8-4b1f-0d7b-0977-c513752a7d25",
+          "name": "within",
+          "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "cc1b4157-ec9f-9c54-5e0a-72ab7f5db163",
           "name": "within",
           "Args": [
             "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+            "30307633-a6de-d1d8-9258-17b7cf501889"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "4baf0f5e-a932-0094-53f2-8f11147f6570",
+          "name": "within",
+          "Args": [
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "b12b6680-7f07-2cb9-2fd3-40c0f945f2fd",
+          "name": "in_reach",
+          "Args": [
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "9d66e815-5a41-53b3-e95f-176cdebac186",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "45f18619-54f9-0429-a7de-02ccdda4f4a7",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "0eaf04b5-f2a9-dc8a-ca9e-4a62fae3114b",
+          "name": "within",
+          "Args": [
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
           ],
           "trudom": false
         },
@@ -1443,51 +1182,339 @@
           "name": "within",
           "Args": [
             "949077c2-7674-456f-626d-719d81cf3252",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
           ],
           "trudom": false
         },
         {
-          "ID": "b12b6680-7f07-2cb9-2fd3-40c0f945f2fd",
+          "ID": "4758367b-a649-9cdc-507b-907265e58f34",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "9c1c3517-85d2-d0a6-8629-5b5d707df251"
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "bff9507d-cd14-a03e-8359-9af65d01f55f",
+          "name": "within",
+          "Args": [
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "30307633-a6de-d1d8-9258-17b7cf501889"
           ],
           "trudom": true
         },
         {
-          "ID": "f7b217c7-ae92-ea71-cf7d-cb431679742f",
+          "ID": "2747b93c-9ae7-7eab-084a-67809136f1f8",
           "name": "within",
           "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "cac4d0eb-3373-730e-fc31-a5971f119c0f",
+          "name": "in_reach",
+          "Args": [
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "97674900-4651-0367-cbdc-43184d85a3d2"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "b5a5f8e6-b639-1f04-2852-4385d9f2dd0d",
+          "name": "in_reach",
+          "Args": [
             "30307633-a6de-d1d8-9258-17b7cf501889",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+            "97674900-4651-0367-cbdc-43184d85a3d2"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "2e326567-d284-f54e-febe-c0db9a3a6103",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "ffa623d0-ea9e-5c8d-b1a8-b71f491b90e9",
+          "name": "within",
+          "Args": [
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "06a241af-1d0a-f7f7-f5e4-a4713fe68c9c",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
           ],
           "trudom": true
+        },
+        {
+          "ID": "4f612217-eef1-6694-50ca-e32d0aba590e",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "493e904d-30ec-2796-a59b-457fc0d7ac73",
+          "name": "within",
+          "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "15260718-cd18-0a82-4447-ceab84ef4324",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "ff4c96d6-71f2-ce8f-b69f-68c3e60fd420",
+          "name": "in_reach",
+          "Args": [
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
+            "97674900-4651-0367-cbdc-43184d85a3d2"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "22bf18f5-1f65-2a87-333e-e3447dbf4bc1",
+          "name": "within",
+          "Args": [
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "30307633-a6de-d1d8-9258-17b7cf501889"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "20509c62-08e8-95d7-702c-1821c8040fb7",
+          "name": "within",
+          "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "30307633-a6de-d1d8-9258-17b7cf501889"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "5ef787b8-f2e6-195f-732e-2016add702c9",
+          "name": "within",
+          "Args": [
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "a3b442bd-4649-4296-6f58-42c3ff86cc31",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "ad973b67-9b89-e5cb-d942-644c248d31ec",
+          "name": "within",
+          "Args": [
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "095ffa81-40d9-2bce-7930-ba208b040f49",
+          "name": "within",
+          "Args": [
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "b43bd27f-42a2-59a6-c664-12854303cbc1",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "f1901b7e-c6b4-69ef-b74e-ba9310275b53",
+          "name": "within",
+          "Args": [
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "2c33350c-73b9-11d8-12f5-131ada52d2ee",
+          "name": "within",
+          "Args": [
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "7e7838c9-ca55-e38b-3c9a-be10238d6f44",
+          "name": "in_reach",
+          "Args": [
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "71a3fad2-b094-6d2a-2aa9-3b436d15f16f",
+          "name": "within",
+          "Args": [
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "07f8d4f0-f3ea-0184-28f4-e3ceadedda80",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "30307633-a6de-d1d8-9258-17b7cf501889"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "f31046dc-6202-bee6-5cb5-e69c5dc7b3e6",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "848af440-7fc1-5858-2fa0-d842bc55300b",
+          "name": "within",
+          "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+          ],
+          "trudom": true
+        },
+        {
+          "ID": "3967e60a-823d-d107-5c8a-c066cb2fafa3",
+          "name": "in_reach",
+          "Args": [
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "97674900-4651-0367-cbdc-43184d85a3d2"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "6e3c4532-1434-8f62-6cac-028cba220065",
+          "name": "within",
+          "Args": [
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "ba108217-0ad7-c9a2-7277-16ec59fefbbc",
+          "name": "within",
+          "Args": [
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "4cc9f5f2-e42e-5037-4a55-2ea08acbbe09",
+          "name": "in_reach",
+          "Args": [
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "56cb1ab0-62fb-26d7-f4db-ca07e506f670",
+          "name": "in_reach",
+          "Args": [
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b",
+            "12fe28bf-81e0-d489-5a18-e2a30e614bcd"
+          ],
+          "trudom": false
         },
         {
           "ID": "13aec376-c359-810a-71a6-014c5f3c44dc",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "eafde7d9-5f73-3a3e-5d28-6aa428a39779"
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "7a768555-a987-b218-ff84-faef5336723b",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": true
+        },
+        {
+          "ID": "f4e95734-5052-1700-6077-96a38685abaa",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
+          ],
+          "trudom": false
+        },
+        {
+          "ID": "887b03e5-e980-f808-75ac-824c2c55aef7",
+          "name": "within",
+          "Args": [
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+          ],
+          "trudom": false
         },
         {
           "ID": "ad05b912-5ab2-8d4a-8bd8-8fcd57a2be4e",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
             "9c89d374-c664-95a7-8077-3e33690e7e62"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "ae455cc6-b88e-830f-de1e-994ac5a11f5c",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
             "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
           ],
           "trudom": false
@@ -1496,7 +1523,7 @@
           "ID": "43ad3d62-b17c-fb21-cdbc-2c1ca4afe7bd",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
             "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
           ],
           "trudom": false
@@ -1505,7 +1532,7 @@
           "ID": "f5141058-3138-3975-7bf3-3a349c2dfa97",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
             "8f964685-3514-5890-84c8-6c4623595fa4"
           ],
           "trudom": false
@@ -1514,8 +1541,8 @@
           "ID": "4c6a70f4-8ede-c44d-476c-f68c3f1be0d0",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": false
         },
@@ -1523,17 +1550,17 @@
           "ID": "fb756923-f910-abb3-f105-32523990e2c9",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
-          "trudom": false
+          "trudom": true
         },
         {
           "ID": "b4746349-49fc-2cd8-c56b-ad4c4c3077c4",
           "name": "within",
           "Args": [
-            "80599b93-79c2-d2e4-9ae1-a991524f93ff",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
           "trudom": false
         },
@@ -1553,7 +1580,7 @@
             "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
             "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "b8beff3d-cb9f-af6d-ef3a-6f27ef06fccb",
@@ -1577,8 +1604,8 @@
           "ID": "e5508ea2-6133-a34d-8b0e-8eb1ad371d9e",
           "name": "within",
           "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": false
         },
@@ -1586,8 +1613,8 @@
           "ID": "585abefb-d181-2f77-6500-1423faebcd19",
           "name": "within",
           "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
           "trudom": false
         },
@@ -1595,10 +1622,10 @@
           "ID": "257f7595-cdfb-4db9-c5e7-8b23f4613f09",
           "name": "within",
           "Args": [
-            "e8b77f7b-7321-bf6b-0a80-76ece5582e16",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "98159d6c-9d71-3084-171d-abf9daf481a7",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
-          "trudom": false
+          "trudom": true
         },
         {
           "ID": "f48f709c-49a2-2441-0ac4-de854a5b1aff",
@@ -1625,7 +1652,7 @@
             "98159d6c-9d71-3084-171d-abf9daf481a7",
             "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "d3f4a49b-33ba-ba88-36c7-d6fa7aa4f052",
@@ -1640,8 +1667,8 @@
           "ID": "8fe069b6-eeda-a802-4568-f42689e03e22",
           "name": "within",
           "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": false
         },
@@ -1649,8 +1676,8 @@
           "ID": "1bf645f6-2324-5211-4588-fc1bb2384849",
           "name": "within",
           "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
           "trudom": false
         },
@@ -1658,8 +1685,8 @@
           "ID": "3d4196fe-963a-8617-bdab-07e79d9d028e",
           "name": "within",
           "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "949077c2-7674-456f-626d-719d81cf3252",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
           "trudom": false
         },
@@ -1670,7 +1697,7 @@
             "949077c2-7674-456f-626d-719d81cf3252",
             "9c89d374-c664-95a7-8077-3e33690e7e62"
           ],
-          "trudom": false
+          "trudom": true
         },
         {
           "ID": "3b9b2d45-a350-55e4-39c5-9df987f255d6",
@@ -1697,14 +1724,14 @@
             "949077c2-7674-456f-626d-719d81cf3252",
             "8f964685-3514-5890-84c8-6c4623595fa4"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "f6eab3a0-0153-9221-2331-0a28c550eca8",
           "name": "within",
           "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": false
         },
@@ -1712,8 +1739,8 @@
           "ID": "286ed390-edd9-7a1a-fa58-5b278ce3e7c3",
           "name": "within",
           "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
           "trudom": false
         },
@@ -1721,8 +1748,8 @@
           "ID": "e1721c83-ef5e-4376-a723-fb72682b163a",
           "name": "within",
           "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
           "trudom": false
         },
@@ -1730,7 +1757,7 @@
           "ID": "a689b424-7a3a-10e1-79c7-73a0e0decc3d",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
             "9c89d374-c664-95a7-8077-3e33690e7e62"
           ],
           "trudom": false
@@ -1739,16 +1766,16 @@
           "ID": "4988e418-f6c3-1218-c183-6315330f8be1",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
             "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
           ],
-          "trudom": false
+          "trudom": true
         },
         {
           "ID": "0f25477d-a559-90e7-4910-fade52380bf2",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
             "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
           ],
           "trudom": false
@@ -1757,7 +1784,7 @@
           "ID": "a6fd0cb1-16e6-e5c0-c4cb-294fe86e8e63",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
             "8f964685-3514-5890-84c8-6c4623595fa4"
           ],
           "trudom": false
@@ -1766,17 +1793,17 @@
           "ID": "bd1a8f4b-88ff-bd40-3b72-c86d92fa675f",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "098c60b3-efc9-909e-d9af-6e09b91e3d6e",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
           "trudom": false
         },
@@ -1784,8 +1811,8 @@
           "ID": "6afa828c-2cd1-0b9f-ebe5-841fe9c96c52",
           "name": "within",
           "Args": [
-            "30307633-a6de-d1d8-9258-17b7cf501889",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "bd29ede9-cab4-923b-f448-83858de7ad6c",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
           "trudom": false
         },
@@ -1814,7 +1841,7 @@
             "bd29ede9-cab4-923b-f448-83858de7ad6c",
             "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
           ],
-          "trudom": false
+          "trudom": true
         },
         {
           "ID": "df4e713e-f64e-3dfc-bfbe-ac7aefc59738",
@@ -1829,8 +1856,8 @@
           "ID": "0997623a-e072-3d96-4a1a-81f5ed10f004",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "7a768555-a987-b218-ff84-faef5336723b"
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "30d73df7-1c22-1cea-b355-56a5f2bd92f2"
           ],
           "trudom": false
         },
@@ -1838,17 +1865,17 @@
           "ID": "9a4ffc0c-9165-f2ed-4c63-6e95025f5543",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "f4e95734-5052-1700-6077-96a38685abaa"
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "6b352f85-504e-2687-70e7-e75604d9145e"
           ],
-          "trudom": true
+          "trudom": false
         },
         {
           "ID": "55c551fc-fba5-7cc8-edaf-37661b780ede",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
           ],
           "trudom": false
         },
@@ -1856,7 +1883,7 @@
           "ID": "a42d0cd7-fd35-9f6a-7450-388748d90846",
           "name": "within",
           "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
             "9c89d374-c664-95a7-8077-3e33690e7e62"
           ],
           "trudom": false
@@ -1865,7 +1892,7 @@
           "ID": "e3a68a70-7e71-0b55-8639-bd418b15bd94",
           "name": "within",
           "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
             "d92f3c1e-df70-fb2a-78bb-22a5eba742d2"
           ],
           "trudom": false
@@ -1874,7 +1901,7 @@
           "ID": "811414f8-d9df-0d0e-225a-ed6cf0458043",
           "name": "within",
           "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
             "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd"
           ],
           "trudom": false
@@ -1883,35 +1910,8 @@
           "ID": "cf0e6d2b-315c-167a-45d8-a6ad77d0359e",
           "name": "within",
           "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
             "8f964685-3514-5890-84c8-6c4623595fa4"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "bb2aa146-2999-394c-54a7-b69b1cd66b09",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "7a768555-a987-b218-ff84-faef5336723b"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "b7f60cdf-41dc-1c60-a5f6-0735757b6b29",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "f4e95734-5052-1700-6077-96a38685abaa"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "564cfbd2-bc92-fd81-039b-058c2faabe0b",
-          "name": "within",
-          "Args": [
-            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9",
-            "887b03e5-e980-f808-75ac-824c2c55aef7"
           ],
           "trudom": true
         }
@@ -1920,34 +1920,34 @@
       "height": 0
     },
     {
-      "ID": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6",
+      "ID": "9293f705-0815-0147-3e00-980eae441e21",
       "schema": "dummy_goal",
       "Args": [],
       "preconds": [
         {
-          "ID": "5cce5ba9-31d4-ee09-8fd3-3afc91fdfa4f",
+          "ID": "673ba8bd-c38c-1dec-5da3-9a73ba3df7ff",
           "name": "within",
           "Args": [
-            "98159d6c-9d71-3084-171d-abf9daf481a7",
-            "15969802-b6dd-6257-fb7d-9f1c57eb89b1"
+            "497de16d-d4ea-120a-5e65-96540e9058b6",
+            "73557b9d-0fd6-f47e-f52d-4af2269ed4c9"
           ],
           "trudom": true
         },
         {
-          "ID": "62e7c1a6-12d2-fa06-49e1-cd138da00495",
+          "ID": "0d18ab95-668c-8477-0b95-017c5dae1201",
           "name": "within",
           "Args": [
-            "949077c2-7674-456f-626d-719d81cf3252",
-            "0a0537f0-2c2c-d22b-a568-95c6812a1f9b"
+            "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492",
+            "d65e59dd-e62d-2d06-cf9b-85581a7f195b"
           ],
           "trudom": true
         },
         {
-          "ID": "8cc36f3b-c3af-fcfe-734a-6ca38116e3fc",
+          "ID": "43b47ee5-e1e8-9e7e-2249-8f666e51484d",
           "name": "within",
           "Args": [
-            "bd29ede9-cab4-923b-f448-83858de7ad6c",
-            "fdb1429e-7010-ed13-b526-b22d3f6c21f7"
+            "09a0a0f6-73b0-a091-7634-c1694f76e388",
+            "80599b93-79c2-d2e4-9ae1-a991524f93ff"
           ],
           "trudom": true
         }
@@ -1957,172 +1957,172 @@
       "height": 0
     },
     {
-      "ID": "e723ada3-8c32-bdb2-d42a-895e0fcf601f",
+      "ID": "86879aa9-14f5-73d0-c991-2032df85c777",
       "schema": "movemono",
       "Args": [
-        "89628f6e-929c-93b3-33c0-8bf18167999f",
-        "dabf984e-53ff-8461-2a1f-1b61265cb9d9",
-        "ae27d432-1dc1-e7eb-711c-767385351a69",
-        "7d23d479-9549-2a82-b787-ef8d3495311e"
+        "5c9deee0-b42a-0456-8736-5a84725e134d",
+        "1cb9b73a-906d-5c8c-ead0-8c8913fe8a29",
+        "e723ada3-8c32-bdb2-d42a-895e0fcf601f",
+        "89628f6e-929c-93b3-33c0-8bf18167999f"
       ],
       "preconds": [
         {
-          "ID": "5f90bed6-fb25-664d-630a-a767a2bb522b",
+          "ID": "f4124360-1153-6e99-5c50-8720f982f4e0",
           "name": "within",
           "Args": [
-            "dabf984e-53ff-8461-2a1f-1b61265cb9d9",
-            "ae27d432-1dc1-e7eb-711c-767385351a69"
+            "1cb9b73a-906d-5c8c-ead0-8c8913fe8a29",
+            "e723ada3-8c32-bdb2-d42a-895e0fcf601f"
           ],
           "trudom": true
         }
       ],
       "effects": [
         {
-          "ID": "c1b5b5ca-bc35-36df-94f7-9dbac5811d2d",
+          "ID": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
           "name": "within",
           "Args": [
-            "dabf984e-53ff-8461-2a1f-1b61265cb9d9",
-            "ae27d432-1dc1-e7eb-711c-767385351a69"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-          "name": "within",
-          "Args": [
-            "dabf984e-53ff-8461-2a1f-1b61265cb9d9",
-            "7d23d479-9549-2a82-b787-ef8d3495311e"
+            "1cb9b73a-906d-5c8c-ead0-8c8913fe8a29",
+            "89628f6e-929c-93b3-33c0-8bf18167999f"
           ],
           "trudom": true
+        },
+        {
+          "ID": "c9525185-81e0-3a5e-8b48-f49686abd4e7",
+          "name": "within",
+          "Args": [
+            "1cb9b73a-906d-5c8c-ead0-8c8913fe8a29",
+            "e723ada3-8c32-bdb2-d42a-895e0fcf601f"
+          ],
+          "trudom": false
         }
       ],
       "stepnum": 0,
       "height": 0
     },
     {
-      "ID": "0592bfa5-b928-e23f-4ee4-334ece920136",
+      "ID": "21c71aa3-7414-23b5-0e3e-25f2cf0671c7",
       "schema": "movemono",
       "Args": [
-        "00c59f30-d103-1424-4124-1bb4655ce508",
-        "12b2102d-940c-3503-37c8-6152beed0af9",
-        "b34c6c73-5833-0b30-6c77-6e950b981ccd",
-        "0f6ce9bf-fe7e-e362-8a89-b0f0105291d3"
+        "905c7bdd-74f0-beae-6a59-43ce836435e3",
+        "ac3a812f-765e-6cb5-8f0d-55400ec7d662",
+        "0592bfa5-b928-e23f-4ee4-334ece920136",
+        "00c59f30-d103-1424-4124-1bb4655ce508"
       ],
       "preconds": [
         {
-          "ID": "5f90bed6-fb25-664d-630a-a767a2bb522b",
+          "ID": "f4124360-1153-6e99-5c50-8720f982f4e0",
           "name": "within",
           "Args": [
-            "12b2102d-940c-3503-37c8-6152beed0af9",
-            "b34c6c73-5833-0b30-6c77-6e950b981ccd"
+            "ac3a812f-765e-6cb5-8f0d-55400ec7d662",
+            "0592bfa5-b928-e23f-4ee4-334ece920136"
           ],
           "trudom": true
         }
       ],
       "effects": [
         {
-          "ID": "c1b5b5ca-bc35-36df-94f7-9dbac5811d2d",
+          "ID": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
           "name": "within",
           "Args": [
-            "12b2102d-940c-3503-37c8-6152beed0af9",
-            "b34c6c73-5833-0b30-6c77-6e950b981ccd"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-          "name": "within",
-          "Args": [
-            "12b2102d-940c-3503-37c8-6152beed0af9",
-            "0f6ce9bf-fe7e-e362-8a89-b0f0105291d3"
+            "ac3a812f-765e-6cb5-8f0d-55400ec7d662",
+            "00c59f30-d103-1424-4124-1bb4655ce508"
           ],
           "trudom": true
+        },
+        {
+          "ID": "c9525185-81e0-3a5e-8b48-f49686abd4e7",
+          "name": "within",
+          "Args": [
+            "ac3a812f-765e-6cb5-8f0d-55400ec7d662",
+            "0592bfa5-b928-e23f-4ee4-334ece920136"
+          ],
+          "trudom": false
         }
       ],
       "stepnum": 0,
       "height": 0
     },
     {
-      "ID": "3acb43a3-d2c7-bffb-6118-433b882ccd1e",
+      "ID": "c194f97f-00e3-a026-d5b6-de85390239d9",
       "schema": "movemono",
       "Args": [
-        "27b608dc-589d-ecb0-75eb-89c23f5cf2f3",
-        "e00da49d-effa-2002-3040-413c4690fb15",
-        "083f64c3-1ce3-62f8-c3f7-25feb99b2b5a",
-        "9d6b9b62-6b53-5a19-a902-b73fcf39f648"
+        "76876c62-4c61-845e-fa7e-5d9405d1fb63",
+        "6c93a791-8b60-c511-b816-8aebac6a7c85",
+        "3acb43a3-d2c7-bffb-6118-433b882ccd1e",
+        "27b608dc-589d-ecb0-75eb-89c23f5cf2f3"
       ],
       "preconds": [
         {
-          "ID": "5f90bed6-fb25-664d-630a-a767a2bb522b",
+          "ID": "f4124360-1153-6e99-5c50-8720f982f4e0",
           "name": "within",
           "Args": [
-            "e00da49d-effa-2002-3040-413c4690fb15",
-            "083f64c3-1ce3-62f8-c3f7-25feb99b2b5a"
+            "6c93a791-8b60-c511-b816-8aebac6a7c85",
+            "3acb43a3-d2c7-bffb-6118-433b882ccd1e"
           ],
           "trudom": true
         }
       ],
       "effects": [
         {
-          "ID": "c1b5b5ca-bc35-36df-94f7-9dbac5811d2d",
+          "ID": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
           "name": "within",
           "Args": [
-            "e00da49d-effa-2002-3040-413c4690fb15",
-            "083f64c3-1ce3-62f8-c3f7-25feb99b2b5a"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-          "name": "within",
-          "Args": [
-            "e00da49d-effa-2002-3040-413c4690fb15",
-            "9d6b9b62-6b53-5a19-a902-b73fcf39f648"
+            "6c93a791-8b60-c511-b816-8aebac6a7c85",
+            "27b608dc-589d-ecb0-75eb-89c23f5cf2f3"
           ],
           "trudom": true
+        },
+        {
+          "ID": "c9525185-81e0-3a5e-8b48-f49686abd4e7",
+          "name": "within",
+          "Args": [
+            "6c93a791-8b60-c511-b816-8aebac6a7c85",
+            "3acb43a3-d2c7-bffb-6118-433b882ccd1e"
+          ],
+          "trudom": false
         }
       ],
       "stepnum": 0,
       "height": 0
     },
     {
-      "ID": "b42a2d93-9aba-0f15-b214-90623e1a963e",
+      "ID": "30a5648e-efe9-b3d0-3639-08bf03ece8ff",
       "schema": "movemono",
       "Args": [
-        "3d44cb2c-ea45-ba41-6589-ada1345af934",
-        "48769153-c688-13fe-5255-5c758d55119e",
-        "a6129a1c-889d-4b76-775c-30b561730c48",
-        "5c11ab6d-42f5-b3f5-4ef4-c34d5bf86f3c"
+        "bf337a15-1e08-6f20-bdd1-51b0f64ab6ec",
+        "ea18d32c-7a9a-8ef5-c11b-d1c4ffe3f366",
+        "b42a2d93-9aba-0f15-b214-90623e1a963e",
+        "3d44cb2c-ea45-ba41-6589-ada1345af934"
       ],
       "preconds": [
         {
-          "ID": "5f90bed6-fb25-664d-630a-a767a2bb522b",
+          "ID": "f4124360-1153-6e99-5c50-8720f982f4e0",
           "name": "within",
           "Args": [
-            "48769153-c688-13fe-5255-5c758d55119e",
-            "a6129a1c-889d-4b76-775c-30b561730c48"
+            "ea18d32c-7a9a-8ef5-c11b-d1c4ffe3f366",
+            "b42a2d93-9aba-0f15-b214-90623e1a963e"
           ],
           "trudom": true
         }
       ],
       "effects": [
         {
-          "ID": "c1b5b5ca-bc35-36df-94f7-9dbac5811d2d",
+          "ID": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
           "name": "within",
           "Args": [
-            "48769153-c688-13fe-5255-5c758d55119e",
-            "a6129a1c-889d-4b76-775c-30b561730c48"
-          ],
-          "trudom": false
-        },
-        {
-          "ID": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-          "name": "within",
-          "Args": [
-            "48769153-c688-13fe-5255-5c758d55119e",
-            "5c11ab6d-42f5-b3f5-4ef4-c34d5bf86f3c"
+            "ea18d32c-7a9a-8ef5-c11b-d1c4ffe3f366",
+            "3d44cb2c-ea45-ba41-6589-ada1345af934"
           ],
           "trudom": true
+        },
+        {
+          "ID": "c9525185-81e0-3a5e-8b48-f49686abd4e7",
+          "name": "within",
+          "Args": [
+            "ea18d32c-7a9a-8ef5-c11b-d1c4ffe3f366",
+            "b42a2d93-9aba-0f15-b214-90623e1a963e"
+          ],
+          "trudom": false
         }
       ],
       "stepnum": 0,
@@ -2131,169 +2131,125 @@
   ],
   "orderings": [
     {
-      "source": "e723ada3-8c32-bdb2-d42a-895e0fcf601f",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "c194f97f-00e3-a026-d5b6-de85390239d9"
     },
     {
-      "source": "b42a2d93-9aba-0f15-b214-90623e1a963e",
-      "sink": "0592bfa5-b928-e23f-4ee4-334ece920136"
+      "source": "21c71aa3-7414-23b5-0e3e-25f2cf0671c7",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "b42a2d93-9aba-0f15-b214-90623e1a963e"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21"
     },
     {
-      "source": "3acb43a3-d2c7-bffb-6118-433b882ccd1e",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "86879aa9-14f5-73d0-c991-2032df85c777"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "0592bfa5-b928-e23f-4ee4-334ece920136"
+      "source": "86879aa9-14f5-73d0-c991-2032df85c777",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "e723ada3-8c32-bdb2-d42a-895e0fcf601f"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "21c71aa3-7414-23b5-0e3e-25f2cf0671c7"
     },
     {
-      "source": "b42a2d93-9aba-0f15-b214-90623e1a963e",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+      "source": "c194f97f-00e3-a026-d5b6-de85390239d9",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "3acb43a3-d2c7-bffb-6118-433b882ccd1e"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "30a5648e-efe9-b3d0-3639-08bf03ece8ff"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+      "source": "30a5648e-efe9-b3d0-3639-08bf03ece8ff",
+      "sink": "86879aa9-14f5-73d0-c991-2032df85c777"
     },
     {
-      "source": "0592bfa5-b928-e23f-4ee4-334ece920136",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6"
+      "source": "30a5648e-efe9-b3d0-3639-08bf03ece8ff",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21"
     }
   ],
   "causal_links": [
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "3acb43a3-d2c7-bffb-6118-433b882ccd1e",
-      "effect": "9a4ffc0c-9165-f2ed-4c63-6e95025f5543",
-      "precondition": "5f90bed6-fb25-664d-630a-a767a2bb522b"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "c194f97f-00e3-a026-d5b6-de85390239d9",
+      "effect": "4988e418-f6c3-1218-c183-6315330f8be1",
+      "precondition": "f4124360-1153-6e99-5c50-8720f982f4e0"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "0592bfa5-b928-e23f-4ee4-334ece920136",
-      "effect": "ae62990c-19bd-4f93-78ef-7666b7a4c719",
-      "precondition": "5f90bed6-fb25-664d-630a-a767a2bb522b"
+      "source": "86879aa9-14f5-73d0-c991-2032df85c777",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21",
+      "effect": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
+      "precondition": "673ba8bd-c38c-1dec-5da3-9a73ba3df7ff"
     },
     {
-      "source": "0592bfa5-b928-e23f-4ee4-334ece920136",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6",
-      "effect": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-      "precondition": "62e7c1a6-12d2-fa06-49e1-cd138da00495"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "30a5648e-efe9-b3d0-3639-08bf03ece8ff",
+      "effect": "2fb21e66-7ed1-7aab-c9b7-c9bc65a16fa9",
+      "precondition": "f4124360-1153-6e99-5c50-8720f982f4e0"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "b42a2d93-9aba-0f15-b214-90623e1a963e",
-      "effect": "ad05b912-5ab2-8d4a-8bd8-8fcd57a2be4e",
-      "precondition": "5f90bed6-fb25-664d-630a-a767a2bb522b"
+      "source": "c194f97f-00e3-a026-d5b6-de85390239d9",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21",
+      "effect": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
+      "precondition": "43b47ee5-e1e8-9e7e-2249-8f666e51484d"
     },
     {
-      "source": "6b352f85-504e-2687-70e7-e75604d9145e",
-      "sink": "e723ada3-8c32-bdb2-d42a-895e0fcf601f",
-      "effect": "bf519362-41a6-4fed-a7ed-c8d8713f8f8c",
-      "precondition": "5f90bed6-fb25-664d-630a-a767a2bb522b"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "86879aa9-14f5-73d0-c991-2032df85c777",
+      "effect": "cf0e6d2b-315c-167a-45d8-a6ad77d0359e",
+      "precondition": "f4124360-1153-6e99-5c50-8720f982f4e0"
     },
     {
-      "source": "3acb43a3-d2c7-bffb-6118-433b882ccd1e",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6",
-      "effect": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-      "precondition": "8cc36f3b-c3af-fcfe-734a-6ca38116e3fc"
+      "source": "21c71aa3-7414-23b5-0e3e-25f2cf0671c7",
+      "sink": "9293f705-0815-0147-3e00-980eae441e21",
+      "effect": "0534a101-8ddc-e719-81f3-8dd4fd034ada",
+      "precondition": "0d18ab95-668c-8477-0b95-017c5dae1201"
     },
     {
-      "source": "e723ada3-8c32-bdb2-d42a-895e0fcf601f",
-      "sink": "34323ec6-b0c4-a01c-69b7-c0fa26c432f6",
-      "effect": "1a89b71e-a0d5-72c8-a837-fe68bba205ca",
-      "precondition": "5cce5ba9-31d4-ee09-8fd3-3afc91fdfa4f"
+      "source": "d25864f2-25d4-a0fc-6154-2765d756ba9c",
+      "sink": "21c71aa3-7414-23b5-0e3e-25f2cf0671c7",
+      "effect": "7a768555-a987-b218-ff84-faef5336723b",
+      "precondition": "f4124360-1153-6e99-5c50-8720f982f4e0"
     }
   ],
   "variableBindings": {
     "symbolic": {
-      "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd": "box_0_init_pos",
-      "497de16d-d4ea-120a-5e65-96540e9058b6": "robot_0",
-      "7a768555-a987-b218-ff84-faef5336723b": "box_4_init_pos",
-      "eafde7d9-5f73-3a3e-5d28-6aa428a39779": "reach_robot_1",
-      "e8b77f7b-7321-bf6b-0a80-76ece5582e16": "box_3",
-      "9c1c3517-85d2-d0a6-8629-5b5d707df251": "reach_robot_0",
-      "80599b93-79c2-d2e4-9ae1-a991524f93ff": "box_5",
-      "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492": "robot_1",
-      "9c89d374-c664-95a7-8077-3e33690e7e62": "box_5_init_pos",
-      "d65e59dd-e62d-2d06-cf9b-85581a7f195b": "table",
+      "b4adaf89-0ff1-aa9f-ba37-0623bc5fd4dd": "box_5_init_pos",
+      "09a0a0f6-73b0-a091-7634-c1694f76e388": "box_0",
+      "497de16d-d4ea-120a-5e65-96540e9058b6": "box_1",
+      "12fe28bf-81e0-d489-5a18-e2a30e614bcd": "robot_1",
+      "e8b77f7b-7321-bf6b-0a80-76ece5582e16": "box_6",
+      "6b352f85-504e-2687-70e7-e75604d9145e": "box_6_init_pos",
+      "97674900-4651-0367-cbdc-43184d85a3d2": "robot_0",
+      "80599b93-79c2-d2e4-9ae1-a991524f93ff": "goal_0",
+      "fa34d2e8-dd3f-7d7e-a508-dc9513a4a492": "box_2",
+      "9c89d374-c664-95a7-8077-3e33690e7e62": "box_4_init_pos",
+      "d65e59dd-e62d-2d06-cf9b-85581a7f195b": "goal_2",
       "8f964685-3514-5890-84c8-6c4623595fa4": "box_1_init_pos",
-      "fdb1429e-7010-ed13-b526-b22d3f6c21f7": "goal_2",
-      "30307633-a6de-d1d8-9258-17b7cf501889": "box_4",
-      "d92f3c1e-df70-fb2a-78bb-22a5eba742d2": "box_3_init_pos",
-      "73557b9d-0fd6-f47e-f52d-4af2269ed4c9": "box_6",
-      "bd29ede9-cab4-923b-f448-83858de7ad6c": "box_2",
-      "887b03e5-e980-f808-75ac-824c2c55aef7": "box_6_init_pos",
-      "f4e95734-5052-1700-6077-96a38685abaa": "box_2_init_pos",
-      "98159d6c-9d71-3084-171d-abf9daf481a7": "box_0",
-      "949077c2-7674-456f-626d-719d81cf3252": "box_1",
-      "15969802-b6dd-6257-fb7d-9f1c57eb89b1": "goal_0",
-      "0a0537f0-2c2c-d22b-a568-95c6812a1f9b": "goal_1",
-      "89628f6e-929c-93b3-33c0-8bf18167999f": "robot_0",
-      "dabf984e-53ff-8461-2a1f-1b61265cb9d9": "box_0",
-      "00c59f30-d103-1424-4124-1bb4655ce508": "robot_1",
-      "12b2102d-940c-3503-37c8-6152beed0af9": "box_1",
-      "27b608dc-589d-ecb0-75eb-89c23f5cf2f3": "robot_0",
-      "e00da49d-effa-2002-3040-413c4690fb15": "box_2",
-      "3d44cb2c-ea45-ba41-6589-ada1345af934": "robot_1",
-      "48769153-c688-13fe-5255-5c758d55119e": "box_5"
+      "30d73df7-1c22-1cea-b355-56a5f2bd92f2": "box_2_init_pos",
+      "30307633-a6de-d1d8-9258-17b7cf501889": "table",
+      "d92f3c1e-df70-fb2a-78bb-22a5eba742d2": "box_0_init_pos",
+      "73557b9d-0fd6-f47e-f52d-4af2269ed4c9": "goal_1",
+      "bd29ede9-cab4-923b-f448-83858de7ad6c": "box_5",
+      "34323ec6-b0c4-a01c-69b7-c0fa26c432f6": "box_3_init_pos",
+      "98159d6c-9d71-3084-171d-abf9daf481a7": "box_3",
+      "949077c2-7674-456f-626d-719d81cf3252": "box_4",
+      "15969802-b6dd-6257-fb7d-9f1c57eb89b1": "reach_robot_0",
+      "0a0537f0-2c2c-d22b-a568-95c6812a1f9b": "reach_robot_1",
+      "5c9deee0-b42a-0456-8736-5a84725e134d": "robot_1",
+      "1cb9b73a-906d-5c8c-ead0-8c8913fe8a29": "box_1",
+      "905c7bdd-74f0-beae-6a59-43ce836435e3": "robot_0",
+      "ac3a812f-765e-6cb5-8f0d-55400ec7d662": "box_2",
+      "76876c62-4c61-845e-fa7e-5d9405d1fb63": "robot_0",
+      "6c93a791-8b60-c511-b816-8aebac6a7c85": "box_0",
+      "bf337a15-1e08-6f20-bdd1-51b0f64ab6ec": "robot_1",
+      "ea18d32c-7a9a-8ef5-c11b-d1c4ffe3f366": "box_5"
     },
     "geometric": {
-      "ae27d432-1dc1-e7eb-711c-767385351a69": [
-        [
-          0.8597210943039065,
-          0.24198716529308922
-        ],
-        [
-          0.8597210943039065,
-          0.44379669902027297
-        ],
-        [
-          0.42102314071419505,
-          0.44379669902027297
-        ],
-        [
-          0.42102314071419505,
-          0.24198716529308922
-        ],
-        [
-          0.8597210943039065,
-          0.24198716529308922
-        ]
-      ],
-      "7d23d479-9549-2a82-b787-ef8d3495311e": [
-        [
-          0.9931024365257615,
-          0.1491499620085856
-        ],
-        [
-          0.9931024365257615,
-          0.35095949573576934
-        ],
-        [
-          0.5544044829360499,
-          0.35095949573576934
-        ],
-        [
-          0.5544044829360499,
-          0.1491499620085856
-        ],
-        [
-          0.9931024365257615,
-          0.1491499620085856
-        ]
-      ],
-      "b34c6c73-5833-0b30-6c77-6e950b981ccd": [
+      "e723ada3-8c32-bdb2-d42a-895e0fcf601f": [
         [
           1.5923886737116568,
           0.3124349227635368
@@ -2315,7 +2271,7 @@
           0.3124349227635368
         ]
       ],
-      "0f6ce9bf-fe7e-e362-8a89-b0f0105291d3": [
+      "89628f6e-929c-93b3-33c0-8bf18167999f": [
         [
           2.038685822201198,
           0.198109419269673
@@ -2337,7 +2293,7 @@
           0.198109419269673
         ]
       ],
-      "083f64c3-1ce3-62f8-c3f7-25feb99b2b5a": [
+      "0592bfa5-b928-e23f-4ee4-334ece920136": [
         [
           0.834416143567011,
           0.42256834329570214
@@ -2359,7 +2315,7 @@
           0.42256834329570214
         ]
       ],
-      "9d6b9b62-6b53-5a19-a902-b73fcf39f648": [
+      "00c59f30-d103-1424-4124-1bb4655ce508": [
         [
           0.262940647718096,
           0.4206195959907357
@@ -2381,7 +2337,51 @@
           0.4206195959907357
         ]
       ],
-      "a6129a1c-889d-4b76-775c-30b561730c48": [
+      "3acb43a3-d2c7-bffb-6118-433b882ccd1e": [
+        [
+          0.8597210943039065,
+          0.24198716529308922
+        ],
+        [
+          0.8597210943039065,
+          0.44379669902027297
+        ],
+        [
+          0.42102314071419505,
+          0.44379669902027297
+        ],
+        [
+          0.42102314071419505,
+          0.24198716529308922
+        ],
+        [
+          0.8597210943039065,
+          0.24198716529308922
+        ]
+      ],
+      "27b608dc-589d-ecb0-75eb-89c23f5cf2f3": [
+        [
+          0.9931024365257615,
+          0.1491499620085856
+        ],
+        [
+          0.9931024365257615,
+          0.35095949573576934
+        ],
+        [
+          0.5544044829360499,
+          0.35095949573576934
+        ],
+        [
+          0.5544044829360499,
+          0.1491499620085856
+        ],
+        [
+          0.9931024365257615,
+          0.1491499620085856
+        ]
+      ],
+      "b42a2d93-9aba-0f15-b214-90623e1a963e": [
         [
           2.1046424865502287,
           0.29933417771042276
@@ -2403,25 +2403,25 @@
           0.29933417771042276
         ]
       ],
-      "5c11ab6d-42f5-b3f5-4ef4-c34d5bf86f3c": [
+      "3d44cb2c-ea45-ba41-6589-ada1345af934": [
         [
-          2.458703257671508,
+          2.4187032576715075,
           0.0
         ],
         [
-          2.458703257671508,
+          2.4187032576715075,
           0.38458731176417044
         ],
         [
-          2.079832945388999,
+          2.0398329453889987,
           0.38458731176417044
         ],
         [
-          2.079832945388999,
+          2.0398329453889987,
           0.0
         ],
         [
-          2.458703257671508,
+          2.4187032576715075,
           0.0
         ]
       ]
