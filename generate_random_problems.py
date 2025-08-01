@@ -152,12 +152,13 @@ def generate_problem(name):
     filepath = name+"_worldmodel.json"
     with open(filepath, "w") as f:
         json.dump(worldmodel_dict, f, indent=2)
+    print(f"made random problem: {name}")
 
 
 if __name__ == '__main__':
     num_args = len(sys.argv)
     if num_args >1:
-        n = sys.argv[1]
+        n = int(sys.argv[1])
     else:
         n = 10
     for i in range(n):
