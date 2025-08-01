@@ -418,10 +418,10 @@ class VariableBindingsGeometric:
                 ploc.area_assigned = a_candidate
                 return True
             # iterate to next position
-            x_pos += 0.1
+            x_pos += 0.01
             if x_pos+candidate_width > maxx:
                 x_pos = minx
-                y_pos += 0.1
+                y_pos += 0.01
         # No solution could be found
         return False
 
