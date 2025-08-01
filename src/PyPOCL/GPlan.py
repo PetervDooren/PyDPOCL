@@ -537,6 +537,13 @@ class GPlan:
 		"""
 		Update the criteria for flaws
 		"""
+		# ungrounded symbolic variables
+		for flaw in self.flaws.ungrounded_symbolic_variables:
+			if self.variableBindings.symbolic_vb.is_ground(flaw.arg):
+				# remove flaw from flawlist
+				#print(f"removing flaw {flaw} as variable is already ground.")
+				self.flaws.ungrounded_symbolic_variables.remove(flaw)
+
 		# ungrounded geometric variables
 		for flaw in self.flaws.ungrounded_geometric_variables:
 			flaw.criteria = 1 / self.variableBindings.geometric_vb.get_max_area(flaw.arg).area
@@ -544,6 +551,12 @@ class GPlan:
 
 		# check if any potential TCLFs are fully initialised
 		for pot_tclf in self.potential_tclf:
+			# # check the threatening action can still occur between the causal link #NOTE: does not actually save computation time.
+			#if self.OrderingGraph.isPath(pot_tclf.threat, pot_tclf.link.source) or self.OrderingGraph.isPath(pot_tclf.link.sink, pot_tclf.threat):
+			#	print(f"removing potential threatened causal link flaw {pot_tclf} since ordering made it irrelevant.")
+			#	self.potential_tclf.remove(pot_tclf)
+			#	continue
+
 			link_args = pot_tclf.link.label.sink.Args
 			# hotfix. store this info in the causal link
 			## find matching condition #TODO make more efficient

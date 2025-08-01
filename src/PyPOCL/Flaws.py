@@ -231,6 +231,13 @@ class Flawque:
 		self._flaws.rotate(-index)
 		self._flaws.appendleft(flaw)
 		self._flaws.rotate(index)
+	
+	def remove(self, flaw):
+		"""Remove a flaw from the internal deque if it exists."""
+		try:
+			self._flaws.remove(flaw)
+		except ValueError:
+			pass  # If the flaw is not present, do nothing
 
 	def sort(self):
 		# Sort the flaws in-place by converting to a list, sorting, and reassigning to deque
