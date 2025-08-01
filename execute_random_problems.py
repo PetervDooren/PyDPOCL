@@ -15,7 +15,9 @@ if __name__ == '__main__':
     problem_tuples = {}
     for file in os.scandir(batch_dir):
         if file.is_file():
-            testname = file.name[0:6] # should be like "test_0"
+            testname = file.name[0:7] # should be like "test_0"
+            if testname[-1] == '_':
+                testname = testname[0:6]
             if testname in problem_tuples: # problem is already found
                 continue
             problem_file = os.path.join(batch_dir, testname+"_problem.pddl")

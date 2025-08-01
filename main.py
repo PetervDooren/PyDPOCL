@@ -24,7 +24,7 @@ if __name__ == '__main__':
         #problem_file = 'domains/manipulation-domain/manipulation-problem3.pddl'
         #worldmodel_file = 'domains/manipulation-domain/manipulation-worldmodel3.json'
 
-        test_i = 4
+        test_i = 5
         domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
         problem_file = f'domains/manipulation-domain-batch/test_{test_i}_problem.pddl'
         worldmodel_file = f'domains/manipulation-domain-batch/test_{test_i}_worldmodel.json'
