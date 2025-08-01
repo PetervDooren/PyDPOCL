@@ -3,7 +3,7 @@ from collections import namedtuple
 import csv
 from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
-from PyPOCL.plan_utility import check_plan, plan_to_json
+from PyPOCL.plan_utility import check_plan, plan_to_json, visualize_plan
 
 Problem = namedtuple("Problem", ["problem", "worldmodel"])
 
@@ -65,7 +65,6 @@ if __name__ == '__main__':
                 })
             for i in range(len(plans)):
                 plan = plans[i]
-                plan_file = f"plans/{domain.name}/{problem_obj.name}-plan_{i}.json"
                 if not check_plan(plan):
                     print("Error: plan is not valid")
                     faulty_plan_count += 1
@@ -74,12 +73,14 @@ if __name__ == '__main__':
                     print("Plan is valid")
                     success_count += 1
                     status = "success"
-                plan_to_json(plan, plan_file)
+                plan_path = f"plans/{domain.name}/{problem_obj.name}-plan_{i}"
+                plan_to_json(plan, f"{plan_path}.json")
+                visualize_plan(plan, show=False, filepath=f"{plan_path}.png")
                 writer.writerow({
                     "iteration": iteration,
                     "testname": testname,
                     "status": status,
-                    "plan_file": plan_file,
+                    "plan_file": f"{plan_path}.json",
                     "planning_time": planning_report.planning_time,
                     "expanded": planning_report.expanded,
                     "visited": planning_report.visited,

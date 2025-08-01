@@ -7,6 +7,10 @@ from uuid import UUID
 import json
 import yaml
 
+# visualization
+import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon as MplPolygon
+
 
 def check_plan(plan: GPlan) -> None:
     """Check if the plan is complete and valid. Does not use the tracked flaws, but checks the plan structure directly."""
@@ -136,6 +140,93 @@ def check_plan(plan: GPlan) -> None:
     if not check_connections_in_plan(plan) and False:
         return False	
     return True
+
+def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
+    """ Create an image of the plan. 
+
+    Args:
+        plan (_type_): _description_
+        filepaht (str): file to write the image to. None = no image will be saved.
+    """
+
+    objcolors = ["red",
+                 "blue",
+                 "green",
+                 "yellow",
+                 "purple",
+                 "cyan",
+                 "orange",
+                 "white"]
+    objcolor_dict = {}
+    i = 0
+    for obj in plan.variableBindings.symbolic_vb.objects:
+        if plan.variableBindings.is_type(obj, 'physical_item'):
+            objcolor_dict[obj] = objcolors[i]
+            i = i+1
+            if i >= len(objcolors):
+                i = len(objcolors)-1
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    geo_vb = plan.variableBindings.geometric_vb
+
+    # plot base area:
+    plot_area(ax, geo_vb.defined_areas[geo_vb.base_area], alpha = 1.0)
+
+    # plot all defined-areas:
+    for key, area in geo_vb.defined_areas.items():
+        if key == geo_vb.base_area:
+            continue
+        plot_area(ax, area, fill=False, label=key.name)
+
+    # plot all actions:
+    for step in plan.steps:
+        # skip any step that does not move objects:
+        if not step.schema == 'movemono':
+            continue
+        obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
+        startarea = geo_vb.get_assigned_area(step.Args[2])
+        goalarea = geo_vb.get_assigned_area(step.Args[3])
+        objcolor = objcolor_dict[obj]
+
+        plot_area(ax, startarea, color=objcolor, edgecolor='blue')
+        plot_area(ax, goalarea, color=objcolor, edgecolor='red')
+        ax.annotate('', xy=(goalarea.centroid.x, goalarea.centroid.y), xytext=(startarea.centroid.x, startarea.centroid.y),
+            arrowprops=dict(arrowstyle='->', color=objcolor, lw=2))
+        mid_x = (goalarea.centroid.x + startarea.centroid.x) / 2
+        mid_y = (goalarea.centroid.y + startarea.centroid.y) / 2
+        #ax.text(mid_x, mid_y, obj.name, fontsize=8, ha='center', va='center', backgroundcolor=objcolor)
+
+    # plot all placelocs:
+    #for key, ploc in geo_vb.placelocs.items():
+    #    if ploc.area_assigned is None:
+    #        continue
+    #    if 'start' in key.arg_name:
+    #        plot_area(ax, ploc.area_assigned, color='blue', edgecolor='purple')
+    #    elif 'goal' in key.arg_name:
+    #        plot_area(ax, ploc.area_assigned, color='orange', edgecolor='red')
+    #    else:
+    #        plot_area(ax, ploc.area_assigned, color='green', edgecolor='red')
+    
+    ax.set_aspect('equal')
+    ax.autoscale()
+    ax.set_title(f'Plan Visualization: {plan.problem}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    if filepath:
+        fig.savefig(filepath)
+    if show:
+        plt.show()
+
+def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
+    coords = list(area.exterior.coords)
+    poly = MplPolygon(coords, closed=True, facecolor=color, edgecolor=edgecolor, alpha=alpha, fill=fill, label=label)
+    ax.add_patch(poly)
+    if label:
+        # Place label at centroid
+        xs, ys = zip(*coords)
+        centroid = (sum(xs)/len(xs), sum(ys)/len(ys))
+        ax.text(centroid[0], centroid[1], label, ha='center', va='center', fontsize=8)
 
 def plan_to_json(plan, filepath: str) -> None:
     """
