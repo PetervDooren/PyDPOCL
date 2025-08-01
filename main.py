@@ -3,6 +3,8 @@ from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
 from PyPOCL.plan_utility import check_plan, plan_to_json, plan_to_yaml
 
+LOG = 1
+
 if __name__ == '__main__':
     num_args = len(sys.argv)
     if num_args >1:
@@ -35,6 +37,7 @@ if __name__ == '__main__':
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
     planner = POCLPlanner(domain, problem)
+    planner.log = LOG
     plans, _ = planner.solve(k=1, cutoff=0)
     for i in range(len(plans)):
         plan = plans[i]

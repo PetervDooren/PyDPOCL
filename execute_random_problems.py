@@ -7,6 +7,8 @@ from PyPOCL.plan_utility import check_plan, plan_to_json
 
 Problem = namedtuple("Problem", ["problem", "worldmodel"])
 
+LOG = 0
+
 if __name__ == '__main__':
     batch_dir = "domains/manipulation-domain-batch/"
 
@@ -44,6 +46,7 @@ if __name__ == '__main__':
             domain, problem_obj = load_domain_and_problem(domain_file, problem.problem, problem.worldmodel)
 
             planner = POCLPlanner(domain, problem_obj)
+            planner.log = LOG
             plans, planning_report = planner.solve(k=1, cutoff=60)
 
             if len(plans) == 0:

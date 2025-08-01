@@ -9,16 +9,11 @@ from PyPOCL.deterministic_uuid import duuid4
 import math
 from heapq import heappush, heappop
 import time
-LOG = 0
+
 REPORT = 1
 RRP = 0
 
 PlanningReport = namedtuple("PlanningReport", ["planning_time", "expanded", "visited", "terminated", "plans_found"])
-
-def log_message(message):
-	if LOG:
-		print(message)
-
 
 class Frontier:
 
@@ -95,8 +90,9 @@ class POCLPlanner:
 		Args:
 			domain (Domain): domain of the planning problem
 			problem (Problem): problem of the planning problem
-		"""		
+		"""	
 		self.ID = duuid4()
+		self.log = 0 # defines log level
 
 		self.domain = domain
 		self.problem = problem
@@ -130,7 +126,7 @@ class POCLPlanner:
 
 	def insert(self, plan: GPlan) -> None:
 		plan.heuristic = self.h_plan(plan)
-		log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
+		self.log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		self._frontier.insert(plan)
 		self.plan_num += 1
 
@@ -167,7 +163,7 @@ class POCLPlanner:
 			if not plan.isInternallyConsistent():
 				# if plan.name[-3] == 'a':
 				# 	print('stop')
-				log_message('prune {}'.format(plan.name))
+				self.log_message('prune {}'.format(plan.name))
 				leaves += 1
 				continue
 
@@ -180,15 +176,15 @@ class POCLPlanner:
 			# if len(plan_schemata) > len(set(plan_schemata)):
 			# 	print('check here')
 
-			log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
-			if LOG:
+			self.log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
+			if self.log:
 				plan.print()
 
 			plan.update_flaws()
 
 			if len(plan.flaws) == 0:
 				if not check_connections_in_plan(plan) and False:
-					log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
+					self.log_message(f"Not all paths between start and end positions could be found. Pruning {plan.name}")
 					leaves += 1
 					continue
 				plan.solved = True
@@ -211,7 +207,7 @@ class POCLPlanner:
 			# Select Flaw
 			flaw = plan.flaws.next()
 			plan.name += '[' + str(flaw.flaw_type)[0] + ']'
-			log_message('{} selected : {}\n'.format(flaw.name, flaw))
+			self.log_message('{} selected : {}\n'.format(flaw.name, flaw))
 
 			if isinstance(flaw, TCLF):
 				tclf_visits += 1
@@ -220,11 +216,11 @@ class POCLPlanner:
 				self.resolve_geometric_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
 				if not self.ground_variable(plan, flaw):
-					log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
+					self.log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, UGGV):
 				if not self.ground_geometric_variable(plan, flaw):
-					log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
+					self.log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, OPF):
 				self.add_step(plan, flaw)
@@ -289,7 +285,7 @@ class POCLPlanner:
 			if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
 				continue
 
-			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {new_plan_consumer} with effect {new_plan_effect}.')
+			self.log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {new_plan_consumer} with effect {new_plan_effect}.')
 
 			# resolve s_need with the new step
 			new_plan.resolve(new_step, new_plan_consumer, new_plan_effect, new_plan_precondition)
@@ -334,7 +330,7 @@ class POCLPlanner:
 			new_plan_effect = new_plan_provider.effects[effect_nr]
 			if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
 				continue
-			log_message(f'Reuse step {new_plan_provider} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {consumer} with effect {new_plan_effect}.')
+			self.log_message(f'Reuse step {new_plan_provider} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {consumer} with effect {new_plan_effect}.')
 			# resolve open condition with old step
 			new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
 
@@ -383,7 +379,7 @@ class POCLPlanner:
 
 			# check that provided condition can be codesignated with the required(consumed) condition
 			if new_plan.variableBindings.unify(init_pos_effect, new_plan_precondition):
-				log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
+				self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
 				# resolve open condition with old step
 				new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition)
 
@@ -405,7 +401,7 @@ class POCLPlanner:
 				new_plan_effect = new_plan_provider.effects[effect_nr]
 				if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
 					continue
-				log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {new_plan_effect}.')
+				self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {new_plan_effect}.')
 				# resolve open condition with old step
 				new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
 
@@ -428,7 +424,7 @@ class POCLPlanner:
 			new_plan.OrderingGraph.addEdge(sink.sibling, threat)
 		threat.update_choices(new_plan)
 		self.insert(new_plan)
-		log_message('promote {} in front of {} in plan {}'.format(threat, sink, new_plan.name))
+		self.log_message('promote {} in front of {} in plan {}'.format(threat, sink, new_plan.name))
 
 
 		# Demotion
@@ -442,7 +438,7 @@ class POCLPlanner:
 			new_plan.OrderingGraph.addEdge(source.sibling, threat)
 		threat.update_choices(new_plan)
 		self.insert(new_plan)
-		log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
+		self.log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
 	def resolve_geometric_threat(self, plan: GPlan, gtf: GTF) -> None:
 		# find out if the threatening area is a static object or not.
@@ -508,7 +504,7 @@ class POCLPlanner:
 			new_plan.variableBindings.add_codesignation(new_goal_object, threatening_obj)
 			new_plan.variableBindings.geometric_vb.add_disjunction(threatened_area, new_goal_area)
 
-			log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy area conflict of {new_plan_consumer}.')
+			self.log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy area conflict of {new_plan_consumer}.')
 
 			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
 
@@ -535,7 +531,7 @@ class POCLPlanner:
 			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
 		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
 		self.insert(new_plan)
-		log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
+		self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
 
 
 		# Demotion place 2 after 1
@@ -549,7 +545,7 @@ class POCLPlanner:
 			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
 		sink_1.update_choices(new_plan) #TODO check if needed?
 		self.insert(new_plan)
-		log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
+		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		""" create branch plans by grounding a symbolic variable.
@@ -567,7 +563,7 @@ class POCLPlanner:
 		arg = flaw.arg
 		if plan.variableBindings.is_ground(arg):
 			obj = plan.variableBindings.symbolic_vb.get_const(arg)
-			log_message(f'Variable {arg} is already ground to object {obj}.')
+			self.log_message(f'Variable {arg} is already ground to object {obj}.')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
 			self.insert(new_plan)
 			return True
@@ -580,7 +576,7 @@ class POCLPlanner:
 			new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 			if not new_plan.variableBindings.add_codesignation(arg, obj): # due to the geometric consequences of grounding variables can_codesignate is no longer complete.
 				continue
-			log_message(f'Grounding variable {arg} to object {obj}.')
+			self.log_message(f'Grounding variable {arg} to object {obj}.')
 			self.insert(new_plan)
 			grounding_success = True
 		return grounding_success
@@ -600,19 +596,19 @@ class POCLPlanner:
 		# ground the geometric variable
 		arg = flaw.arg
 		if plan.variableBindings.geometric_vb.is_ground(arg):
-			log_message(f'Variable {arg} is already ground. This should not happen!')
+			self.log_message(f'Variable {arg} is already ground. This should not happen!')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
 			self.insert(new_plan)
 			return True
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions(arg)
 		if new_plan.variableBindings.geometric_vb.resolve(arg):
-			log_message(f'Grounding variable {arg}.')
+			self.log_message(f'Grounding variable {arg}.')
 			self.insert(new_plan)
 			return True
 		else:
 			offending_areas = new_plan.variableBindings.geometric_vb.disjunctions[arg]
-			log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
+			self.log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
 			new_new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 			if new_new_plan.variableBindings.geometric_vb.resolve(arg):
 				moved_areas = []
@@ -620,7 +616,7 @@ class POCLPlanner:
 					if new_new_plan.variableBindings.geometric_vb.can_intersect(area, arg):
 						new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
 						moved_areas.append(area)
-				log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
+				self.log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
 				self.insert(new_new_plan)
 				return True
 			return False
@@ -705,3 +701,8 @@ class POCLPlanner:
 				continue
 			sumo += self.h_condition(plan, abstract_step.dummy.final.stepnum, pre)
 		return sumo
+
+	# logging
+	def log_message(self, message):
+		if self.log:
+			print(message)
