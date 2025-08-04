@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # Prepare CSV file
     csv_filename = "test_results.csv"
     with open(csv_filename, mode="w", newline="") as csvfile:
-        fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found"]
+        fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found", "nr_objects", "nr_goals"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -46,6 +46,9 @@ if __name__ == '__main__':
             print(f"\n\niteration: {iteration}. running test: {testname}\n\n")
 
             domain, problem_obj = load_domain_and_problem(domain_file, problem.problem, problem.worldmodel)
+
+            nr_objects = len([o for o in problem_obj.objects if o.typ=='physical_item'])
+            nr_goals = len(problem_obj.goal.preconds)
 
             planner = POCLPlanner(domain, problem_obj, LOG)
             plans, planning_report = planner.solve(k=1, cutoff=60)
@@ -63,6 +66,8 @@ if __name__ == '__main__':
                     "visited": planning_report.visited,
                     "terminated": planning_report.terminated,
                     "plans_found": planning_report.plans_found,
+                    "nr_objects": nr_objects,
+                    "nr_goals": nr_goals,
                 })
             for i in range(len(plans)):
                 plan = plans[i]
@@ -87,6 +92,8 @@ if __name__ == '__main__':
                     "visited": planning_report.visited,
                     "terminated": planning_report.terminated,
                     "plans_found": planning_report.plans_found,
+                    "nr_objects": nr_objects,
+                    "nr_goals": nr_goals,
                 })
             iteration += 1
     print(f"Done running. ran {iteration} iterations")
