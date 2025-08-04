@@ -9,13 +9,15 @@ from shapely import Polygon, box, difference, within, union, intersects, buffer
 # visualization
 import matplotlib.pyplot as plt
 
+MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
+
 @dataclass
 class placeloc:
     object: Argument
     object_width: float
     object_length: float
     area_max: Polygon
-    area_assigned: Polygon
+    area_assigned: Polygon        
 
 class VariableBindingsGeometric:
     """class to manage variablebindings for areas
@@ -295,7 +297,10 @@ class VariableBindingsGeometric:
         if A_area is None or B_area is None:
             print(f"Area of {varA} or {varB} is None. This should not happen!")
             return False
-        if not within(A_area, B_area):
+
+        buffered_B_area = buffer(B_area, MARGIN_OF_ERROR)
+
+        if not within(A_area, buffered_B_area):
             print(f"Assigned area of {varA} is not within assigned area of {varB}. This should not happen!")
             return False
         return True
@@ -350,7 +355,6 @@ class VariableBindingsGeometric:
         Returns:
             bool: True if resolving succeeded. False otherwise.
         """
-        MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
         HELPER_VIZ = False # only use when debugging
         ploc = self.placelocs[var]
 
