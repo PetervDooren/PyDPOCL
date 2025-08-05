@@ -465,7 +465,8 @@ class GPlan:
 				for causal_link in self.CausalLinkGraph.edges:
 					if causal_link.label.source.name == "within":
 						if obj == causal_link.label.source.Args[0]:
-							break
+							if not (causal_link.source == self.dummy.init and causal_link.sink == self.dummy.goal):
+								break
 				else:
 					static_objs.append(obj)		
 		for obj in static_objs:
