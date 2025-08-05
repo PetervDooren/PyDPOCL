@@ -48,7 +48,7 @@ def main():
 
     num_args = len(sys.argv)
     if num_args > 1:
-        filenames = [filenames[int(i)] for i in sys.argv[1:]]
+        filenames = [f'domains/manipulation-domain-batch/test_{i}_worldmodel.json' for i in sys.argv[1:]]
 
     for filename in filenames:
         data = load_worldmodel(filename)
