@@ -486,6 +486,8 @@ class GPlan:
 			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
 			if other_var not in other_src.Args: # only add goal locations to the disjunction list.
 				continue
+			if other_src ==source and other_snk ==sink: # this is the exact same causal link. Just the other variable in it.
+				continue
 			if self.OrderingGraph.isPath(sink, other_src) or self.OrderingGraph.isPath(other_snk, source):
 				# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
 				continue

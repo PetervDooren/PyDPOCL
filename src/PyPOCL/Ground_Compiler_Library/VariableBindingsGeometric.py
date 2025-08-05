@@ -393,9 +393,10 @@ class VariableBindingsGeometric:
         if a_min is not None:
             minx, miny, maxx, maxy = a_min.bounds
             a_min = box(minx, miny, maxx, maxy)
-            if maxx - minx - (ploc.object_width + self.buffer) >= -MARGIN_OF_ERROR and maxy - miny - (ploc.object_length + self.buffer) >= -MARGIN_OF_ERROR:
-                ploc.area_assigned = a_min
-                return True
+            if maxx - minx - (ploc.object_width) >= -MARGIN_OF_ERROR and maxy - miny - (ploc.object_length) >= -MARGIN_OF_ERROR:
+                if within(a_min, buffered_disjunct_area_max):
+                    ploc.area_assigned = a_min
+                    return True
 
         if a_min is None:
             # area is not constrained by areas that should lie within it.
@@ -417,7 +418,7 @@ class VariableBindingsGeometric:
             # sample acceptable pose in the area_max
             a_candidate = box(x_pos, y_pos, x_pos+candidate_width, y_pos+candidate_length)
             if HELPER_VIZ:
-                self.helper_show_resolve_step(disjunct_area_max, a_candidate)
+                self.helper_show_resolve_step(disjunct_area_max, a_min, a_candidate)
             if within(a_candidate, buffered_disjunct_area_max):
                 ploc.area_assigned = a_candidate
                 return True

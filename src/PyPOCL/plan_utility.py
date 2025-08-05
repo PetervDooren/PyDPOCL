@@ -11,6 +11,7 @@ import yaml
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon as MplPolygon
 
+MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
 
 def check_plan(plan: GPlan) -> None:
     """Check if the plan is complete and valid. Does not use the tracked flaws, but checks the plan structure directly."""
@@ -71,7 +72,7 @@ def check_plan(plan: GPlan) -> None:
             print(f"Area {area_id} has no object defined")
             return False
         # check that the object fits within the assigned area
-        if area.area < placeloc.object_width * placeloc.object_length:
+        if area.area - placeloc.object_width * placeloc.object_length < -MARGIN_OF_ERROR:
             print(f"Area {area_id} is too small for the object with width {placeloc.object_width} and length {placeloc.object_length}")
             return False
 
