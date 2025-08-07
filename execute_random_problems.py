@@ -50,8 +50,10 @@ if __name__ == '__main__':
             nr_objects = len([o for o in problem_obj.objects if o.typ=='physical_item'])
             nr_goals = len(problem_obj.goal.preconds)
 
-            planner = POCLPlanner(domain, problem_obj, LOG)
-            plans, planning_report = planner.solve(k=1, cutoff=60)
+            plangraph_name = f"plans/{domain.name}/{problem_obj.name}-plangraph"
+
+            planner = POCLPlanner(domain, problem_obj, LOG, plangraph_name=plangraph_name)
+            plans, planning_report = planner.solve(k=1, cutoff=180)
 
             if len(plans) == 0:
                 print("no plans could be found")

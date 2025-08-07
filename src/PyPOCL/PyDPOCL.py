@@ -7,11 +7,18 @@ from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, UGSV, UGGV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
+import graphviz
 from heapq import heappush, heappop
 import time
 
 REPORT = 1
 RRP = 0
+
+# graphviz colors:
+OPEN_NODE = 'cyan'
+CLOSED_NODE = 'white'
+LEAF_NODE = 'red'
+GOAL_NODE = 'green'
 
 PlanningReport = namedtuple("PlanningReport", ["planning_time", "expanded", "visited", "terminated", "plans_found"])
 
@@ -84,7 +91,7 @@ class POCLPlanner:
 	h_subplan():
 	"""
 
-	def __init__(self, domain: Domain, problem: Problem, log=0) -> None:
+	def __init__(self, domain: Domain, problem: Problem, log=False, plangraph_name=None) -> None:
 		"""construct planner
 
 		Args:
@@ -93,6 +100,10 @@ class POCLPlanner:
 		"""	
 		self.ID = duuid4()
 		self.log = log # defines log level
+		self.save_plangraph = plangraph_name is not None # create a planning graph
+		if self.save_plangraph:
+			self.plangraph_name = plangraph_name
+			self.dot = graphviz.Digraph()
 
 		self.domain = domain
 		self.problem = problem
@@ -107,6 +118,7 @@ class POCLPlanner:
 
 		self._frontier = Frontier()
 		self.plan_num = 0
+		self.opened = 0 # number of opened plans
 		root_plan = GPlan.make_root_plan(domain, problem)
 		root_plan.log = log
 		self.insert(root_plan)
@@ -125,11 +137,16 @@ class POCLPlanner:
 	def pop(self) -> GPlan:
 		return self._frontier.pop()
 
-	def insert(self, plan: GPlan) -> None:
+	def insert(self, plan: GPlan, parent_plan: GPlan=None, label=None) -> None:
 		plan.heuristic = self.h_plan(plan)
 		self.log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
+		if self.save_plangraph:
+			self.dot.node(f"{plan.ID}", f"plan_{self.opened}", style="filled", fillcolor=OPEN_NODE)
+			if parent_plan is not None:
+				self.dot.edge(f"{parent_plan.ID}", f"{plan.ID}", label=label)
 		self._frontier.insert(plan)
 		self.plan_num += 1
+		self.opened += 1
 
 	# @clock
 	def solve(self, k: int=4, cutoff: int=60) -> List[GPlan]:
@@ -148,22 +165,32 @@ class POCLPlanner:
 			if time.time() - t_report > 1: # report every second
 				elapsed = time.time() - t0
 				delay = str('%0.8f' % elapsed)
-				print(f'{delay}\t{expanded}\t{len(self)+expanded}\t{leaves}')
+				print(f'{delay}\t{expanded}\t{self.opened}\t{leaves}')
 				t_report = time.time()
 			if cutoff > 0 and time.time() - t0 > cutoff:
 				elapsed = time.time() - t0
 				delay = str('%0.8f' % elapsed)
-				print(f'timedout: {delay}\t {expanded}\t{len(self)+expanded}\t{leaves}')
-				planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+				print(f'timedout: {delay}\t {expanded}\t{self.opened}\t{leaves}')
+
+				if self.save_plangraph:
+						self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
+
+				planning_report = PlanningReport(delay, expanded, self.opened, leaves, len(completed))
 				return [], planning_report
 
 			plan = self.pop()
 			expanded += 1
 			self.plan_num = 0 # reset branch counter
 
+			if self.save_plangraph:
+				self.dot.node(f"{plan.ID}", f"visited_{expanded}", style="filled", fillcolor=CLOSED_NODE)
+
 			if not plan.isInternallyConsistent():
 				# if plan.name[-3] == 'a':
 				# 	print('stop')
+				if self.save_plangraph:
+					self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
+
 				self.log_message('prune {}'.format(plan.name))
 				leaves += 1
 				continue
@@ -199,8 +226,12 @@ class POCLPlanner:
 				if REPORT:
 					print(f"solution {len(completed)} found at {expanded} nodes expanded and {len(self)+expanded} nodes visited and {leaves} branches terminated")
 					plan.print()
+				if self.save_plangraph:
+					self.dot.node(f"{plan.ID}", f"goal_{len(completed)}", style="filled", fillcolor=GOAL_NODE)
 
 				if len(completed) == k:
+					if self.save_plangraph:
+						self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
 					planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
 					return completed, planning_report
 				continue
@@ -217,10 +248,14 @@ class POCLPlanner:
 				self.resolve_geometric_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
 				if not self.ground_variable(plan, flaw):
+					if self.save_plangraph:
+						self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
 					self.log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, UGGV):
 				if not self.ground_geometric_variable(plan, flaw):
+					if self.save_plangraph:
+						self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
 					self.log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, OPF):
@@ -297,7 +332,7 @@ class POCLPlanner:
 			# self.max_height + 1 - new_step.height
 
 			# insert our new mutated plan into the frontier
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'OPF: add_step')
 
 	def reuse_step(self, plan: GPlan, flaw: Flaw) -> None:
 		consumer, precondition = flaw.flaw
@@ -336,7 +371,7 @@ class POCLPlanner:
 			new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
 
 			# insert mutated plan into frontier
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'OPF: reuse step')
 
 	def ground_in_init(self, plan: GPlan, flaw: Flaw) -> None:
 		"""Similar to reuse step. But specifically for grounding an unsupported condition in the initial state.
@@ -385,7 +420,7 @@ class POCLPlanner:
 				new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition)
 
 				# insert mutated plan into frontier
-				self.insert(new_plan)
+				self.insert(new_plan, plan, 'OPF: reuse init')
 		else:
 			for candidate_action, effect_nr in choices:
 				# clone plan and new step
@@ -407,7 +442,7 @@ class POCLPlanner:
 				new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
 
 				# insert mutated plan into frontier
-				self.insert(new_plan)
+				self.insert(new_plan, plan, 'OPF: reuse init')
 
 	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)
@@ -424,7 +459,7 @@ class POCLPlanner:
 		if hasattr(sink, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink.sibling, threat)
 		threat.update_choices(new_plan)
-		self.insert(new_plan)
+		self.insert(new_plan, plan, 'TCLF: promote')
 		self.log_message('promote {} in front of {} in plan {}'.format(threat, sink, new_plan.name))
 
 
@@ -438,7 +473,7 @@ class POCLPlanner:
 		if hasattr(source, 'sibling'):
 			new_plan.OrderingGraph.addEdge(source.sibling, threat)
 		threat.update_choices(new_plan)
-		self.insert(new_plan)
+		self.insert(new_plan, plan, 'TCLF: demote')
 		self.log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
 	def resolve_geometric_threat(self, plan: GPlan, gtf: GTF) -> None:
@@ -510,7 +545,7 @@ class POCLPlanner:
 			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
 
 			# insert our new mutated plan into the frontier
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'GTF: add step')
 
 	def resolve_geometric_threat_dynamic(self, plan: GPlan, gtf: GTF, threat_source, threat_sink) -> None:
 		threatened_area = gtf.area
@@ -531,7 +566,7 @@ class POCLPlanner:
 		if hasattr(sink_2, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
 		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
-		self.insert(new_plan)
+		self.insert(new_plan, plan, 'GTF: promote')
 		self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
 
 
@@ -545,7 +580,7 @@ class POCLPlanner:
 		if hasattr(sink_1, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
 		sink_1.update_choices(new_plan) #TODO check if needed?
-		self.insert(new_plan)
+		self.insert(new_plan, plan, 'GTF: demote')
 		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
@@ -566,7 +601,7 @@ class POCLPlanner:
 			obj = plan.variableBindings.symbolic_vb.get_const(arg)
 			self.log_message(f'Variable {arg} is already ground to object {obj}.')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'UGSV: already ground')
 			return True
 
 		grounding_success = False # should be True if at least one branch is created
@@ -578,7 +613,7 @@ class POCLPlanner:
 			if not new_plan.variableBindings.add_codesignation(arg, obj): # due to the geometric consequences of grounding variables can_codesignate is no longer complete.
 				continue
 			self.log_message(f'Grounding variable {arg} to object {obj}.')
-			self.insert(new_plan)
+			self.insert(new_plan, plan, f'UGSV: ground variable')
 			grounding_success = True
 		return grounding_success
 		
@@ -599,13 +634,13 @@ class POCLPlanner:
 		if plan.variableBindings.geometric_vb.is_ground(arg):
 			self.log_message(f'Variable {arg} is already ground. This should not happen!')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'UGGV: already ground')
 			return True
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions(arg)
 		if new_plan.variableBindings.geometric_vb.resolve(arg):
 			self.log_message(f'Grounding variable {arg}.')
-			self.insert(new_plan)
+			self.insert(new_plan, plan, 'UGGV: ground')
 			return True
 		else:
 			offending_areas = new_plan.variableBindings.geometric_vb.disjunctions[arg]
@@ -618,7 +653,7 @@ class POCLPlanner:
 						new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
 						moved_areas.append(area)
 				self.log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
-				self.insert(new_new_plan)
+				self.insert(new_new_plan, plan, 'UGGV: ground with threats')
 				return True
 			return False
 

@@ -36,7 +36,9 @@ if __name__ == '__main__':
 
     domain, problem = load_domain_and_problem(domain_file, problem_file, worldmodel_file)
 
-    planner = POCLPlanner(domain, problem, LOG)
+    plangraph_name = f"plans/{domain.name}/{problem.name}-plangraph"
+
+    planner = POCLPlanner(domain, problem, LOG, plangraph_name=plangraph_name)
     plans, _ = planner.solve(k=1, cutoff=0)
     for i in range(len(plans)):
         plan = plans[i]
