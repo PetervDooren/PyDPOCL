@@ -1,7 +1,7 @@
 import sys
 from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
-from PyPOCL.plan_utility import check_plan, plan_to_json, plan_to_yaml, visualize_plan
+from PyPOCL.plan_utility import check_plan, plan_to_json, plan_to_yaml, visualize_plan, plan_to_dot
 
 LOG = 1
 
@@ -45,6 +45,7 @@ if __name__ == '__main__':
         else:
             print("Plan is valid")
         visualize_plan(plan, filepath=f"plans/{domain.name}/{problem.name}-plan_{i}.png")
+        plan_to_dot(plan, filepath_dot=f"plans/{domain.name}/{problem.name}-plan_{i}.dot", filepath_svg=f"plans/{domain.name}/{problem.name}-plan_{i}.svg")
         plan_to_json(plan, f"plans/{domain.name}/{problem.name}-plan_{i}.json")
         #if domain.name == "manipulation-domain":
         #    plan_to_yaml(plan, f"plans/{domain.name}/{problem.name}-executable_plan_{i}.yaml")

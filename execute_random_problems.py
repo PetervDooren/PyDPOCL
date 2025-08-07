@@ -3,7 +3,7 @@ from collections import namedtuple
 import csv
 from PyPOCL.PyDPOCL import POCLPlanner
 from PyPOCL.worldmodel import load_domain_and_problem
-from PyPOCL.plan_utility import check_plan, plan_to_json, visualize_plan
+from PyPOCL.plan_utility import check_plan, plan_to_json, visualize_plan, plan_to_dot
 
 Problem = namedtuple("Problem", ["problem", "worldmodel"])
 
@@ -81,6 +81,7 @@ if __name__ == '__main__':
                     status = "success"
                 plan_path = f"plans/{domain.name}/{problem_obj.name}-plan_{i}"
                 plan_to_json(plan, f"{plan_path}.json")
+                plan_to_dot(plan, f"{plan_path}.dot", f"{plan_path}.svg", show=False)
                 visualize_plan(plan, show=False, filepath=f"{plan_path}.png")
                 writer.writerow({
                     "iteration": iteration,

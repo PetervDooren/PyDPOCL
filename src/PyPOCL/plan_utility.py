@@ -2,6 +2,7 @@ from PyPOCL.GPlan import GPlan
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
 
+import graphviz
 from shapely import within, Polygon, overlaps
 from uuid import UUID
 import json
@@ -141,6 +142,31 @@ def check_plan(plan: GPlan) -> None:
     if not check_connections_in_plan(plan) and False:
         return False	
     return True
+
+def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None, show=True) -> None:
+    """
+    Write the plan's ordering and causal link graphs to a Graphviz .dot file.
+
+    Args:
+        plan (GPlan): The plan to export.
+        filepath_dot (str): The path to the output .dot file.
+        filepath_svg (str): The path to the output .svg file.
+        show (bool): show the figure 
+    """
+    dot = graphviz.Digraph()
+
+    # add nodes for each step
+    for step in plan.steps:
+        dot.node(f"{step.ID}", f"{step.schema}")
+
+    for edge in plan.OrderingGraph.edges:
+        dot.edge(f"{edge.source.ID}", f"{edge.sink.ID}", color="black", style="dashed")
+
+    for edge in plan.CausalLinkGraph.edges:
+        effect = edge.label.source.name
+        dot.edge(f"{edge.source.ID}", f"{edge.sink.ID}", label=effect, color='red')
+
+    dot.render(filename=filepath_dot, view=show, outfile=filepath_svg)
 
 def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
     """ Create an image of the plan. 
