@@ -1,0 +1,16 @@
+digraph {
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" [label=dummy_init]
+	"8b7a5e38-6f70-a306-3496-092ef652fc7d" [label=dummy_goal]
+	"af28a666-b88f-a256-e5f9-ae5086bf1142" [label=movemono]
+	"f349e856-6979-2102-dbb7-b5630f592492" [label=movemono]
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" -> "f349e856-6979-2102-dbb7-b5630f592492" [color=black style=dashed]
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" -> "af28a666-b88f-a256-e5f9-ae5086bf1142" [color=black style=dashed]
+	"f349e856-6979-2102-dbb7-b5630f592492" -> "8b7a5e38-6f70-a306-3496-092ef652fc7d" [color=black style=dashed]
+	"af28a666-b88f-a256-e5f9-ae5086bf1142" -> "8b7a5e38-6f70-a306-3496-092ef652fc7d" [color=black style=dashed]
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" -> "8b7a5e38-6f70-a306-3496-092ef652fc7d" [color=black style=dashed]
+	"f349e856-6979-2102-dbb7-b5630f592492" -> "af28a666-b88f-a256-e5f9-ae5086bf1142" [color=black style=dashed]
+	"af28a666-b88f-a256-e5f9-ae5086bf1142" -> "8b7a5e38-6f70-a306-3496-092ef652fc7d" [label=within color=red]
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" -> "af28a666-b88f-a256-e5f9-ae5086bf1142" [label=within color=red]
+	"44f916ef-ef43-4fc0-9c53-c246d060ab45" -> "f349e856-6979-2102-dbb7-b5630f592492" [label=within color=red]
+	"f349e856-6979-2102-dbb7-b5630f592492" -> "8b7a5e38-6f70-a306-3496-092ef652fc7d" [label=within color=red]
+}

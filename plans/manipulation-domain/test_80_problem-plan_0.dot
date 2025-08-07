@@ -1,0 +1,10 @@
+digraph {
+	"98dc9e0b-51a1-f5df-06ac-10102e0869c1" [label=dummy_init]
+	"cf89569d-e550-d736-0780-6e713811b519" [label=dummy_goal]
+	"52961fb3-4d40-7b28-5628-ddcd19dd3e8c" [label=movemono]
+	"52961fb3-4d40-7b28-5628-ddcd19dd3e8c" -> "cf89569d-e550-d736-0780-6e713811b519" [color=black style=dashed]
+	"98dc9e0b-51a1-f5df-06ac-10102e0869c1" -> "52961fb3-4d40-7b28-5628-ddcd19dd3e8c" [color=black style=dashed]
+	"98dc9e0b-51a1-f5df-06ac-10102e0869c1" -> "cf89569d-e550-d736-0780-6e713811b519" [color=black style=dashed]
+	"52961fb3-4d40-7b28-5628-ddcd19dd3e8c" -> "cf89569d-e550-d736-0780-6e713811b519" [label=within color=red]
+	"98dc9e0b-51a1-f5df-06ac-10102e0869c1" -> "52961fb3-4d40-7b28-5628-ddcd19dd3e8c" [label=within color=red]
+}

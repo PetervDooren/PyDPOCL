@@ -1,0 +1,15 @@
+digraph {
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" [label=dummy_init]
+	"d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [label=dummy_goal]
+	"c9017334-212d-b862-52b9-ad6f18486a5a" [label=movemono]
+	"2f558813-5f31-23bb-27a2-03a283b736f2" [label=movemono]
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" -> "c9017334-212d-b862-52b9-ad6f18486a5a" [color=black style=dashed]
+	"c9017334-212d-b862-52b9-ad6f18486a5a" -> "d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [color=black style=dashed]
+	"2f558813-5f31-23bb-27a2-03a283b736f2" -> "d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [color=black style=dashed]
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" -> "2f558813-5f31-23bb-27a2-03a283b736f2" [color=black style=dashed]
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" -> "d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [color=black style=dashed]
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" -> "c9017334-212d-b862-52b9-ad6f18486a5a" [label=within color=red]
+	"2f558813-5f31-23bb-27a2-03a283b736f2" -> "d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [label=within color=red]
+	"c9017334-212d-b862-52b9-ad6f18486a5a" -> "d33d4e4a-9d73-d9bf-010c-d2fecec8f679" [label=within color=red]
+	"e17bfaae-e2f0-f21f-eb8c-e53bb11d37ad" -> "2f558813-5f31-23bb-27a2-03a283b736f2" [label=within color=red]
+}
