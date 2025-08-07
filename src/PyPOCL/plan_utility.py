@@ -153,11 +153,33 @@ def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None,
         filepath_svg (str): The path to the output .svg file.
         show (bool): show the figure 
     """
+    objcolors = ["red",
+                 "blue",
+                 "green",
+                 "yellow",
+                 "purple",
+                 "cyan",
+                 "orange",
+                 "white"]
+    objcolor_dict = {}
+    i = 0
+    for obj in plan.variableBindings.symbolic_vb.objects:
+        if plan.variableBindings.is_type(obj, 'physical_item'):
+            objcolor_dict[obj] = objcolors[i]
+            i = i+1
+            if i >= len(objcolors):
+                i = len(objcolors)-1
+
     dot = graphviz.Digraph()
 
     # add nodes for each step
     for step in plan.steps:
-        dot.node(f"{step.ID}", f"{step.schema}")
+        if step.schema == 'movemono':
+            obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
+            objcolor = objcolor_dict[obj]
+        else:
+            objcolor = "white"
+        dot.node(f"{step.ID}", f"{step.schema}", style="filled", fillcolor=objcolor)
 
     for edge in plan.OrderingGraph.edges:
         dot.edge(f"{edge.source.ID}", f"{edge.sink.ID}", color="black", style="dashed")
