@@ -1,0 +1,10 @@
+digraph {
+	"184a8b4c-2cd5-4cf6-0b71-36ec2bcfabdd" [label=plan_0 fillcolor=cyan style=filled]
+	"184a8b4c-2cd5-4cf6-0b71-36ec2bcfabdd" [label=visited_1 fillcolor=white style=filled]
+	"baa93172-5679-7656-9f8c-86f38e768c9d" [label=plan_1 fillcolor=cyan style=filled]
+	"184a8b4c-2cd5-4cf6-0b71-36ec2bcfabdd" -> "baa93172-5679-7656-9f8c-86f38e768c9d" [label="OPF: add_step"]
+	"9c1bffdf-e76f-6bf2-95ce-1e04d0759f54" [label=plan_2 fillcolor=cyan style=filled]
+	"184a8b4c-2cd5-4cf6-0b71-36ec2bcfabdd" -> "9c1bffdf-e76f-6bf2-95ce-1e04d0759f54" [label="OPF: reuse init"]
+	"9c1bffdf-e76f-6bf2-95ce-1e04d0759f54" [label=visited_2 fillcolor=white style=filled]
+	"9c1bffdf-e76f-6bf2-95ce-1e04d0759f54" [label=goal_1 fillcolor=green style=filled]
+}
