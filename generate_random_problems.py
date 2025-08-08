@@ -5,8 +5,9 @@ from shapely import box, intersects
 
 def generate_problem(name):
     n_robots = 2
-    n_objects = random.randint(2, 8)
-    n_goals = random.randint(1, n_objects)
+    max_nr_objects = 6
+    n_goals = random.randint(1, max_nr_objects+1)
+    n_objects = random.randint(n_goals, max_nr_objects+1)
     min_obj_size = 0.1
     max_obj_size = 0.4
     buffer = 0.1 # goal areas should be this much larger than the object
@@ -14,6 +15,9 @@ def generate_problem(name):
     goal_overlap_allowed = False
     table_width = 2.5
     table_length = 1.5
+
+    attempts = 0
+    max_attempts = 1000
 
     # generate the reaches of the different robots
     robot_reach = []
@@ -43,6 +47,9 @@ def generate_problem(name):
     for i in range(n_objects):
         redo = True
         while redo:
+            attempts+=1
+            if attempts > max_attempts:
+                return False
             width = random.uniform(min_obj_size, max_obj_size)
             length = random.uniform(min_obj_size, max_obj_size)
             x_pos = random.uniform(0, table_width-width)
@@ -64,6 +71,9 @@ def generate_problem(name):
         if i < n_goals:
             redo = True
             while redo:
+                attempts+=1
+                if attempts > max_attempts:
+                    return False
                 goal_width = random.uniform(width+buffer, max_goal_size)
                 goal_length = random.uniform(length+buffer, max_goal_size)
                 x_goal = random.uniform(0, table_width-goal_width)
@@ -152,7 +162,8 @@ def generate_problem(name):
     filepath = name+"_worldmodel.json"
     with open(filepath, "w") as f:
         json.dump(worldmodel_dict, f, indent=2)
-    print(f"made random problem: {name}")
+    print(f"made random problem: {name} with {n_objects} objects and {n_goals} goals")
+    return True
 
 
 if __name__ == '__main__':
@@ -164,4 +175,5 @@ if __name__ == '__main__':
     for i in range(n):
         problem_path = "domains/manipulation-domain-batch/"
         problem_name = problem_path + "test_" + str(i)
-        generate_problem(problem_name)
+        while not generate_problem(problem_name):
+            pass

@@ -1,0 +1,16 @@
+nr_goals = 4;
+nr_objects = 8;
+nr_operators = 1;
+nr_robots = 2;
+
+open_precondition_branches = nr_operators + 1;
+threatened_causal_link_branches = 2;
+ungrounded_symbolic_variable_branches = nr_robots; % objects are always ground through unification.
+ungrounded_geometric_variable_branches = 1;
+
+nr_actions = nr_goals*nr_robots;
+nr_params_per_action = 4
+
+N = 1;
+
+N = N * open_precondition_branches*nr_goals
