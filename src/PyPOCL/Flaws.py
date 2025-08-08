@@ -346,27 +346,29 @@ class FlawLib:
 		# ungrounded geometric variables
 		self.ungrounded_geometric_variables = Flawque('ungrounded_geometric_variables')
 
-		# resolve symbolic variables (robot) first
-		self.typs = FlawTypes([self.statics,
-						      self.threats,
-							  self.geometric_threats,
-							  self.ungrounded_symbolic_variables,
-						      self.inits,
-							  self.unsafe,
-							  self.reusable,
-							  self.nonreusable,
-							  self.ungrounded_geometric_variables])
+		if True:
+			# resolve symbolic variables (robot) first
+			self.typs = FlawTypes([self.statics,
+								self.threats,
+								self.geometric_threats,
+								self.ungrounded_symbolic_variables,
+								self.inits,
+								self.unsafe,
+								self.reusable,
+								self.nonreusable,
+								self.ungrounded_geometric_variables])
 
-		# classic order
-		#self.typs = FlawTypes([self.statics,
-		#				      self.threats,
-		#					  self.ungrounded_symbolic_variables,
-		#				      self.inits,
-		#					  self.unsafe,
-		#					  self.reusable,
-		#					  self.nonreusable,
-		#					  self.geometric_threats,
-		#					  self.ungrounded_geometric_variables])
+		else:
+			# classic order
+			self.typs = FlawTypes([self.statics,
+								self.threats,
+								self.inits,
+								self.unsafe,
+								self.reusable,
+								self.nonreusable,
+								self.geometric_threats,
+								self.ungrounded_symbolic_variables,
+								self.ungrounded_geometric_variables])
 
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)
