@@ -1,9 +1,10 @@
 from PyPOCL.GPlan import GPlan
 from PyPOCL.worldmodel import Domain, Problem
+from PyPOCL.Ground_Compiler_Library.Element import Operator
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
 
 import graphviz
-from shapely import within, Polygon, overlaps
+from shapely import within, Polygon, MultiPolygon, overlaps, difference
 from uuid import UUID
 import json
 import yaml
@@ -139,9 +140,178 @@ def check_plan(plan: GPlan) -> None:
             if overlaps(area, other_area):
                 print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
                 return False
-    if not check_connections_in_plan(plan) and False:
+    if not check_plan_execution(plan):
         return False	
     return True
+
+def check_plan_execution(plan: GPlan) -> bool:
+    """Simulate an execution of a plan and check that it does not deadlock.
+
+    Args:
+        plan (GPlan): _description_
+    """
+    # create an open list of actions which can be performed at this stage
+
+    closed_list = [plan.dummy.init]
+    # create a state object
+    state = plan.variableBindings.initial_positions
+
+    while True:
+        # determine which steps can be executed
+        open_list = []
+        for step in plan.steps:
+            if step in closed_list:
+                continue
+            # for all prerequisites of step. check that they are in the closed list
+            for edge in plan.OrderingGraph.edges:
+                if edge.sink == step and edge.source not in closed_list:
+                    break
+            else:
+                # all previous steps are in the closed list
+                if step == plan.dummy.goal:
+                    return True # reached the end of the plan.
+                open_list.append(step)
+
+        # check if any of the open steps can be executed
+        for step in open_list:
+            obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
+            goal_arg = step.Args[3]
+            if check_connection(step, state, plan):
+                # update state
+                state[obj] = goal_arg
+                # add step to the closed list
+                closed_list.append(step)
+                # reset loop.
+                break
+            else:
+                print(f"Could not execute step {step} in the current state")
+        else:
+            # no step could be executed
+            print(f"No step could be executed in the current state!")
+            return False
+
+def check_connection(step: Operator, state: dict, plan: GPlan) -> bool:
+    # get the grounded information from step
+    robot_obj = plan.variableBindings.symbolic_vb.get_const(step.Args[0])
+    reach_area = plan.variableBindings.geometric_vb.defined_areas[plan.variableBindings.reach_areas[robot_obj]]
+    
+    moved_obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
+    object_width, object_length = plan.variableBindings.geometric_vb.object_dimensions[moved_obj]
+
+    start_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[2])
+    goal_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[3])
+    
+    # create a map of the available space
+    available_space = reach_area
+    for obj, area_arg in state.items():
+        if obj == moved_obj:
+            continue
+        if area_arg in plan.variableBindings.geometric_vb.defined_areas:
+            area = plan.variableBindings.geometric_vb.defined_areas[area_arg]
+        else:
+            area = plan.variableBindings.geometric_vb.get_assigned_area(area_arg)
+        available_space = difference(available_space, area)
+    erosion_dist = 0.5*min(object_width, object_length)
+    eroded = available_space.buffer(-erosion_dist)
+
+    # determine if both start and end lie in the available space
+    is_connected = False
+    if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+        is_connected = True
+    elif type(eroded) == MultiPolygon:
+        start_centroid = start_area.centroid # middle of the start area
+        goal_centroid = goal_area.centroid # middle of the goal area
+        for poly in eroded.geoms:
+            if within(start_centroid, poly) and within(goal_centroid, poly):
+                is_connected = True
+                break
+        else:
+            # no polygon contains both start and goal. Therefore they are separated in the reachable space
+            is_connected = False
+    else: # eroded has an unexpected type
+        print(f"eroded has an unexpected type: {type(eroded)}")
+        is_connected = False
+
+    #helper_show_state(step, state, plan, eroded, is_connected)
+    return is_connected
+
+def helper_show_state(step: Operator, state: dict, plan: GPlan, eroded: Polygon = None, connected: bool = None) -> bool:
+    """ 
+    Create an image of showing the process of checking wether a connection exists.
+    """
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Polygon as MplPolygon
+
+    # Give each object a unique color
+    objcolors = ["red",
+                 "blue",
+                 "green",
+                 "yellow",
+                 "purple",
+                 "cyan",
+                 "orange",
+                 "white"]
+    objcolor_dict = {}
+    i = 0
+    for obj in plan.variableBindings.symbolic_vb.objects:
+        if plan.variableBindings.is_type(obj, 'physical_item'):
+            objcolor_dict[obj] = objcolors[i]
+            i = i+1
+            if i >= len(objcolors):
+                i = len(objcolors)-1
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
+        coords = list(area.exterior.coords)
+        poly = MplPolygon(coords, closed=True, facecolor=color, edgecolor=edgecolor, alpha=alpha, fill=fill, label=label)
+        ax.add_patch(poly)
+        for hole in area.interiors:
+            hole_coords = list(hole.coords)
+            hole_poly = MplPolygon(hole_coords, closed=True, facecolor='white', edgecolor=edgecolor, alpha=1, fill=fill, label=label)
+            ax.add_patch(hole_poly)
+        if label:
+            # Place label at centroid
+            xs, ys = zip(*coords)
+            centroid = (sum(xs)/len(xs), sum(ys)/len(ys))
+            ax.text(centroid[0], centroid[1], label, ha='center', va='center', fontsize=8)
+
+    if eroded is not None:
+        if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+            plot_area(ax, eroded, color = 'green', label='eroded')
+        if type(eroded) == MultiPolygon:
+            for poly in eroded.geoms:
+                plot_area(ax, poly, color = 'green', label='eroded')
+        else: # eroded has an unexpected type
+            print(f"eroded has an unexpected type: {type(eroded)}")
+
+    # plot start area:
+    mainobj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
+    start = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[2])
+    goal = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[3])
+    mainobjcolor = objcolor_dict[mainobj]
+    edgecolor = 'black' if connected is None else 'green' if connected else 'red'
+    plot_area(ax, start, color = mainobjcolor, edgecolor=edgecolor, alpha=0.8, label='start')
+    plot_area(ax, goal, color = mainobjcolor, edgecolor=edgecolor, alpha=0.8, label='goal')
+
+    # plot the current state:
+    for obj, area_arg in state.items():
+        if obj == mainobj:
+            continue
+        objcolor = objcolor_dict[obj]
+        if area_arg in plan.variableBindings.geometric_vb.defined_areas:
+            area = plan.variableBindings.geometric_vb.defined_areas[area_arg]
+        else:
+            area = plan.variableBindings.geometric_vb.get_assigned_area(area_arg)
+        plot_area(ax, area, color=objcolor, label=obj.name)    
+    
+    ax.set_aspect('equal')
+    ax.autoscale()
+    ax.set_title(f'Connection Visualization')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.show()
+
 
 def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None, show=True) -> None:
     """
