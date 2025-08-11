@@ -22,9 +22,13 @@ for i=nr_goals_array
 end
 
 figure(1)
+clf
 hold on
 plot(SuccessRows.nr_goals, SuccessRows.planning_time, 'bo')
 plot(nr_goals_array, median_per_goal, 'b')
-plot(nr_goals_array, mean_per_goal, 'b--')
+%plot(nr_goals_array, mean_per_goal, 'b--')
 xlabel("number of goals")
 ylabel("planning time [s]")
+yscale("log")
+grid on
+legend('testcase', 'median')
