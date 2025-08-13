@@ -32,6 +32,8 @@ def check_connections_in_plan(plan: GPlan) -> bool:
             if plan.OrderingGraph.isPath(step, causal_link.source) or plan.OrderingGraph.isPath(causal_link.sink, step):
                 continue
             sourceloc = causal_link.label.source.Args[1]
+            if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+                sourceloc = causal_link.label.sink.Args[1]
             obst_areas.append(sourceloc)
         
         start_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[2])
