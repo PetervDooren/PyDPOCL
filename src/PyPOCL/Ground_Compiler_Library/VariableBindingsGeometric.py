@@ -127,6 +127,16 @@ class VariableBindingsGeometric:
             print(f"Variable {var} is not registered in the geometric variable bindings")
             return None
         return self.placelocs[var].area_assigned
+    
+    def get_area(self, var: Argument) -> Polygon:
+        if var in self.defined_areas:
+            return self.defined_areas[var]
+        if var in self.placelocs:
+            if self.placelocs[var].area_assigned is None:
+                print("Warning, variable {var} is not yet ground")
+            return self.placelocs[var].area_assigned
+        print(f"Error [VariableBindingsGeometric]: Variable {var} is not registered in defined areas or in geometric variables")
+        raise
 
     def register_variable(self, areavar: Argument, objvar: Argument=None, width=0, length=0):
         if areavar in self.variables:

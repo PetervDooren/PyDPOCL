@@ -32,8 +32,6 @@ def check_connections_in_plan(plan: GPlan) -> bool:
             if plan.OrderingGraph.isPath(step, causal_link.source) or plan.OrderingGraph.isPath(causal_link.sink, step):
                 continue
             sourceloc = causal_link.label.source.Args[1]
-            if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
-                sourceloc = causal_link.label.sink.Args[1]
             obst_areas.append(sourceloc)
         
         start_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[2])
@@ -50,7 +48,7 @@ def check_connections_in_plan(plan: GPlan) -> bool:
             area = plan.variableBindings.geometric_vb.defined_areas[area_arg]    
             available_space = difference(available_space, area)
         for loc in obst_areas:
-            area = plan.variableBindings.geometric_vb.get_assigned_area(loc)
+            area = plan.variableBindings.geometric_vb.get_area(loc)
             available_space = difference(available_space, area)
         erosion_dist = 0.5*min(object_width, object_length)
         eroded = available_space.buffer(-erosion_dist)
@@ -143,7 +141,7 @@ def helper_visualize_connection(step: Operator, plan: GPlan, static_objs: List[A
         area = plan.variableBindings.geometric_vb.defined_areas[area_arg]    
         plot_area(ax, area, color='black', label='static_obstacle')
     for loc in obstacle_areas:
-        area = plan.variableBindings.geometric_vb.get_assigned_area(loc)
+        area = plan.variableBindings.geometric_vb.get_area(loc)
         obj = plan.variableBindings.symbolic_vb.get_const(plan.variableBindings.geometric_vb.placelocs[loc].object)
         objcolor = objcolor_dict[obj]
         plot_area(ax, area, color=objcolor, label=obj.name)    
