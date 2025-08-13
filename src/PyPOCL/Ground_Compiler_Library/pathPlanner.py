@@ -2,7 +2,7 @@ from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.Element import Operator, Argument
 
 from typing import List
-from shapely import Polygon, MultiPolygon, difference, within
+from shapely import Polygon, MultiPolygon, difference, within, intersects
 
 def check_connections_in_plan(plan: GPlan) -> bool:
     """verify that for every move action in the plan. There exists a path from the start to the goal position in that configuration.
@@ -78,6 +78,120 @@ def check_connections_in_plan(plan: GPlan) -> bool:
             return False
     # no step was found to not have a connection between start and end
     return True
+
+def find_movable_obstacles(eroded, static_objs, area_args, erosion_dist, start, goal, plan: GPlan) -> List[Argument]:
+    """ Find which objects can be moved to create a path between start and end
+
+    Args:
+        eroded (MultiPolygon): _description_
+        static_objs (List[Argument]): list of static objects which are defined by their initial positions.
+        area_args (List[Argument]): list of area args which can coexist with the planned step.
+        erosion_dist (_type_): _description_
+        start (Point): the centroid of the start area
+        goal (Point): the centroid of the goal area
+        plan (GPlan): the plan in which this operation takes place
+
+    Returns:
+        List[List[Arguments]]: Each item in the first list is a collection of objects which,
+                               if they are all moved. Provide a path between start and goal. Each collection has the same cost.
+    """
+    all_areas = [plan.variableBindings.initial_positions[obj] for obj in static_objs]
+    all_areas.extend(area_args)
+    # Find connections between areas
+    poly_args = dict()
+    connections = dict()
+    for poly in eroded.geoms:
+        arg = Argument(name="eroded_polygon")
+        poly_args[arg] = poly
+        connections[arg] = []
+    for arg in all_areas:
+        connections[arg] = []
+
+    areas = [plan.variableBindings.geometric_vb.get_area(a) for a in all_areas]
+    inflated_areas = [area.buffer(erosion_dist) for area in areas]
+    for i in range(len(all_areas)):
+        area_arg_i = all_areas[i]
+        area_i = inflated_areas[i]
+        # check connections to eroded
+        for poly_arg in poly_args:
+            poly = poly_args[poly_arg]
+            if intersects(poly, area_i):
+                connections[area_arg_i].append(poly_arg)
+                connections[poly_arg].append(area_arg_i)
+        # check connections to other objects
+        for j in range(i, len(all_areas)):
+            area_arg_j = all_areas[j]
+            area_j = inflated_areas[j]
+            if intersects(area_i, area_j):
+                # add connection between the two
+                connections[area_arg_i].append(area_arg_j)
+                connections[area_arg_j].append(area_arg_i)
+    # run dijkstra algorithm over the connections
+    cost_dict = dict()
+    predecessor_dict = dict()
+    for poly_arg in poly_args:
+        cost_dict[poly_arg] = 100
+        predecessor_dict[poly_arg] = []
+    for arg in all_areas:
+        cost_dict[arg] = 100
+        predecessor_dict[arg] = []
+    
+    # find start poly
+    for poly_arg in poly_args:
+        poly = poly_args[poly_arg]
+        if within(start, poly):
+            start_arg = poly_arg
+            break
+    else:
+        print("start not found in eroded")
+        raise
+    # find goal poly
+    for poly_arg in poly_args:
+        poly = poly_args[poly_arg]
+        if within(goal, poly):
+            goal_arg = poly_arg
+            break
+    else:
+        print("goal not found in eroded")
+        raise
+    cost_dict[start_arg] = 0
+    open_list = [start_arg]
+    closed_list = []
+
+    while True:
+        open_list.sort(key=lambda x: cost_dict[x], reverse=True)
+        node = open_list.pop()
+        closed_list.append(node)
+        if node == goal_arg:
+            break
+        node_cost = cost_dict[node]
+        for connection in connections[node]:
+            if connection not in open_list and connection not in closed_list:
+                open_list.append(connection)
+            if node_cost + 1 < cost_dict[connection]:
+                predecessor_dict[connection] = [node]
+                cost_dict[connection]=node_cost + 1
+            elif node_cost + 1 == cost_dict[connection]:
+                predecessor_dict[connection].append(node)
+    #backtrace the objects that should be moved
+    def recursive_backtrace(arg, connection_dict):
+        if len(connection_dict[arg]) == 0:
+            if arg.name == "eroded_polygon":
+                return [[]]
+            else:
+                return [[arg]]
+        else:
+            arg_list = []
+            for connection in connection_dict[arg]:
+                subarglist = recursive_backtrace(connection, connection_dict)
+                for l in subarglist:
+                    if arg.name != "eroded_polygon":
+                        l.append(arg)
+                    arg_list.append(l)
+        return arg_list
+
+    movable_object_sets = recursive_backtrace(goal_arg, predecessor_dict)
+    return movable_object_sets
 
 def helper_visualize_connection(step: Operator, plan: GPlan, static_objs: List[Argument] = [], obstacle_areas: List[Polygon] = [], eroded: Polygon = None) -> None:
     """ 
