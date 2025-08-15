@@ -64,6 +64,7 @@ def check_connections_in_plan(plan: GPlan) -> bool:
 
         if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
             is_connected = True
+            find_corridor(step, plan, eroded) # test this method
             continue
         elif type(eroded) == MultiPolygon:
             start_centroid = start_area.centroid # middle of the start area
@@ -75,6 +76,7 @@ def check_connections_in_plan(plan: GPlan) -> bool:
             else:
                 # no polygon contains both start and goal. Therefore they are separated in the reachable space
                 is_connected = False
+                find_movable_obstacles(eroded, static_objs, obst_areas, erosion_dist, start_centroid, goal_centroid, plan)
                 return False
         else: # eroded has an unexpected type
             print(f"eroded has an unexpected type: {type(eroded)}")
@@ -260,9 +262,8 @@ def find_corridor(step: Operator, plan: GPlan, eroded: Polygon):
     closed_set = set()
     g_score = {start_node: 0}
 
-    helper_visualize_Astart(eroded, valid_points, start_node, goal_node)
     while open_set:
-        helper_visualize_Astart(eroded, valid_points, start_node, goal_node, open_set, closed_set)
+        #helper_visualize_Astart(eroded, valid_points, start_node, goal_node, open_set, closed_set)
         _, cost, current, path = heappop(open_set)
         if current == goal_node:
             # Return path as list of (x, y) tuples

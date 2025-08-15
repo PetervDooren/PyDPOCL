@@ -183,7 +183,7 @@ class GPlan:
 
 	# Insert Methods #
 
-	def insert(self, step):
+	def insert(self, step: Operator):
 		# baseline condition:
 		# self.cost += 1
 		# self.cost += (2 * 2 + 1) - (step.height * step.height)
@@ -193,7 +193,7 @@ class GPlan:
 			self.insert_primitive(step)
 
 
-	def insert_primitive(self, new_step):
+	def insert_primitive(self, new_step: Operator):
 		self.steps.append(new_step)
 
 		# global orderings
