@@ -361,7 +361,7 @@ def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None,
     dot.render(filename=filepath_dot, view=show, outfile=filepath_svg)
 
 def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
-    """ Create an image of the plan. 
+    """ Create an image of the plan geometry. 
 
     Args:
         plan (_type_): _description_
@@ -406,27 +406,21 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
         obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
         startarea = geo_vb.get_assigned_area(step.Args[2])
         goalarea = geo_vb.get_assigned_area(step.Args[3])
+        path = geo_vb.get_path(step.Args[4])
+        patharea = geo_vb.get_area(step.Args[4])
         objcolor = objcolor_dict[obj]
 
+        plot_area(ax, patharea, color=objcolor, alpha=0.3)
+        # plot the path from start to goal
+        ax.plot(*zip(*path.coords), color='black')
+        start = path.coords[-2]
+        end = path.coords[-1]
+        ax.annotate('', xy=end, xytext=start,
+            arrowprops=dict(arrowstyle='->', color='black', lw=2)
+        )
         plot_area(ax, startarea, color=objcolor, edgecolor='blue')
         plot_area(ax, goalarea, color=objcolor, edgecolor='red')
-        ax.annotate('', xy=(goalarea.centroid.x, goalarea.centroid.y), xytext=(startarea.centroid.x, startarea.centroid.y),
-            arrowprops=dict(arrowstyle='->', color=objcolor, lw=2))
-        mid_x = (goalarea.centroid.x + startarea.centroid.x) / 2
-        mid_y = (goalarea.centroid.y + startarea.centroid.y) / 2
-        #ax.text(mid_x, mid_y, obj.name, fontsize=8, ha='center', va='center', backgroundcolor=objcolor)
-
-    # plot all placelocs:
-    #for key, ploc in geo_vb.placelocs.items():
-    #    if ploc.area_assigned is None:
-    #        continue
-    #    if 'start' in key.arg_name:
-    #        plot_area(ax, ploc.area_assigned, color='blue', edgecolor='purple')
-    #    elif 'goal' in key.arg_name:
-    #        plot_area(ax, ploc.area_assigned, color='orange', edgecolor='red')
-    #    else:
-    #        plot_area(ax, ploc.area_assigned, color='green', edgecolor='red')
-    
+        
     ax.set_aspect('equal')
     ax.autoscale()
     ax.set_title(f'Plan Visualization: {plan.problem}')

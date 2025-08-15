@@ -4,7 +4,8 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from PyPOCL.Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, MultiPolygon, box, difference, within, union, intersects, buffer
+from shapely import Polygon, MultiPolygon, LineString, box, difference, within, union, intersects, buffer
+from PyPOCL.Ground_Compiler_Library.pathPlanner import find_path
 
 # visualization
 import matplotlib.pyplot as plt
@@ -26,6 +27,7 @@ class path:
     object_length: float
     start_area: Argument
     goal_area: Argument
+    path_assigned: LineString
     area_assigned: Polygon        
 
 class VariableBindingsGeometric:
@@ -111,6 +113,11 @@ class VariableBindingsGeometric:
                 self.placelocs[var].object = obj_instance
                 self.placelocs[var].object_width = self.object_dimensions[obj_instance][0]
                 self.placelocs[var].object_length = self.object_dimensions[obj_instance][1]
+        for var in self.path_variables:
+            if self.paths[var].object == objvar:
+                self.paths[var].object = obj_instance
+                self.paths[var].object_width = self.object_dimensions[obj_instance][0]
+                self.paths[var].object_length = self.object_dimensions[obj_instance][1]
     
     def set_assigned_area(self, var: Argument, area: Polygon):
         """set the area assigned to a variable. Should only be used when loading a plan from a file. Otherwise use resolve() to set the area.
@@ -148,6 +155,18 @@ class VariableBindingsGeometric:
             if self.placelocs[var].area_assigned is None:
                 print("Warning, variable {var} is not yet ground")
             return self.placelocs[var].area_assigned
+        if var in self.paths:
+            if self.paths[var].area_assigned is None:
+                print("Warning, path variable {var} is not yet ground")
+            return self.paths[var].area_assigned
+        print(f"Error [VariableBindingsGeometric]: Variable {var} is not registered in defined areas or in geometric variables")
+        raise
+
+    def get_path(self, var:Argument) -> LineString:
+        if var in self.paths:
+            if self.paths[var].path_assigned is None:
+                print("Warning, path variable {var} is not yet ground")
+            return self.paths[var].path_assigned
         print(f"Error [VariableBindingsGeometric]: Variable {var} is not registered in defined areas or in geometric variables")
         raise
 
@@ -168,7 +187,7 @@ class VariableBindingsGeometric:
             print(f"Warning variable {pathvar} is already registered")
             return
         self.path_variables.append(pathvar)
-        self.paths[pathvar] = path(objvar, width, length, startloc, goalloc, None)
+        self.paths[pathvar] = path(objvar, width, length, startloc, goalloc, None, None)
         self.disjunctions[pathvar] = []
 
     def link_path_to_areas(self, path_variable, start_area, goal_area):
@@ -516,7 +535,7 @@ class VariableBindingsGeometric:
                 plt.fill(*a_min.exterior.xy, color='cyan')                     
 
     def resolve_path(self, var):
-        start_arg = self.paths[var].goal_area
+        start_arg = self.paths[var].start_area
         start_area = self.placelocs[start_arg].area_assigned
         goal_arg = self.paths[var].goal_area
         goal_area = self.placelocs[goal_arg].area_assigned
@@ -541,19 +560,32 @@ class VariableBindingsGeometric:
         # check if start and goal are connected in the eroded polygon
         if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
             #TODO ground a single chosen path
-            return True
+            free_space = eroded
         elif type(eroded) == MultiPolygon:
             start_centroid = start_area.centroid # middle of the start area
             goal_centroid = goal_area.centroid # middle of the goal area
             for poly in eroded.geoms:
                 if within(start_centroid, poly) and within(goal_centroid, poly):
-                    return True
+                    free_space = poly
+                    break
             else:
                 # no polygon contains both start and goal. Therefore they are separated in the reachable space
                 return False
         else: # eroded has an unexpected type
             print(f"eroded has an unexpected type: {type(eroded)}")
-        raise
+            raise
+        
+        # find a path through free space
+        start_centroid = start_area.centroid # middle of the start area
+        goal_centroid = goal_area.centroid # middle of the goal area
+        path = find_path(start_centroid, goal_centroid, free_space)
+        if path is None:
+            print("free space is connected but no path could be found. This should not happen!")
+            raise
+        path_area = path.buffer(erosion_dist)
+        self.paths[var].path_assigned = path
+        self.paths[var].area_assigned = path_area
+        return True
 
     def repr_arg(self, var):
         shrt_id = str(var.ID)[19:23]

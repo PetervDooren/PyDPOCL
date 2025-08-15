@@ -1,20 +1,24 @@
-from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.Element import Operator, Argument
 
+import numpy as np
+from shapely.geometry import Point
+from heapq import heappush, heappop
+
 from typing import List
-from shapely import Polygon, MultiPolygon, difference, within, intersects
+from shapely import Polygon, MultiPolygon, LineString, difference, within, intersects
 
 # visualization
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon as MplPolygon
 
 
-def check_connections_in_plan(plan: GPlan) -> bool:
+def check_connections_in_plan(plan) -> bool:
     """verify that for every move action in the plan. There exists a path from the start to the goal position in that configuration.
 
     Args:
         plan (GPlan): _description_
     """
+    raise DeprecationWarning
     static_objs = []
     # find static objects
     for obj in plan.variableBindings.objects:
@@ -88,7 +92,7 @@ def check_connections_in_plan(plan: GPlan) -> bool:
     # no step was found to not have a connection between start and end
     return True
 
-def find_movable_obstacles(eroded, static_objs, area_args, erosion_dist, start, goal, plan: GPlan) -> List[Argument]:
+def find_movable_obstacles(eroded, static_objs, area_args, erosion_dist, start, goal, plan) -> List[Argument]:
     """ Find which objects can be moved to create a path between start and end
 
     Args:
@@ -104,6 +108,7 @@ def find_movable_obstacles(eroded, static_objs, area_args, erosion_dist, start, 
         List[List[Arguments]]: Each item in the first list is a collection of objects which,
                                if they are all moved. Provide a path between start and goal. Each collection has the same cost.
     """
+    raise DeprecationWarning
     all_areas = [plan.variableBindings.initial_positions[obj] for obj in static_objs]
     all_areas.extend(area_args)
     # Find connections between areas
@@ -202,46 +207,42 @@ def find_movable_obstacles(eroded, static_objs, area_args, erosion_dist, start, 
     movable_object_sets = recursive_backtrace(goal_arg, predecessor_dict)
     return movable_object_sets
 
-def find_corridor(step: Operator, plan: GPlan, eroded: Polygon):
-    """Apply a discretised A* planner to find a path from A to B. All points in the path lie in the eroded Polygon.
+def find_path(start, goal, free_space):
+    """Apply a discretised A* planner to find a path from start to goal. All points in the path lie in the free space.
 
     Args:
-        step (Operator): _description_
-        plan (GPlan): _description_
-        eroded (Polygon): _description_
+        start (Point): _description_
+        goal (Point): _description_
+        free_space (Polygon): _description_
+    
+    Returns: Line
     """
-    start_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[2])
-    goal_area = plan.variableBindings.geometric_vb.get_assigned_area(step.Args[3])
-    start_centroid = start_area.centroid # middle of the start area
-    goal_centroid = goal_area.centroid # middle of the goal area
-
     # Discretize the eroded polygon into a grid of points
-    import numpy as np
-    from shapely.geometry import Point
-    from heapq import heappush, heappop
-
     # Parameters for grid resolution
-    minx, miny, maxx, maxy = eroded.bounds
+    minx, miny, maxx, maxy = free_space.bounds
     grid_res = 0.1  # meters (adjust as needed)
+    grid_digits = 4 # rounding accuracy
     x_coords = np.arange(minx, maxx, grid_res)
     y_coords = np.arange(miny, maxy, grid_res)
+    x_coords = [round(x, ndigits=grid_digits) for x in x_coords]
+    y_coords = [round(y, ndigits=grid_digits) for y in y_coords]
 
-    # Build set of valid points inside eroded polygon
+    # Build set of valid points inside the free_space polygon
     valid_points = set()
     for x in x_coords:
         for y in y_coords:
             pt = Point(x, y)
-            if eroded.contains(pt):
+            if free_space.contains(pt):
                 valid_points.add((x, y))
 
     # Helper: get neighbors (4-connected grid)
     def get_neighbors(node):
         x, y = node
         neighbors = [
-            (x + grid_res, y),
-            (x - grid_res, y),
-            (x, y + grid_res),
-            (x, y - grid_res)
+            (round(x + grid_res, ndigits=grid_digits), y),
+            (round(x- grid_res, ndigits=grid_digits), y),
+            (x, round(y + grid_res, ndigits=grid_digits)),
+            (x, round(y - grid_res, ndigits=grid_digits))
         ]
         return [n for n in neighbors if n in valid_points]
 
@@ -253,8 +254,8 @@ def find_corridor(step: Operator, plan: GPlan, eroded: Polygon):
     def closest_grid_point(pt):
         return min(valid_points, key=lambda p: np.hypot(p[0] - pt.x, p[1] - pt.y))
 
-    start_node = closest_grid_point(start_centroid)
-    goal_node = closest_grid_point(goal_centroid)
+    start_node = closest_grid_point(start)
+    goal_node = closest_grid_point(goal)
 
     # A* search
     open_set = []
@@ -263,11 +264,11 @@ def find_corridor(step: Operator, plan: GPlan, eroded: Polygon):
     g_score = {start_node: 0}
 
     while open_set:
-        #helper_visualize_Astart(eroded, valid_points, start_node, goal_node, open_set, closed_set)
+        #helper_visualize_Astart(free_space, valid_points, start_node, goal_node, open_set, closed_set)
         _, cost, current, path = heappop(open_set)
         if current == goal_node:
             # Return path as list of (x, y) tuples
-            return path
+            return LineString(path)
         if current in closed_set:
             continue
         closed_set.add(current)
@@ -278,7 +279,7 @@ def find_corridor(step: Operator, plan: GPlan, eroded: Polygon):
                 heappush(open_set, (tentative_g + heuristic(neighbor, goal_node), tentative_g, neighbor, path + [neighbor]))
 
     # No path found
-    return []
+    return None
 
 def helper_visualize_Astart(eroded, points, start_point, goal_point, open_set = [], closed_set=[]):
     plt.figure(2)
@@ -323,10 +324,11 @@ def helper_visualize_Astart(eroded, points, start_point, goal_point, open_set = 
     plt.show(block=False)
 
 
-def helper_visualize_connection(step: Operator, plan: GPlan, static_objs: List[Argument] = [], obstacle_areas: List[Polygon] = [], eroded: Polygon = None) -> None:
+def helper_visualize_connection(step: Operator, plan, static_objs: List[Argument] = [], obstacle_areas: List[Polygon] = [], eroded: Polygon = None) -> None:
     """ 
     Create an image of showing the process of checking wether a connection exists.
     """
+    raise DeprecationWarning
     # Give each object a unique color
     objcolors = ["red",
                  "blue",
