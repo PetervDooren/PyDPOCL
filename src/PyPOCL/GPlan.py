@@ -502,6 +502,7 @@ class GPlan:
 				# the areas do not overlap. No need to add an explicit disjunction.
 				continue
 			self.variableBindings.geometric_vb.add_disjunction(var, other_var)
+		#TODO add disjunctions with paths which may occur simultaneously.
 		return True
 
 	def set_disjunctions_all(self):
@@ -543,6 +544,40 @@ class GPlan:
 					# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
 					continue
 				self.variableBindings.geometric_vb.add_disjunction(sourceloc, other_loc)	
+		return True
+	
+	def set_disjunctions_path(self, var):
+		"""
+		Add disjunctions to the path variable var such that they do not overlap.
+		"""
+		# Find all objects that are static
+		static_objs = []
+		for obj in self.variableBindings.objects:
+			if self.variableBindings.is_type(obj, 'physical_item'):
+				for causal_link in self.CausalLinkGraph.edges:
+					if causal_link.label.source.name == "within":
+						if obj == causal_link.label.source.Args[0]:
+							if not (causal_link.source == self.dummy.init and causal_link.sink == self.dummy.goal):
+								break
+				else:
+					static_objs.append(obj)		
+		for obj in static_objs:
+			obj_area_arg = self.variableBindings.initial_positions[obj]
+			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
+
+		# find the step the path belongs to
+		for step in self.steps:
+			if var in step.Args:
+				break
+		
+		# add disjunctions between var and moving object locations
+		for causal_link in self.CausalLinkGraph.edges:
+			if causal_link.label.source.name != "within":
+				continue
+			if self.OrderingGraph.isPath(step, causal_link.source) or self.OrderingGraph.isPath(causal_link.sink, step):
+				continue
+			sourceloc = causal_link.label.source.Args[1]
+			self.variableBindings.geometric_vb.add_disjunction(var, sourceloc)
 		return True
 	
 	def update_flaws(self):

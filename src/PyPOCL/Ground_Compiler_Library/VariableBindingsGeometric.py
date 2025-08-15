@@ -4,7 +4,7 @@ from typing import List
 from collections import defaultdict
 from operator import attrgetter
 from PyPOCL.Ground_Compiler_Library.Element import Argument
-from shapely import Polygon, box, difference, within, union, intersects, buffer
+from shapely import Polygon, MultiPolygon, box, difference, within, union, intersects, buffer
 
 # visualization
 import matplotlib.pyplot as plt
@@ -20,7 +20,7 @@ class placeloc:
     area_assigned: Polygon
 
 @dataclass
-class Trajectory:
+class path:
     object: Argument
     object_width: float
     object_length: float
@@ -60,9 +60,9 @@ class VariableBindingsGeometric:
         self.inverse_within_mapping = {}
         self.disjunctions = {}
 
-        # trajectory info
-        self.trajectory_variables = []
-        self.trajectories = {}
+        # path info
+        self.path_variables = []
+        self.paths = {}
 
         self.buffer = 0.05 # buffer to use when placing objects in the area.
     
@@ -163,17 +163,17 @@ class VariableBindingsGeometric:
         self.inverse_within_mapping[self.base_area].append(areavar)
         self.disjunctions[areavar] = []
 
-    def register_trajectory_variable(self, trajectoryvar: Argument, startloc: Argument=None, goalloc: Argument=None, objvar: Argument=None, width=0, length=0):
-        if trajectoryvar in self.trajectory_variables:
-            print(f"Warning variable {trajectoryvar} is already registered")
+    def register_path_variable(self, pathvar: Argument, startloc: Argument=None, goalloc: Argument=None, objvar: Argument=None, width=0, length=0):
+        if pathvar in self.path_variables:
+            print(f"Warning variable {pathvar} is already registered")
             return
-        self.trajectory_variables.append(trajectoryvar)
-        self.trajectories[trajectoryvar] = Trajectory(objvar, width, length, startloc, goalloc, None)
-        self.disjunctions[trajectoryvar] = []
+        self.path_variables.append(pathvar)
+        self.paths[pathvar] = path(objvar, width, length, startloc, goalloc, None)
+        self.disjunctions[pathvar] = []
 
     def link_path_to_areas(self, path_variable, start_area, goal_area):
-        if path_variable not in self.trajectory_variables:
-            print(f"Warning: variable {path_variable} of type {path_variable.typ} is not in the trajectory parameter list")
+        if path_variable not in self.path_variables:
+            print(f"Warning: variable {path_variable} of type {path_variable.typ} is not in the path parameter list")
             raise
         if start_area not in self.variables:
             print(f"Warning: variable {start_area} of type {start_area.typ} is not in the geometric parameter list")
@@ -181,15 +181,15 @@ class VariableBindingsGeometric:
         if goal_area not in self.variables:
             print(f"Warning: variable {goal_area} of type {goal_area.typ} is not in the geometric parameter list")
             raise
-        self.trajectories[path_variable].start_area = start_area
-        self.trajectories[path_variable].goal_area = goal_area
+        self.paths[path_variable].start_area = start_area
+        self.paths[path_variable].goal_area = goal_area
         if self.placelocs[start_area].object is None or self.placelocs[goal_area].object is None:
             print("object is not yet defined")
             raise
         if not self.placelocs[start_area].object == self.placelocs[goal_area].object:
             print(f"object of start location {self.placelocs[start_area].object} does not match object of goal location {self.placelocs[goal_area].object}")
         objvar = self.placelocs[start_area].object
-        self.trajectories[path_variable].object = objvar
+        self.paths[path_variable].object = objvar
 
     def link_area_to_object(self, objvar: Argument, areavar: Argument):
         if areavar not in self.variables:
@@ -515,8 +515,45 @@ class VariableBindingsGeometric:
             if isinstance(a_min, Polygon):
                 plt.fill(*a_min.exterior.xy, color='cyan')                     
 
-    def resolve_trajectory(self, var):
-        pass
+    def resolve_path(self, var):
+        start_arg = self.paths[var].goal_area
+        start_area = self.placelocs[start_arg].area_assigned
+        goal_arg = self.paths[var].goal_area
+        goal_area = self.placelocs[goal_arg].area_assigned
+        object_width = self.paths[var].object_width
+        object_length = self.paths[var].object_length
+
+        #TODO fix reach using within constraints
+        available_space = self.defined_areas[self.base_area]
+        # check if the start and goal areas are connected
+        # remove all areas that are disjunct from the area_max
+        for d_area in self.disjunctions[var]:
+            if d_area in self.defined_areas:
+                available_space = difference(available_space, self.defined_areas[d_area])
+            elif self.placelocs[d_area].area_assigned is not None:
+                available_space = difference(available_space, self.placelocs[d_area].area_assigned)
+            else:
+                print(f"problem: disjunct area {d_area} is not defined")
+        # erode available space with the size of the object
+        erosion_dist = 0.5*min(object_width, object_length)
+        eroded = available_space.buffer(-erosion_dist)
+
+        # check if start and goal are connected in the eroded polygon
+        if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+            #TODO ground a single chosen path
+            return True
+        elif type(eroded) == MultiPolygon:
+            start_centroid = start_area.centroid # middle of the start area
+            goal_centroid = goal_area.centroid # middle of the goal area
+            for poly in eroded.geoms:
+                if within(start_centroid, poly) and within(goal_centroid, poly):
+                    return True
+            else:
+                # no polygon contains both start and goal. Therefore they are separated in the reachable space
+                return False
+        else: # eroded has an unexpected type
+            print(f"eroded has an unexpected type: {type(eroded)}")
+        raise
 
     def repr_arg(self, var):
         shrt_id = str(var.ID)[19:23]

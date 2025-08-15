@@ -675,10 +675,14 @@ class POCLPlanner:
 		"""
 		plan.name += '[ugpv]'
 
-		# ostritch method for now
+		arg = flaw.arg
 		new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
-		self.insert(new_plan, plan, 'UGGV: already ground')
-		return True
+		new_plan.set_disjunctions_path(arg)
+		if new_plan.variableBindings.geometric_vb.resolve_path(arg):
+			self.insert(new_plan, plan, 'UGPV: ground')
+			return True
+		#TODO ground with threats if this is not possible
+		return False
 
 	# Heuristic Methods #
 
