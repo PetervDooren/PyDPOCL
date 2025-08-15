@@ -135,6 +135,32 @@ class GTF(Flaw):
 
 	def __repr__(self):
 		return f'GTF(threatening area {self.threat}, threatened area {self.area})'
+	
+class GPTF(Flaw):
+	"""
+    Represents a geometric path threat flaw
+    A GPTF occurs when a path cannot coexist with another area.
+
+    Attributes:
+        threat (Argument): The area-argument of the threatening area, which cannot coexist with the threatened area.
+        path (Argument): The path-argument of the threatened path.
+        criteria (int): A computed metric used for evaluating the severity of the flaw, based on the schema of the threatening step
+                        and the label of the causal link.
+        tiebreaker (int): A computed metric used to break ties between multiple TCLFs, based on the causal link's label and the
+                          sink and source of the link.
+    Args:
+        threatening_area (Argument):
+        threatened_path (Argument):
+    """
+	def __init__(self, threatening_area, threatened_path):
+		super(GPTF, self).__init__((threatening_area, threatened_path), 'gptf')
+		self.threat = self.flaw[0]
+		self.path = self.flaw[1]
+		self.criteria = 1
+		self.tiebreaker = 1
+
+	def __repr__(self):
+		return f'GPTF(threatening area {self.threat}, threatened path {self.path})'
 
 # class DTCLF(Flaw):
 # 	def __init__(self, dummy_init, dummy_final, causal_link_edge):
@@ -184,11 +210,27 @@ class UGGV(Flaw):
 	def __init__(self, arg):
 		super(UGGV, self).__init__((arg,), f'Ungrounded_variable_{arg}')
 		self.arg = self.flaw[0]
-		self.criteria = 1 #TODO base on number of options available in symbolic variable bindings.
+		self.criteria = 1
 		self.tiebreaker = 1 
 
 	def __repr__(self):
 		return f'Ungrounded Geometric Variable ({self.flaw[0]})'
+
+class UGPV(Flaw):
+	"""
+	Represents an ungrounded geometric path variable flaw. 
+
+	Attributes:
+		flaw (Tuple[1]): The argument of the geometric variable that still needs to be grounded.
+	"""
+	def __init__(self, arg):
+		super(UGPV, self).__init__((arg,), f'Ungrounded_path_variable_{arg}')
+		self.arg = self.flaw[0]
+		self.criteria = 1
+		self.tiebreaker = 1 
+
+	def __repr__(self):
+		return f'Ungrounded Geometric Path Variable ({self.flaw[0]})'
 
 class Flawque:
 	""" A deque which pretends to be a set, and keeps everything sorted, highest-value first"""
@@ -340,23 +382,27 @@ class FlawLib:
 		self.opf_names = ['statics', 'inits', 'unsafe', 'reusable']
 
 		self.geometric_threats = Flawque('geometric_threats')
+		self.path_threats = Flawque('path_threats')
 		# ungrounded symbolic variables
 		self.ungrounded_symbolic_variables = Flawque('ungrounded_symbolic_variables')
 
 		# ungrounded geometric variables
 		self.ungrounded_geometric_variables = Flawque('ungrounded_geometric_variables')
+		self.ungrounded_path_variables = Flawque('ungrounded_path_variables')
 
 		if True:
 			# resolve symbolic variables (robot) first
 			self.typs = FlawTypes([self.statics,
 								self.threats,
 								self.geometric_threats,
+								self.path_threats,
 								self.ungrounded_symbolic_variables,
 								self.inits,
 								self.unsafe,
 								self.reusable,
 								self.nonreusable,
-								self.ungrounded_geometric_variables])
+								self.ungrounded_geometric_variables,
+								self.ungrounded_path_variables])
 
 		else:
 			# classic order
@@ -431,10 +477,14 @@ class FlawLib:
 			self.threats.add(flaw)
 		elif isinstance(flaw, GTF):
 			self.geometric_threats.add(flaw)
+		elif isinstance(flaw, GPTF):
+			self.path_threats.add(flaw)
 		elif isinstance(flaw, UGSV):
 			self.ungrounded_symbolic_variables.add(flaw)
 		elif isinstance(flaw, UGGV):
 			self.ungrounded_geometric_variables.add(flaw)
+		elif isinstance(flaw, UGPV):
+			self.ungrounded_path_variables.add(flaw)
 		#elif isinstance(flaw, DCF):
 		# 	self.decomps.add(flaw)
 		# 	return

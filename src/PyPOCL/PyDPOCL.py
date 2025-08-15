@@ -3,7 +3,7 @@ from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
 from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
-from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, UGSV, UGGV
+from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, UGSV, UGGV, UGPV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
@@ -257,6 +257,12 @@ class POCLPlanner:
 					if self.save_plangraph:
 						self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
 					self.log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
+					leaves += 1
+			elif isinstance(flaw, UGPV):
+				if not self.ground_path_variable(plan, flaw):
+					if self.save_plangraph:
+						self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
+					self.log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, OPF):
 				self.add_step(plan, flaw)
@@ -656,6 +662,23 @@ class POCLPlanner:
 				self.insert(new_new_plan, plan, 'UGGV: ground with threats')
 				return True
 			return False
+	
+	def ground_path_variable(self, plan: GPlan, flaw: UGPV):
+		""" create branch plans by grounding a path variable.
+
+		Args:
+			plan (GPlan): _description_
+			flaw (UGPV): _description_
+
+		Returns:
+			bool: True if at least one branch was made.
+		"""
+		plan.name += '[ugpv]'
+
+		# ostritch method for now
+		new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
+		self.insert(new_plan, plan, 'UGGV: already ground')
+		return True
 
 	# Heuristic Methods #
 
