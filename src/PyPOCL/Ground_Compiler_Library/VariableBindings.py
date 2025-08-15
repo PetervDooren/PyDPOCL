@@ -72,6 +72,8 @@ class VariableBindings:
             self.symbolic_vb.register_variable(var)
         elif var.typ == 'area' or 'area' in self.object_types[var.typ]:
             self.geometric_vb.register_variable(var)
+        elif var.typ == 'path' or 'path' in self.object_types[var.typ]:
+            self.geometric_vb.register_trajectory_variable(var)
         else:
             raise ValueError(f"Variable {var} of type {var.typ} is neither a symbol nor an area!")
 

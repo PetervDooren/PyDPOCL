@@ -213,6 +213,8 @@ class GPlan:
 			self.variableBindings.add_non_codesignation(new_step.Args[ne[0]], new_step.Args[ne[1]])
 		for rc in new_step.reach_constraints:
 			self.variableBindings.add_reach_constraint(rc[0], rc[1])
+		for p in new_step.paths:
+			self.variableBindings.geometric_vb.link_path_to_areas(p[0], p[1], p[2])
 
 		# add open conditions for new step
 		for pre in new_step.open_preconds:

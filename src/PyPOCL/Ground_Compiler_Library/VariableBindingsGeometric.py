@@ -17,6 +17,15 @@ class placeloc:
     object_width: float
     object_length: float
     area_max: Polygon
+    area_assigned: Polygon
+
+@dataclass
+class Trajectory:
+    object: Argument
+    object_width: float
+    object_length: float
+    start_area: Argument
+    goal_area: Argument
     area_assigned: Polygon        
 
 class VariableBindingsGeometric:
@@ -50,6 +59,10 @@ class VariableBindingsGeometric:
         self.within_mapping = {}
         self.inverse_within_mapping = {}
         self.disjunctions = {}
+
+        # trajectory info
+        self.trajectory_variables = []
+        self.trajectories = {}
 
         self.buffer = 0.05 # buffer to use when placing objects in the area.
     
@@ -149,6 +162,34 @@ class VariableBindingsGeometric:
         self.inverse_within_mapping[areavar] = []
         self.inverse_within_mapping[self.base_area].append(areavar)
         self.disjunctions[areavar] = []
+
+    def register_trajectory_variable(self, trajectoryvar: Argument, startloc: Argument=None, goalloc: Argument=None, objvar: Argument=None, width=0, length=0):
+        if trajectoryvar in self.trajectory_variables:
+            print(f"Warning variable {trajectoryvar} is already registered")
+            return
+        self.trajectory_variables.append(trajectoryvar)
+        self.trajectories[trajectoryvar] = Trajectory(objvar, width, length, startloc, goalloc, None)
+        self.disjunctions[trajectoryvar] = []
+
+    def link_path_to_areas(self, path_variable, start_area, goal_area):
+        if path_variable not in self.trajectory_variables:
+            print(f"Warning: variable {path_variable} of type {path_variable.typ} is not in the trajectory parameter list")
+            raise
+        if start_area not in self.variables:
+            print(f"Warning: variable {start_area} of type {start_area.typ} is not in the geometric parameter list")
+            raise
+        if goal_area not in self.variables:
+            print(f"Warning: variable {goal_area} of type {goal_area.typ} is not in the geometric parameter list")
+            raise
+        self.trajectories[path_variable].start_area = start_area
+        self.trajectories[path_variable].goal_area = goal_area
+        if self.placelocs[start_area].object is None or self.placelocs[goal_area].object is None:
+            print("object is not yet defined")
+            raise
+        if not self.placelocs[start_area].object == self.placelocs[goal_area].object:
+            print(f"object of start location {self.placelocs[start_area].object} does not match object of goal location {self.placelocs[goal_area].object}")
+        objvar = self.placelocs[start_area].object
+        self.trajectories[path_variable].object = objvar
 
     def link_area_to_object(self, objvar: Argument, areavar: Argument):
         if areavar not in self.variables:
@@ -473,6 +514,9 @@ class VariableBindingsGeometric:
         if a_min:
             if isinstance(a_min, Polygon):
                 plt.fill(*a_min.exterior.xy, color='cyan')                     
+
+    def resolve_trajectory(self, var):
+        pass
 
     def repr_arg(self, var):
         shrt_id = str(var.ID)[19:23]
