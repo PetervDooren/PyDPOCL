@@ -462,8 +462,14 @@ class VariableBindingsGeometric:
         for d_area in self.disjunctions[var]:
             if d_area in self.defined_areas:
                 disjunct_area_max = difference(disjunct_area_max, self.defined_areas[d_area])
-            elif self.placelocs[d_area].area_assigned is not None:
-                disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
+            elif d_area in self.variables:
+                if self.placelocs[d_area].area_assigned is not None:
+                    disjunct_area_max = difference(disjunct_area_max, self.placelocs[d_area].area_assigned)
+            elif d_area in self.path_variables:
+                if self.paths[d_area].area_assigned is not None:
+                    disjunct_area_max = difference(disjunct_area_max, self.paths[d_area].area_assigned)
+            else:
+                print(f"Unkown variable {d_area} in disjunctions")
 
         buffered_disjunct_area_max = buffer(disjunct_area_max, MARGIN_OF_ERROR)
         # compile a minimum area based on areas that must lie within this area

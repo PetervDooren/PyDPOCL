@@ -504,7 +504,24 @@ class GPlan:
 				# the areas do not overlap. No need to add an explicit disjunction.
 				continue
 			self.variableBindings.geometric_vb.add_disjunction(var, other_var)
-		#TODO add disjunctions with paths which may occur simultaneously.
+
+		#add disjunctions with paths which may occur simultaneously.
+		for pathvar in self.variableBindings.geometric_vb.path_variables:
+			if self.variableBindings.geometric_vb.paths[pathvar].area_assigned is None:
+				continue
+			# find place of path in the plan
+			for step in self.steps:
+				if pathvar in step.Args:
+					break
+			else:
+				print(f"path {pathvar} not found in plan!")
+			if step ==source or step ==sink: # this path belongs to the goal location.
+				print("Path of step {step} is grounded but its start or end is not! This should not happen")
+				continue
+			if self.OrderingGraph.isPath(sink, step) or self.OrderingGraph.isPath(step, source):
+				# This step cannot occur at the same time as the place location
+				continue
+			self.variableBindings.geometric_vb.add_disjunction(var, pathvar)
 		return True
 
 	def set_disjunctions_all(self):
