@@ -187,6 +187,8 @@ class VariableBindingsGeometric:
             print(f"Warning variable {pathvar} is already registered")
             return
         self.path_variables.append(pathvar)
+        self.within_mapping[pathvar] = [self.base_area]
+        self.inverse_within_mapping[pathvar] = []
         self.paths[pathvar] = path(objvar, width, length, startloc, goalloc, None, None)
         self.disjunctions[pathvar] = []
 
@@ -298,6 +300,8 @@ class VariableBindingsGeometric:
         Returns:
             bool: False if the constraint is inconsistent with the existing bindings
         """
+        if varA in self.path_variables or varB in self.path_variables:
+            return True
         # check if either A or B is a defined area
         Aisarea = varA in self.defined_areas.keys()
         Bisarea = varB in self.defined_areas.keys()
@@ -581,7 +585,7 @@ class VariableBindingsGeometric:
         path = find_path(start_centroid, goal_centroid, free_space)
         if path is None:
             print("free space is connected but no path could be found. This should not happen!")
-            raise
+            return False
         path_area = path.buffer(erosion_dist)
         self.paths[var].path_assigned = path
         self.paths[var].area_assigned = path_area

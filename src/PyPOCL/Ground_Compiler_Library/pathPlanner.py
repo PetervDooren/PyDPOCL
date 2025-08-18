@@ -268,6 +268,8 @@ def find_path(start, goal, free_space):
         _, cost, current, path = heappop(open_set)
         if current == goal_node:
             # Return path as list of (x, y) tuples
+            if len(path) < 2:
+                return LineString([(start.x, start.y), (goal.x, goal.y)])
             return LineString(path)
         if current in closed_set:
             continue
