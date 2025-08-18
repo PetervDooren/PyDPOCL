@@ -422,6 +422,20 @@ class VariableBindingsGeometric:
         self.disjunctions[varA].append(varB)
         self.disjunctions[varB].append(varA)
         return True
+    
+    def remove_disjunction(self, varA, varB) -> bool:
+        """remove a constraint that area A must be disjunct from area B if it exists
+
+        Args:
+            varA (uuid): _description_
+            varB (uuid): _description_
+
+        Returns:
+            bool: False if the non codesignation is inconsistent with the existing bindings
+        """        
+        self.disjunctions[varA].remove(varB)
+        self.disjunctions[varB].remove(varA)
+        return True
 
     def resolve(self, var):
         """ground the variable into a concrete description of an area which fits the constrainst specified.

@@ -2,8 +2,8 @@ from typing import Set, List
 from collections import namedtuple
 from PyPOCL.GPlan import GPlan
 from PyPOCL.Ground_Compiler_Library.GElm import GLiteral
-from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
-from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, UGSV, UGGV, UGPV
+from PyPOCL.Ground_Compiler_Library.find_moveable_obstacles import find_movable_obstacles
+from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, GPTF, UGSV, UGGV, UGPV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
 import math
@@ -242,6 +242,8 @@ class POCLPlanner:
 				self.resolve_threat(plan, flaw)
 			elif isinstance(flaw, GTF):
 				self.resolve_geometric_threat(plan, flaw)
+			elif isinstance(flaw, GPTF):
+				self.resolve_geometric_path_threat(plan, flaw)
 			elif isinstance(flaw, UGSV):
 				if not self.ground_variable(plan, flaw):
 					if self.save_plangraph:
@@ -585,6 +587,19 @@ class POCLPlanner:
 		self.insert(new_plan, plan, 'GTF: demote')
 		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
+	def resolve_geometric_path_threat(self, plan: GPlan, gptf: GPTF) -> None:
+		new_plan = plan.instantiate(str(self.plan_num)+ '[ignore] ')
+		self.insert(new_plan, plan, 'GPTF')
+		return True
+		# find out if the threatening area is a static object or not.
+		threat_source, threat_sink = GPlan.find_place_in_plan(plan, gtf.threat)
+		
+		area_is_static = threat_source == plan.dummy.init and threat_sink == plan.dummy.goal
+		if area_is_static:
+			self.resolve_geometric_threat_static(plan, gtf)
+		else:
+			self.resolve_geometric_threat_dynamic(plan, gtf, threat_source, threat_sink)
+	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		""" create branch plans by grounding a symbolic variable.
 
@@ -672,13 +687,27 @@ class POCLPlanner:
 		plan.name += '[ugpv]'
 
 		arg = flaw.arg
-		new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
+		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions_path(arg)
 		if new_plan.variableBindings.geometric_vb.resolve_path(arg):
+			self.log_message(f'Grounding path variable {arg}.')
 			self.insert(new_plan, plan, 'UGPV: ground')
 			return True
-		#TODO ground with threats if this is not possible
-		return False
+		movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
+		if len(movable_obstacle_sets) < 1:
+			print(f"Could not find objects to remove for {arg}. This should not be possible")
+			return False
+		for obst_set in movable_obstacle_sets:
+			new_new_plan = new_plan.instantiate(str(self.plan_num) + '[g] ')
+			for obst in obst_set:
+				new_new_plan.variableBindings.geometric_vb.remove_disjunction(arg, obst)
+				new_new_plan.flaws.insert(new_new_plan, GPTF(obst, arg))
+			if not new_new_plan.variableBindings.geometric_vb.resolve_path(arg):
+				print(f"Could not ground {arg} after removing objects. This should not happen")
+				continue
+			self.log_message(f"grounding path variable {arg}. Moving areas {obst_set}")	
+			self.insert(new_new_plan, plan, 'UGPV: ground with threats')
+		return True
 
 	# Heuristic Methods #
 
