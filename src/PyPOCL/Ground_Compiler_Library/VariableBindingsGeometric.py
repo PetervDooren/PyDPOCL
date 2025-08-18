@@ -9,6 +9,7 @@ from PyPOCL.Ground_Compiler_Library.pathPlanner import find_path
 
 # visualization
 import matplotlib.pyplot as plt
+from matplotlib.patches import Polygon as MplPolygon
 
 MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
 
@@ -560,7 +561,6 @@ class VariableBindingsGeometric:
         object_width = self.paths[var].object_width
         object_length = self.paths[var].object_length
 
-        #TODO fix reach using within constraints
         available_space = self.defined_areas[self.base_area]
         for within_var in self.within_mapping[var]:
             if within_var in self.defined_areas.keys():
@@ -569,20 +569,25 @@ class VariableBindingsGeometric:
                 print(f"path {var} should not be within placement location {within_var}!")
         # check if the start and goal areas are connected
         # remove all areas that are disjunct from the area_max
-        for d_area in self.disjunctions[var]:
-            if d_area in self.defined_areas:
-                available_space = difference(available_space, self.defined_areas[d_area])
-            elif self.placelocs[d_area].area_assigned is not None:
-                available_space = difference(available_space, self.placelocs[d_area].area_assigned)
+        disjunct_areas = {}
+        for d_arg in self.disjunctions[var]:
+            if d_arg in self.defined_areas:
+                d_area = self.defined_areas[d_arg]
+            elif self.placelocs[d_arg].area_assigned is not None:
+                d_area = self.placelocs[d_arg].area_assigned
             else:
-                print(f"problem: disjunct area {d_area} is not defined")
+                print(f"problem: disjunct area {d_arg} is not defined")
+                continue
+            available_space = difference(available_space, d_area)
+            disjunct_areas[d_arg] = d_area
         # erode available space with the size of the object
         erosion_dist = 0.5*min(object_width, object_length)
         eroded = available_space.buffer(-erosion_dist)
 
+        #self.helper_visualize_resolve_path(start_area, goal_area, disjunct_areas, eroded)
+
         # check if start and goal are connected in the eroded polygon
         if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
-            #TODO ground a single chosen path
             free_space = eroded
         elif type(eroded) == MultiPolygon:
             start_centroid = start_area.centroid # middle of the start area
@@ -609,6 +614,57 @@ class VariableBindingsGeometric:
         self.paths[var].path_assigned = path
         self.paths[var].area_assigned = path_area
         return True
+
+    def helper_visualize_resolve_path(self, start = None, goal = None, obsts = [], eroded: Polygon = None) -> None:
+        """ 
+        Create an image of showing the process of checking wether a connection exists.
+        """
+
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
+            coords = list(area.exterior.coords)
+            poly = MplPolygon(coords, closed=True, facecolor=color, edgecolor=edgecolor, alpha=alpha, fill=fill, label=label)
+            ax.add_patch(poly)
+            for hole in area.interiors:
+                hole_coords = list(hole.coords)
+                hole_poly = MplPolygon(hole_coords, closed=True, facecolor='white', edgecolor=edgecolor, alpha=1, fill=fill, label=label)
+                ax.add_patch(hole_poly)
+            if label:
+                # Place label at centroid
+                xs, ys = zip(*coords)
+                centroid = (sum(xs)/len(xs), sum(ys)/len(ys))
+                ax.text(centroid[0], centroid[1], label, ha='center', va='center', fontsize=8)
+
+        if eroded is not None:
+            if type(eroded) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+                plot_area(ax, eroded, color = 'green', label='eroded')
+            if type(eroded) == MultiPolygon:
+                for poly in eroded.geoms:
+                    plot_area(ax, poly, color = 'green', label='eroded')
+            else: # eroded has an unexpected type
+                print(f"eroded has an unexpected type: {type(eroded)}")
+
+        # plot start area:
+        if start is not None:
+            plot_area(ax, start, color = 'magenta', label='start')
+        if goal is not None:
+            plot_area(ax, goal, color = 'magenta', label='goal')
+
+        # plot all obstacles:
+        for obst_arg, obst_area in obsts.items():
+            if obst_arg in self.placelocs:
+                label = self.placelocs[obst_area].object.name
+            else:
+                label = 'obst'
+            plot_area(ax, obst_area, color='black', label=label)
+
+        ax.set_aspect('equal')
+        ax.autoscale()
+        ax.set_title(f'Path resolve Visualization')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show(block=False)
 
     def repr_arg(self, var):
         shrt_id = str(var.ID)[19:23]
