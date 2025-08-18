@@ -588,17 +588,119 @@ class POCLPlanner:
 		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def resolve_geometric_path_threat(self, plan: GPlan, gptf: GPTF) -> None:
-		new_plan = plan.instantiate(str(self.plan_num)+ '[ignore] ')
-		self.insert(new_plan, plan, 'GPTF')
-		return True
 		# find out if the threatening area is a static object or not.
-		threat_source, threat_sink = GPlan.find_place_in_plan(plan, gtf.threat)
+		threat_source, threat_sink = GPlan.find_place_in_plan(plan, gptf.threat)
 		
 		area_is_static = threat_source == plan.dummy.init and threat_sink == plan.dummy.goal
 		if area_is_static:
-			self.resolve_geometric_threat_static(plan, gtf)
+			self.resolve_geometric_path_threat_static(plan, gptf)
 		else:
-			self.resolve_geometric_threat_dynamic(plan, gtf, threat_source, threat_sink)
+			self.resolve_geometric_path_threat_dynamic(plan, gptf, threat_source, threat_sink)
+	
+	def resolve_geometric_path_threat_static(self, plan: GPlan, gptf: GTF) -> None:
+		threatened_path = gptf.path
+		# find the step corresponding to the threatened path
+		for step in plan.steps:
+			if threatened_path in step.Args:
+				break
+		else:
+			print(f"Could not find path {threatened_path} in plan")
+
+		consumer_index = plan.index(step)
+		precondition_index = None # free (yadayada) is not an explicit condition
+
+		threatening_area = gptf.threat
+		for obj, area in plan.variableBindings.initial_positions.items():
+			if area == threatening_area:
+				break
+		else:
+			raise LookupError(f"Could not find object belonging to initial area {threatening_area}")
+		threatening_obj = obj
+
+		# add a step to the plan to move the object
+		candidates = []
+		for o in self.gsteps:
+			# cannot add a step which is the inital step
+			if not o.instantiable:
+				continue
+			for e in o.effects:
+				if e.name == 'within' and e.truth:
+					candidates.append((o.stepnum, o.effects.index(e)))
+
+		if len(candidates) == 0:
+			return
+
+		# need indices
+		for candidate_operator, candidate_effect in candidates:
+			# clone plan and new step
+
+			new_plan = plan.instantiate(str(self.plan_num) + '[a] ')
+
+			# use indices befoer inserting new steps
+			new_plan_consumer = new_plan[consumer_index]
+			#new_plan_precondition = new_plan_consumer.preconds[precondition_index]
+
+			# instantiate new step
+			new_step = self.gsteps[candidate_operator].instantiate()
+
+			# pass depth to new Added step.
+			new_step.depth = new_plan_consumer.depth
+
+			# recursively insert new step and substeps into plan, adding orderings and flaws
+			new_plan.insert(new_step)
+
+			new_plan.OrderingGraph.addEdge(new_step, new_plan_consumer)
+			#new_plan.CausalLinkGraph.addEdge(new_step, new_plan_consumer, new_step.effects[candidate_effect], None)
+			new_goal_object = new_step.effects[candidate_effect].Args[0]
+			new_goal_area = new_step.effects[candidate_effect].Args[1]
+			new_plan.variableBindings.add_codesignation(new_goal_object, threatening_obj)
+			new_plan.variableBindings.geometric_vb.add_disjunction(threatened_path, new_goal_area)
+
+			self.log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy area conflict of {new_plan_consumer}.')
+
+			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
+
+			# insert our new mutated plan into the frontier
+			self.insert(new_plan, plan, 'GPTF: add step')
+
+	def resolve_geometric_path_threat_dynamic(self, plan: GPlan, gptf: GTF, threat_source, threat_sink) -> None:
+		threatened_path = gptf.path
+		# find the step corresponding to the threatened path
+		for step in plan.steps:
+			if threatened_path in step.Args:
+				break
+		else:
+			print(f"Could not find path {threatened_path} in plan")
+		step_index_1 = plan.index(step)
+		src_index_2 = plan.index(threat_source)
+		snk_index_2 = plan.index(threat_sink)
+
+		# Promotion place 2 before 1
+		new_plan = plan.instantiate(str(self.plan_num)+ '[tp] ')
+		source_1 = new_plan[step_index_1]
+		sink_2 = new_plan[snk_index_2]
+		new_plan.OrderingGraph.addEdge(sink_2, source_1)
+		if hasattr(source_1, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_2, source_1.sibling)
+		if hasattr(sink_2, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
+		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
+		self.insert(new_plan, plan, 'GTF: promote')
+		self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
+
+
+		# Demotion place 2 after 1
+		new_plan = plan.instantiate(str(self.plan_num) + '[td] ')
+		source_2 = new_plan[src_index_2]
+		sink_1 = new_plan[step_index_1]
+		new_plan.OrderingGraph.addEdge(sink_1, source_2)
+		if hasattr(source_2, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_1, source_2.sibling)
+		if hasattr(sink_1, 'sibling'):
+			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
+		sink_1.update_choices(new_plan) #TODO check if needed?
+		self.insert(new_plan, plan, 'GTF: demote')
+		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		""" create branch plans by grounding a symbolic variable.
