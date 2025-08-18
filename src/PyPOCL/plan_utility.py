@@ -1,7 +1,6 @@
 from PyPOCL.GPlan import GPlan
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.Ground_Compiler_Library.Element import Operator
-from PyPOCL.Ground_Compiler_Library.pathPlanner import check_connections_in_plan
 
 import graphviz
 from shapely import within, Polygon, MultiPolygon, overlaps, difference
