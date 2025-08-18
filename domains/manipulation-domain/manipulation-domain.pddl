@@ -4,6 +4,7 @@
           physical_item robot - symbol)
   (:predicates (within ?obj - physical_item ?area - area)
                (in_reach ?area - area ?robot - robot)
+               (path_in_reach ?path - path ?robot - robot)
                (is_path ?path - path ?startarea - area ?goalarea - area)
   )
 
@@ -14,6 +15,7 @@
 	                 (within ?obj ?startarea)
                    (in_reach ?startarea ?robot)
                    (in_reach ?goalarea ?robot)
+                   (path_in_reach ?path ?robot)
                    (is_path ?path ?startarea ?goalarea)
                 )
 	:effect       (and (within ?obj ?goalarea)

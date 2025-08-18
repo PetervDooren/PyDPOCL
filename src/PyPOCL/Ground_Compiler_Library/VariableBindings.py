@@ -228,6 +228,24 @@ class VariableBindings:
             print(f"Warning: variable {varB} of type {varB.typ} is not in the symbolic parameter list")
             raise
         self.reach_constraints.append((varA, varB))
+
+    def add_path_reach_constraint(self, varA: Argument, varB: Argument) -> None:
+        """add a constraint path_in_reach(varA, varB) indicating that path A should be in reach of robot B
+
+        Args:
+            varA (Argument): path variable
+            varB (Argument): robot variable
+        Raises:
+            Exception: if varA is not a geometric variable or varB is not a symbolic variable
+        """
+        
+        if varA not in self.geometric_vb.path_variables:
+            print(f"Warning: variable {varA} of type {varA.typ} is not in the geometric parameter list")
+            raise
+        if varB not in self.symbolic_vb.variables:
+            print(f"Warning: variable {varB} of type {varB.typ} is not in the symbolic parameter list")
+            raise
+        self.reach_constraints.append((varA, varB))
     
     def apply_reach(self, robotvar):
         """_summary_

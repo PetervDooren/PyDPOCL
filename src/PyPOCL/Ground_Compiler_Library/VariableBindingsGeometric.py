@@ -548,6 +548,11 @@ class VariableBindingsGeometric:
 
         #TODO fix reach using within constraints
         available_space = self.defined_areas[self.base_area]
+        for within_var in self.within_mapping[var]:
+            if within_var in self.defined_areas.keys():
+                available_space = available_space.intersection(self.defined_areas[within_var])
+            else: # within_var is a variable
+                print(f"path {var} should not be within placement location {within_var}!")
         # check if the start and goal areas are connected
         # remove all areas that are disjunct from the area_max
         for d_area in self.disjunctions[var]:

@@ -94,7 +94,7 @@ class Operator:
 		# ID used as "instance ID"
 		self.ID = duuid4()
 		# preconds is a list of GCond
-		excluded_preconds = ['in_reach', 'is_path']
+		excluded_preconds = ['in_reach', 'is_path', 'path_in_reach']
 		self.preconds = [p for p in preconditions if p.name not in excluded_preconds]
 		self.effects = effects
 		# stepnum is the ground step constructor type
@@ -104,6 +104,7 @@ class Operator:
 		self.nonequals = nonequals
 		# in-reach constraints for the arms
 		self.reach_constraints = [(p.Args[0], p.Args[1]) for p in preconditions if p.name == 'in_reach']
+		self.path_reach_constraints = [(p.Args[0], p.Args[1]) for p in preconditions if p.name == 'path_in_reach']
 		self.paths = [(p.Args[0], p.Args[1], p.Args[2]) for p in preconditions if p.name == 'is_path']
 		# height is 0 when primitive
 		self.height = height
