@@ -386,6 +386,22 @@ class VariableBindingsGeometric:
             return False
         return True
     
+    def intersect(self, varA, varB) -> bool:
+        """Check if variable A and variable B intersect
+
+        Args:
+            varA (Argument): _description_
+            varB (Argument): _description_
+
+        Returns:
+            bool: True if the two areas intersect. False if they do not OR if either is not ground.
+        """
+        A_area = self.get_area(varA)
+        B_area = self.get_area(varB)
+        if A_area is None or B_area is None:
+            return False
+        return intersects(A_area, B_area)
+
     def can_intersect(self, varA, varB) -> bool:
         # check if the areas can overlap
         # check if either A or B is a defined area

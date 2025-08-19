@@ -11,11 +11,14 @@ import graphviz
 from heapq import heappush, heappop
 import time
 
-from PyPOCL.plan_utility import visualize_plan
-import matplotlib.pyplot as plt
+
 
 REPORT = 1
 RRP = 0
+VISUALIZE = 1
+if VISUALIZE:
+	from PyPOCL.plan_utility import visualize_plan, plan_to_dot
+	import matplotlib.pyplot as plt
 
 # graphviz colors:
 OPEN_NODE = 'cyan'
@@ -212,7 +215,10 @@ class POCLPlanner:
 			self.log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
 			if self.log:
 				plan.print()
-				#visualize_plan(plan, fig=geometry_fig)
+				if VISUALIZE:
+					visualize_plan(plan, fig=geometry_fig)
+					plan_to_dot(plan)
+					plt.pause(0.001)
 
 			plan.update_flaws()
 
@@ -810,6 +816,7 @@ class POCLPlanner:
 		if len(movable_obstacle_sets) < 1:
 			print(f"Could not find objects to remove for {arg}. This should not be possible")
 			# repeat methods for debugging
+			new_plan.set_disjunctions_path(arg)
 			new_plan.variableBindings.geometric_vb.resolve_path(arg)
 			movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
 			return False

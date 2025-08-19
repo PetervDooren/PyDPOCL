@@ -85,6 +85,7 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
                 # add connection between the two
                 connections[area_arg_i].append(area_arg_j)
                 connections[area_arg_j].append(area_arg_i)
+
     # run dijkstra algorithm over the connections
     cost_dict = dict()
     predecessor_dict = dict()
@@ -94,6 +95,12 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
     for arg in all_areas:
         cost_dict[arg] = 100
         predecessor_dict[arg] = []
+    
+    # create dict for visualization
+    obst_area_dict = {}
+    for i in range(len(areas)):
+        obst_area_dict[all_areas[i]] = areas[i]
+    #helper_visualize_moveable_obstacles(poly_args, obst_area_dict, connections, cost_dict, predecessor_dict)
     
     # find start poly
     for poly_arg in poly_args:
@@ -150,9 +157,6 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
         return arg_list
 
     movable_object_sets = recursive_backtrace(goal_arg, predecessor_dict)
-    obst_area_dict = {}
-    for i in range(len(areas)):
-        obst_area_dict[all_areas[i]] = areas[i]
     #helper_visualize_moveable_obstacles(poly_args, obst_area_dict, connections, cost_dict, predecessor_dict)
     return movable_object_sets
 

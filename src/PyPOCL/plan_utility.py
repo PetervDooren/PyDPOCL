@@ -385,9 +385,11 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None, fig=None) -> No
                 i = len(objcolors)-1
     if fig is None:
         fig, ax = plt.subplots(figsize=(8, 6))
+        block = True
     else:
         fig.clf()
         ax = fig.add_subplot(1,1,1)
+        block = False
 
     geo_vb = plan.variableBindings.geometric_vb
 
@@ -447,7 +449,7 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None, fig=None) -> No
     if filepath:
         fig.savefig(filepath)
     if show:
-        plt.show(block=False)
+        plt.show(block=block)
 
 def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
     coords = list(area.exterior.coords)
