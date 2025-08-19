@@ -221,13 +221,19 @@ class VariableBindingsGeometric:
     
     def is_ground(self, var) -> bool:
         """check if a variable is ground"""
-        if var not in self.placelocs:
-            print(f"Variable {var} is not registered in the geometric variable bindings")
-            return False
-        if self.placelocs[var].area_assigned is not None:
-            return True
-        else:
-            return False
+        if var in self.placelocs:
+            if self.placelocs[var].area_assigned is not None:
+                return True
+            else:
+                return False
+        if var in self.paths:
+            if self.paths[var].area_assigned is not None:
+                return True
+            else:
+                return False
+        print(f"Variable {var} is not registered in the geometric variable bindings")
+        return False
+        
         
     def is_fully_ground(self) -> bool:
         for var in self.variables:
@@ -660,7 +666,7 @@ class VariableBindingsGeometric:
         # plot all obstacles:
         for obst_arg, obst_area in obsts.items():
             if obst_arg in self.placelocs:
-                label = self.placelocs[obst_area].object.name
+                label = self.placelocs[obst_arg].object.name
             else:
                 label = 'obst'
             plot_area(ax, obst_area, color='black', label=label)

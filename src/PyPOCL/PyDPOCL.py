@@ -11,6 +11,9 @@ import graphviz
 from heapq import heappush, heappop
 import time
 
+from PyPOCL.plan_utility import visualize_plan
+import matplotlib.pyplot as plt
+
 REPORT = 1
 RRP = 0
 
@@ -157,6 +160,8 @@ class POCLPlanner:
 		leaves = 0
 		tclf_visits = 0
 
+		geometry_fig = plt.figure()
+
 		t0 = time.time()
 		t_report = time.time()
 		print('k={}'.format(str(k)))
@@ -207,6 +212,7 @@ class POCLPlanner:
 			self.log_message('Plan {} selected cost={} heuristic={}'.format(plan.name, plan.cost, plan.heuristic))
 			if self.log:
 				plan.print()
+				#visualize_plan(plan, fig=geometry_fig)
 
 			plan.update_flaws()
 
@@ -768,9 +774,14 @@ class POCLPlanner:
 			if new_new_plan.variableBindings.geometric_vb.resolve(arg):
 				moved_areas = []
 				for area in offending_areas:
-					if new_new_plan.variableBindings.geometric_vb.can_intersect(area, arg):
-						new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
-						moved_areas.append(area)
+					if new_new_plan.variableBindings.is_type(area, 'area'):
+						if new_new_plan.variableBindings.geometric_vb.can_intersect(area, arg):
+							new_new_plan.flaws.insert(new_new_plan, GTF(area, arg))
+							moved_areas.append(area)
+					elif new_new_plan.variableBindings.is_type(area, 'path'):
+						if new_new_plan.variableBindings.geometric_vb.intersect(area, arg):
+							return False # there is no way to resolve this
+
 				self.log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
 				self.insert(new_new_plan, plan, 'UGGV: ground with threats')
 				return True
@@ -798,6 +809,9 @@ class POCLPlanner:
 		movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
 		if len(movable_obstacle_sets) < 1:
 			print(f"Could not find objects to remove for {arg}. This should not be possible")
+			# repeat methods for debugging
+			new_plan.variableBindings.geometric_vb.resolve_path(arg)
+			movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
 			return False
 		for obst_set in movable_obstacle_sets:
 			new_new_plan = new_plan.instantiate(str(self.plan_num) + '[g] ')

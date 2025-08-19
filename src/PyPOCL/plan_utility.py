@@ -359,7 +359,7 @@ def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None,
 
     dot.render(filename=filepath_dot, view=show, outfile=filepath_svg)
 
-def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
+def visualize_plan(plan: GPlan, show=True, filepath: str = None, fig=None) -> None:
     """ Create an image of the plan geometry. 
 
     Args:
@@ -383,8 +383,11 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
             i = i+1
             if i >= len(objcolors):
                 i = len(objcolors)-1
-
-    fig, ax = plt.subplots(figsize=(8, 6))
+    if fig is None:
+        fig, ax = plt.subplots(figsize=(8, 6))
+    else:
+        fig.clf()
+        ax = fig.add_subplot(1,1,1)
 
     geo_vb = plan.variableBindings.geometric_vb
 
@@ -403,23 +406,39 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
         if not step.schema == 'movemono':
             continue
         obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
-        startarea = geo_vb.get_assigned_area(step.Args[2])
-        goalarea = geo_vb.get_assigned_area(step.Args[3])
-        path = geo_vb.get_path(step.Args[4])
-        patharea = geo_vb.get_area(step.Args[4])
         objcolor = objcolor_dict[obj]
+        start_arg = step.Args[2]
+        start_is_ground = geo_vb.is_ground(start_arg)
+        startarea = geo_vb.get_assigned_area(start_arg) if start_is_ground else geo_vb.get_max_area(start_arg)
+        goal_arg = step.Args[3]
+        goal_is_ground = geo_vb.is_ground(goal_arg)
+        goalarea = geo_vb.get_assigned_area(goal_arg) if goal_is_ground else geo_vb.get_max_area(goal_arg)
 
-        plot_area(ax, patharea, color=objcolor, alpha=0.3)
-        # plot the path from start to goal
-        ax.plot(*zip(*path.coords), color='black')
-        start = path.coords[-2]
-        end = path.coords[-1]
-        ax.annotate('', xy=end, xytext=start,
-            arrowprops=dict(arrowstyle='->', color='black', lw=2)
-        )
-        plot_area(ax, startarea, color=objcolor, edgecolor='blue')
-        plot_area(ax, goalarea, color=objcolor, edgecolor='red')
-        
+        path_arg = step.Args[4]
+        path_is_ground = geo_vb.is_ground(path_arg)
+        if path_is_ground:
+            path = geo_vb.get_path(path_arg)
+            patharea = geo_vb.get_area(step.Args[4])
+
+            # plot the path from start to goal
+            plot_area(ax, patharea, color=objcolor, alpha=0.3)
+            ax.plot(*zip(*path.coords), color='black')
+            start = path.coords[-2]
+            end = path.coords[-1]
+            ax.annotate('', xy=end, xytext=start,
+                arrowprops=dict(arrowstyle='->', color='black', lw=2)
+            )
+        else:
+            ax.annotate('', xy=(goalarea.centroid.x, goalarea.centroid.y), xytext=(startarea.centroid.x, startarea.centroid.y),
+                        arrowprops=dict(arrowstyle='->', color=objcolor, lw=2))
+            
+        # plot the start area
+        start_alpha = 0.3 if start_is_ground else 0.1
+        plot_area(ax, startarea, alpha=start_alpha, color=objcolor, edgecolor='blue')
+        # plot the goal area
+        goal_alpha = 0.3 if goal_is_ground else 0.1
+        plot_area(ax, goalarea, alpha=goal_alpha, color=objcolor, edgecolor='blue')
+
     ax.set_aspect('equal')
     ax.autoscale()
     ax.set_title(f'Plan Visualization: {plan.problem}')
@@ -428,7 +447,7 @@ def visualize_plan(plan: GPlan, show=True, filepath: str = None) -> None:
     if filepath:
         fig.savefig(filepath)
     if show:
-        plt.show()
+        plt.show(block=False)
 
 def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
     coords = list(area.exterior.coords)
