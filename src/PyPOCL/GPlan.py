@@ -588,6 +588,9 @@ class GPlan:
 		for step in self.steps:
 			if var in step.Args:
 				break
+		else:
+			print(f"could not find step belonging to path {var}")
+			raise
 		
 		# add disjunctions between var and moving object locations
 		for causal_link in self.CausalLinkGraph.edges:

@@ -36,6 +36,9 @@ def find_path(start: Point, goal: Point, free_space: Polygon):
             pt = Point(x, y)
             if free_space.contains(pt):
                 valid_points.add((x, y))
+    if len(valid_points) == 0:
+        # Free space is very small
+        return None
 
     # Helper: get neighbors (4-connected grid)
     def get_neighbors(node):
