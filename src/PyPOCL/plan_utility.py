@@ -547,11 +547,17 @@ def plan_to_yaml(plan, filepath: str) -> None:
         filepath (str): _description_
     """
     # conversions between planning terms and yaml terms:
-    robot_names = {"left_panda": 0,
-                    "right_panda": 1}
-    parcel_names = {"boxa": 0,
-                    "boxb": 1,
-                    "boxc": 2}
+    robot_names = {"robot_0": 0,
+                    "robot_1": 1}
+    parcel_names = {"box_0": 0,
+                    "box_1": 1,
+                    "box_2": 2,
+                    "box_3": 3,
+                    "box_4": 4,
+                    "box_5": 5,
+                    "box_6": 6,
+                    "box_7": 7,
+                    "box_8": 8}
 
     plan_dict = {"actions": []}
     for step in plan.OrderingGraph.topoSort():
