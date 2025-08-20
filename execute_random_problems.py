@@ -34,6 +34,7 @@ if __name__ == '__main__':
     success_count = 0
     faulty_plan_count = 0
     plan_not_found_count = 0
+    error_count = 0
 
     # Prepare CSV file
     csv_filename = "test_results.csv"
@@ -53,8 +54,27 @@ if __name__ == '__main__':
             plangraph_name = f"plans/{domain.name}/{problem_obj.name}-plangraph"
 
             planner = POCLPlanner(domain, problem_obj, LOG, plangraph_name=plangraph_name)
-            plans, planning_report = planner.solve(k=1, cutoff=180)
-
+            try:
+                plans, planning_report = planner.solve(k=1, cutoff=180)
+            except:
+                print("error during execution")
+                error_count += 1
+                writer.writerow({
+                    "iteration": iteration,
+                    "testname": testname,
+                    "status": "error",
+                    "plan_file": "",
+                    "planning_time": 0,
+                    "expanded": 0,
+                    "visited": 0,
+                    "terminated": 0,
+                    "plans_found": 0,
+                    "nr_objects": nr_objects,
+                    "nr_goals": nr_goals,
+                })
+                iteration += 1
+                continue
+        
             if len(plans) == 0:
                 print("no plans could be found")
                 plan_not_found_count += 1
@@ -98,8 +118,9 @@ if __name__ == '__main__':
                     "nr_objects": nr_objects,
                     "nr_goals": nr_goals,
                 })
-            iteration += 1
+                iteration += 1
     print(f"Done running. ran {iteration} iterations")
     print(f"{success_count} successfull.")
     print(f"{faulty_plan_count} faulty plans found.")
     print(f"{plan_not_found_count} plan not found.")
+    print(f"{error_count} errors.")
