@@ -163,7 +163,8 @@ class POCLPlanner:
 		leaves = 0
 		tclf_visits = 0
 
-		geometry_fig = plt.figure()
+		if self.log and VISUALIZE:
+			geometry_fig = plt.figure()
 
 		t0 = time.time()
 		t_report = time.time()
