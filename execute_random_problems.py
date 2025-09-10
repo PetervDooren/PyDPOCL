@@ -37,7 +37,7 @@ if __name__ == '__main__':
     error_count = 0
 
     # Prepare CSV file
-    csv_filename = "test_results.csv"
+    csv_filename = "test_results/random_batch_test_results.csv"
     with open(csv_filename, mode="w", newline="") as csvfile:
         fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found", "nr_objects", "nr_goals"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
             planner = POCLPlanner(domain, problem_obj, LOG, plangraph_name=plangraph_name)
             try:
-                plans, planning_report = planner.solve(k=1, cutoff=180)
+                plans, planning_report = planner.solve(k=1, cutoff=600)
             except:
                 print("error during execution")
                 error_count += 1

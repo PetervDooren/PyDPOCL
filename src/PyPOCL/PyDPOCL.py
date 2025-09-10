@@ -201,6 +201,12 @@ class POCLPlanner:
 					self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
 
 				self.log_message('prune {}'.format(plan.name))
+				if self.log:
+					plan.print()
+					if VISUALIZE:
+						visualize_plan(plan, fig=geometry_fig)
+						plan_to_dot(plan)
+						plt.pause(0.001)
 				leaves += 1
 				continue
 

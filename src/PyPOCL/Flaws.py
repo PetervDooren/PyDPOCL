@@ -390,7 +390,9 @@ class FlawLib:
 		self.ungrounded_geometric_variables = Flawque('ungrounded_geometric_variables')
 		self.ungrounded_path_variables = Flawque('ungrounded_path_variables')
 
-		if True:
+		# order of flaw types to consider
+		order = 0
+		if order == 0:
 			# resolve symbolic variables (robot) first
 			self.typs = FlawTypes([self.statics,
 								self.threats,
@@ -404,7 +406,7 @@ class FlawLib:
 								self.ungrounded_geometric_variables,
 								self.ungrounded_path_variables])
 
-		else:
+		elif order == 1:
 			# classic order
 			self.typs = FlawTypes([self.statics,
 								self.threats,
@@ -414,7 +416,21 @@ class FlawLib:
 								self.nonreusable,
 								self.geometric_threats,
 								self.ungrounded_symbolic_variables,
-								self.ungrounded_geometric_variables])
+								self.ungrounded_geometric_variables,
+								self.ungrounded_path_variables])
+		
+		else: #order == 2
+			# ground early
+			self.typs = FlawTypes([self.statics,
+								self.threats,
+								self.ungrounded_symbolic_variables,
+								self.ungrounded_geometric_variables,
+								self.ungrounded_path_variables,
+								self.inits,
+								self.unsafe,
+								self.reusable,
+								self.nonreusable,
+								self.geometric_threats])
 
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)

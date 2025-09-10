@@ -22,9 +22,11 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
     """
     geo_vb = plan.variableBindings.geometric_vb
     start_arg = geo_vb.paths[pathvar].start_area
-    start = geo_vb.placelocs[start_arg].area_assigned.centroid
+    start_area = geo_vb.placelocs[start_arg].area_assigned
+    start = start_area.centroid
     goal_arg = geo_vb.paths[pathvar].goal_area
-    goal = geo_vb.placelocs[goal_arg].area_assigned.centroid
+    goal_area = geo_vb.placelocs[goal_arg].area_assigned
+    goal = goal_area.centroid
     object_width = geo_vb.paths[pathvar].object_width
     object_length = geo_vb.paths[pathvar].object_length
 
@@ -160,7 +162,7 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
     #helper_visualize_moveable_obstacles(poly_args, obst_area_dict, connections, cost_dict, predecessor_dict)
     return movable_object_sets
 
-def helper_visualize_moveable_obstacles(poly_args, obst_areas, connections, cost_list, predecessor_list):
+def helper_visualize_moveable_obstacles(poly_args, obst_areas, connections, cost_list, predecessor_list, start=None, goal=None):
     fig, ax = plt.subplots(figsize=(8, 6))
 
     def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
@@ -180,6 +182,13 @@ def helper_visualize_moveable_obstacles(poly_args, obst_areas, connections, cost
         plot_area(ax, poly, color = 'green')
     for obst in obst_areas.values():
         plot_area(ax, obst, color = 'gray')
+
+    if start is not None:
+        plot_area(ax, start, color='red', label='start')
+        ax.plot(start.centroid.x, start.centroid.y, marker='o', color='black')  # single point
+    if goal is not None:
+        plot_area(ax, goal, color='red', label='goal')
+        ax.plot(goal.centroid.x, goal.centroid.y, marker='o', color='black')
     for node, node_connections in connections.items():
         if node in poly_args:
             p1 = poly_args[node].centroid
