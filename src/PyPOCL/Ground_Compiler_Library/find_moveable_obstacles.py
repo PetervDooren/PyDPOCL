@@ -136,12 +136,23 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
         for connection in connections[node]:
             if connection not in open_list and connection not in closed_list:
                 open_list.append(connection)
-            if node_cost + 1 < cost_dict[connection]:
-                predecessor_dict[connection] = [node]
-                cost_dict[connection]=node_cost + 1
-            elif node_cost + 1 == cost_dict[connection]:
-                predecessor_dict[connection].append(node)
-    #backtrace the objects that should be moved
+            #check if we enter free space, in which case cost does not increase
+            if connection in poly_args:
+                if node_cost < cost_dict[connection]:
+                    predecessor_dict[connection] = [node]
+                    cost_dict[connection]=node_cost
+                elif node_cost == cost_dict[connection]:
+                    predecessor_dict[connection].append(node)
+                continue
+            # otherwise cost increases by 1
+            else:
+                if node_cost + 1 < cost_dict[connection]:
+                    predecessor_dict[connection] = [node]
+                    cost_dict[connection]=node_cost + 1
+                elif node_cost + 1 == cost_dict[connection]:
+                    predecessor_dict[connection].append(node)
+                continue
+        #backtrace the objects that should be moved
     def recursive_backtrace(arg, connection_dict):
         if len(connection_dict[arg]) == 0:
             if arg.name == "eroded_polygon":
