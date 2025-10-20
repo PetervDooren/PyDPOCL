@@ -65,9 +65,8 @@ class OPF(Flaw):
 		self.s_need = s_need
 		self.p = pre
 		self.level = level
-		# self.criteria = hash(s_need.stepnum) ^ hash(pre.name) ^ hash(pre.truth)
-		self.criteria = len(str(s_need.schema)) + len(str(pre.name)) + len(str(pre.truth))
-		self.tiebreaker = sum(len(str(arg.name)) for arg in pre.Args)
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __hash__(self):
 		return hash(self.flaw[0].ID) ^ hash(self.flaw[1].ID)
@@ -98,9 +97,8 @@ class TCLF(Flaw):
 		super(TCLF, self).__init__((threatening_step, causal_link_edge), 'tclf')
 		self.threat = self.flaw[0]
 		self.link = self.flaw[1]
-		self.criteria = len(str(self.threat.schema)) + len(str(self.link.label.sink.name)) + len(str(self.link.label.sink.truth))
-		self.tiebreaker = len(str(self.link.label.sink.truth)) + len(str(self.link.label.sink.name)) \
-		                  + len(str(causal_link_edge.sink.schema)) - len(causal_link_edge.source.preconds)
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __hash__(self):
 		return hash(self.threat.ID) ^ hash(self.link.source.ID) ^ hash(self.link.sink.ID) ^ hash(self.link.label.source.ID ^ hash(self.link.label.sink.ID))
@@ -130,8 +128,8 @@ class GTF(Flaw):
 		super(GTF, self).__init__((threatening_area, threatened_area), 'gtf')
 		self.threat = self.flaw[0]
 		self.area = self.flaw[1]
-		self.criteria = 1
-		self.tiebreaker = 1
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __repr__(self):
 		return f'GTF(threatening area {self.threat}, threatened area {self.area})'
@@ -156,8 +154,8 @@ class GPTF(Flaw):
 		super(GPTF, self).__init__((threatening_area, threatened_path), 'gptf')
 		self.threat = self.flaw[0]
 		self.path = self.flaw[1]
-		self.criteria = 1
-		self.tiebreaker = 1
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __repr__(self):
 		return f'GPTF(threatening area {self.threat}, threatened path {self.path})'
@@ -194,8 +192,8 @@ class UGSV(Flaw):
 	def __init__(self, arg):
 		super(UGSV, self).__init__((arg,), f'Ungrounded_variable_{arg}')
 		self.arg = self.flaw[0]
-		self.criteria = 1 #TODO base on number of options available in symbolic variable bindings.
-		self.tiebreaker = 1 
+		self.criteria = 0 #TODO base on number of options available in symbolic variable bindings.
+		self.tiebreaker = 0
 
 	def __repr__(self):
 		return f'Ungrounded Symbolic Variable ({self.flaw[0]})'
@@ -210,8 +208,8 @@ class UGGV(Flaw):
 	def __init__(self, arg):
 		super(UGGV, self).__init__((arg,), f'Ungrounded_variable_{arg}')
 		self.arg = self.flaw[0]
-		self.criteria = 1
-		self.tiebreaker = 1 
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __repr__(self):
 		return f'Ungrounded Geometric Variable ({self.flaw[0]})'
@@ -226,8 +224,8 @@ class UGPV(Flaw):
 	def __init__(self, arg):
 		super(UGPV, self).__init__((arg,), f'Ungrounded_path_variable_{arg}')
 		self.arg = self.flaw[0]
-		self.criteria = 1
-		self.tiebreaker = 1 
+		self.criteria = 0
+		self.tiebreaker = 0
 
 	def __repr__(self):
 		return f'Ungrounded Geometric Path Variable ({self.flaw[0]})'
@@ -238,9 +236,12 @@ class Flawque:
 	def __init__(self, name=None):
 		self._flaws = deque()
 		self.name = name
+		self.count = 0
 
 	def add(self, flaw):
 		flaw.flaw_type = self.name
+		flaw.tiebreaker = self.count
+		self.count += 1
 		self.insert(flaw)
 
 	def update(self, iter):
