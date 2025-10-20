@@ -182,7 +182,7 @@ class POCLPlanner:
 				print(f'timedout: {delay}\t {expanded}\t{self.opened}\t{leaves}')
 
 				if self.save_plangraph:
-						self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
+					self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
 
 				planning_report = PlanningReport(delay, expanded, self.opened, leaves, len(completed))
 				return [], planning_report
@@ -834,6 +834,11 @@ class POCLPlanner:
 				new_new_plan.flaws.insert(new_new_plan, GPTF(obst, arg))
 			if not new_new_plan.variableBindings.geometric_vb.resolve_path(arg):
 				print(f"Could not ground {arg} after removing objects. This should not happen")
+				# repeat methods for debugging
+				#new_plan.set_disjunctions_path(arg)
+				#new_plan.variableBindings.geometric_vb.resolve_path(arg)
+				movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
+				new_new_plan.variableBindings.geometric_vb.resolve_path(arg)
 				continue
 			self.log_message(f"grounding path variable {arg}. Moving areas {obst_set}")	
 			self.insert(new_new_plan, plan, 'UGPV: ground with threats')
