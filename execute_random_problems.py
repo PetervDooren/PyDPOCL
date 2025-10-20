@@ -118,7 +118,7 @@ if __name__ == '__main__':
                     "nr_objects": nr_objects,
                     "nr_goals": nr_goals,
                 })
-                iteration += 1
+            iteration += 1
     print(f"Done running. ran {iteration} iterations")
     print(f"{success_count} successfull.")
     print(f"{faulty_plan_count} faulty plans found.")
