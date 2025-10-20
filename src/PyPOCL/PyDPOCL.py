@@ -341,16 +341,12 @@ class POCLPlanner:
 
 			# recursively insert new step and substeps into plan, adding orderings and flaws
 			new_plan.insert(new_step)
-
-			# check that provided condition can be codesignated with the required(consumed) condition
 			new_plan_effect = new_step.effects[candidate_effect]
-			if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
-				continue
-
-			self.log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {new_plan_consumer} with effect {new_plan_effect}.')
-
+			
 			# resolve s_need with the new step
-			new_plan.resolve(new_step, new_plan_consumer, new_plan_effect, new_plan_precondition)
+			if not new_plan.resolve(new_step, new_plan_consumer, new_plan_effect, new_plan_precondition):
+				continue
+			self.log_message(f'Add step {new_step} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {new_plan_consumer} with effect {new_plan_effect}.')
 
 			new_plan.cost += ((self.max_height*self.max_height)+1) - (new_step.height*new_step.height)
 			# new_plan.cost += self.max_height + 1 - new_step.height
@@ -387,14 +383,12 @@ class POCLPlanner:
 
 			# use index to find old step
 			new_plan_provider = new_plan.steps[plan.index(candidate_action)]
-
-			# check that provided condition can be codesignated with the required(consumed) condition
 			new_plan_effect = new_plan_provider.effects[effect_nr]
-			if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
+			
+			# resolve open condition with old step
+			if not new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition):
 				continue
 			self.log_message(f'Reuse step {new_plan_provider} to plan {new_plan.name} to satisfy precondition {new_plan_precondition} of {consumer} with effect {new_plan_effect}.')
-			# resolve open condition with old step
-			new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
 
 			# insert mutated plan into frontier
 			self.insert(new_plan, plan, 'OPF: reuse step')
@@ -421,7 +415,6 @@ class POCLPlanner:
 		consumer_index = plan.index(consumer)
 		precondition_index = consumer.preconds.index(precondition)
 		if precondition.name == "within":
-			# clone plan and new step
 			new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
 
 			# use indices before inserting new steps
@@ -440,16 +433,12 @@ class POCLPlanner:
 			init_pos_effect = next((lit for lit in new_plan.init if lit.Args[0] == obj and lit.Args[1] == init_pos and lit.name == "within"))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			if new_plan.variableBindings.unify(init_pos_effect, new_plan_precondition):
+			if new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition):
 				self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
-				# resolve open condition with old step
-				new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition)
-
 				# insert mutated plan into frontier
 				self.insert(new_plan, plan, 'OPF: reuse init')
 		else:
 			for candidate_action, effect_nr in choices:
-				# clone plan and new step
 				new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
 
 				# use indices before inserting new steps
@@ -461,14 +450,11 @@ class POCLPlanner:
 
 				# check that provided condition can be codesignated with the required(consumed) condition
 				new_plan_effect = new_plan_provider.effects[effect_nr]
-				if not new_plan.variableBindings.unify(new_plan_effect, new_plan_precondition):
-					continue
-				self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {new_plan_effect}.')
 				# resolve open condition with old step
-				new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition)
-
-				# insert mutated plan into frontier
-				self.insert(new_plan, plan, 'OPF: reuse init')
+				if new_plan.resolve(new_plan_provider, new_plan_consumer, new_plan_effect, new_plan_precondition):
+					self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {new_plan_effect}.')
+					# insert mutated plan into frontier
+					self.insert(new_plan, plan, 'OPF: reuse init')
 
 	def resolve_threat(self, plan: GPlan, tclf: TCLF) -> None:
 		threat_index = plan.index(tclf.threat)

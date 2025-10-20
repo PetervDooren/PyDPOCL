@@ -354,7 +354,7 @@ class GPlan:
 
 	# Resolve Methods #
 
-	def resolve(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
+	def resolve(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> bool:
 		"""resolve precondition of the consumer using an effect of the provider 
 
 		Args:
@@ -362,13 +362,15 @@ class GPlan:
 			consumer (Operator): action which requires the effect for its precondition
 			effect (GLiteral): effect of the provider that fulfills the precondition of the consumer
 			precondition (GLiteral): precondition of the consumer that is fulfilled by the provider's effect
+		Returns:
+			True if resolving was successfull. False if it was not possible.
 		"""
 		if provider.height > 0:
-			self.resolve_with_decomp(provider, consumer, effect, precondition)
+			return self.resolve_with_decomp(provider, consumer, effect, precondition)
 		else:
-			self.resolve_with_primitive(provider, consumer, effect, precondition)
+			return self.resolve_with_primitive(provider, consumer, effect, precondition)
 
-	def resolve_with_primitive(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
+	def resolve_with_primitive(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> bool:
 		"""resolve precondition of the consumer using an effect of the provider. Where the provider is a primitive step.
 
 		Args:
@@ -376,6 +378,8 @@ class GPlan:
 			consumer (Operator): action which requires the effect for its precondition
 			effect (GLiteral): effect of the provider that fulfills the precondition of the consumer
 			precondition (GLiteral): precondition of the consumer that is fulfilled by the provider's effect
+		Returns:
+			True if resolving was successfull. False if it was not possible.
 		"""
 		# operate on cloned plan
 		consumer.fulfill(precondition)
@@ -385,6 +389,10 @@ class GPlan:
 
 		# add causal link
 		c_link = self.CausalLinkGraph.addEdge(provider, consumer, effect, precondition)
+
+		# add variable Bindings
+		if not self.variableBindings.unify(effect, precondition):
+			return False
 
 		consumer.update_choices(self)
 
@@ -402,18 +410,8 @@ class GPlan:
 			if self.OrderingGraph.isPath(step, provider):
 				continue
 			self.potential_tclf.append(TCLF(step, c_link))
-
-		# # check if adding this step threatens other causal links
-		# for cl in self.CausalLinkGraph.edges:
-		# 	if cl == c_link:
-		# 		continue
-		# 	if new_step.stepnum not in cl.sink.threat_map[cl.label.ID]:
-		# 		continue
-		# 	if self.OrderingGraph.isPath(new_step, cl.source):
-		# 		continue
-		# 	if self.OrderingGraph.isPath(cl.sink, new_step):
-		# 		continue
-		# 	self.flaws.insert(self, TCLF(new_step, cl))
+		
+		return True
 
 	def resolve_with_decomp(self, provider: Operator, consumer: Operator, effect: GLiteral, precondition: GLiteral) -> None:
 		raise DeprecationWarning("decomposition is no longer supported")
@@ -493,8 +491,10 @@ class GPlan:
 			if other_var == var:
 				continue
 			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
-			if other_var in other_snk.Args and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
+			if other_var in other_snk.Args: # and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
 				continue
+			if other_var in other_snk.Args and other_src == self.dummy.init:
+				Warning("Adding arument of sink since the source is the initial state.")
 			if other_src ==source and other_snk ==sink: # this is the exact same causal link. Just the other variable in it.
 				continue
 			if self.OrderingGraph.isPath(sink, other_src) or self.OrderingGraph.isPath(other_snk, source):
