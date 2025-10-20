@@ -493,7 +493,7 @@ class GPlan:
 			if other_var == var:
 				continue
 			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
-			if other_var in other_snk.Args: # only add goal locations to the disjunction list.
+			if other_var in other_snk.Args and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
 				continue
 			if other_src ==source and other_snk ==sink: # this is the exact same causal link. Just the other variable in it.
 				continue
