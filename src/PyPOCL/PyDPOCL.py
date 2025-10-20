@@ -26,7 +26,7 @@ CLOSED_NODE = 'white'
 LEAF_NODE = 'red'
 GOAL_NODE = 'green'
 
-PlanningReport = namedtuple("PlanningReport", ["planning_time", "expanded", "visited", "terminated", "plans_found"])
+PlanningReport = namedtuple("PlanningReport", ["planning_time", "expanded", "visited", "terminated", "plans_found", "assumption_failed"])
 
 class Frontier:
 
@@ -131,6 +131,8 @@ class POCLPlanner:
 		self._h_visited = []
 		self.max_height = self.gsteps[-3].height
 
+		self.assumption_failed = 0
+
 	# Private Hooks #
 
 	def __len__(self):
@@ -162,6 +164,7 @@ class POCLPlanner:
 		expanded = 0
 		leaves = 0
 		tclf_visits = 0
+		self.assumption_failed = 0
 
 		if self.log and VISUALIZE:
 			geometry_fig = plt.figure()
@@ -184,7 +187,7 @@ class POCLPlanner:
 				if self.save_plangraph:
 					self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
 
-				planning_report = PlanningReport(delay, expanded, self.opened, leaves, len(completed))
+				planning_report = PlanningReport(delay, expanded, self.opened, leaves, len(completed), self.assumption_failed)
 				return [], planning_report
 
 			plan = self.pop()
@@ -247,7 +250,7 @@ class POCLPlanner:
 				if len(completed) == k:
 					if self.save_plangraph:
 						self.dot.render(filename=f"{self.plangraph_name}.dot", outfile=f"{self.plangraph_name}.svg")
-					planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+					planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed), self.assumption_failed)
 					return completed, planning_report
 				continue
 
@@ -292,7 +295,7 @@ class POCLPlanner:
 		print(f'FAIL: No more plans to visit with {expanded} nodes expanded')
 		elapsed = time.time() - t0
 		delay = str('%0.8f' % elapsed)
-		planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed))
+		planning_report = PlanningReport(delay, expanded, len(self)+expanded, leaves, len(completed), self.assumption_failed)
 		return [], planning_report
 
 	def add_step(self, plan: GPlan, flaw: Flaw) -> None:
@@ -839,6 +842,7 @@ class POCLPlanner:
 				#new_plan.variableBindings.geometric_vb.resolve_path(arg)
 				movable_obstacle_sets = find_movable_obstacles(new_plan, arg)
 				new_new_plan.variableBindings.geometric_vb.resolve_path(arg)
+				self.assumption_failed += 1
 				continue
 			self.log_message(f"grounding path variable {arg}. Moving areas {obst_set}")	
 			self.insert(new_new_plan, plan, 'UGPV: ground with threats')

@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # Prepare CSV file
     csv_filename = f"test_results/repeat_{testname}.csv"
     with open(csv_filename, mode="w", newline="") as csvfile:
-        fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found", "nr_objects", "nr_goals"]
+        fieldnames = ["iteration", "testname", "status", "plan_file", "planning_time", "expanded", "visited", "terminated", "plans_found", "assumption_failed", "nr_objects", "nr_goals"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -75,6 +75,7 @@ if __name__ == '__main__':
                     "visited": 0,
                     "terminated": 0,
                     "plans_found": 0,
+                    "assumption_failed": 0,
                     "nr_objects": nr_objects,
                     "nr_goals": nr_goals,
                 })
@@ -94,6 +95,7 @@ if __name__ == '__main__':
                     "visited": planning_report.visited,
                     "terminated": planning_report.terminated,
                     "plans_found": planning_report.plans_found,
+                    "assumption_failed": planning_report.assumption_failed,
                     "nr_objects": nr_objects,
                     "nr_goals": nr_goals,
                 })
@@ -121,6 +123,7 @@ if __name__ == '__main__':
                     "visited": planning_report.visited,
                     "terminated": planning_report.terminated,
                     "plans_found": planning_report.plans_found,
+                    "assumption_failed": planning_report.assumption_failed,
                     "nr_objects": nr_objects,
                     "nr_goals": nr_goals,
                 })
