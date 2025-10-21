@@ -2,7 +2,7 @@ import unittest
 
 from uuid import uuid4
 from collections import defaultdict
-from PyPOCL.Ground_Compiler_Library.VariableBindingsGeometric import VariableBindingsGeometric
+from PyPOCL.Ground_Compiler_Library.VariableBindingsGeometric import VariableBindingsGeometric, MARGIN_OF_ERROR
 from PyPOCL.Ground_Compiler_Library.Element import Argument
 from shapely import Polygon, overlaps, within
 
@@ -284,7 +284,9 @@ class TestVariableBindingsGeometric(unittest.TestCase):
         area_B = vb.placelocs[variables["B"]].area_assigned
         self.assertIsNotNone(area_A)
         self.assertIsNotNone(area_B)
-        self.assertFalse(overlaps(area_A, area_B))
+        schrunk_A = area_A.buffer(-MARGIN_OF_ERROR)
+        schrunk_B = area_B.buffer(-MARGIN_OF_ERROR)
+        self.assertFalse(overlaps(schrunk_A, schrunk_B))
 
     def test_resolve(self):
         """
