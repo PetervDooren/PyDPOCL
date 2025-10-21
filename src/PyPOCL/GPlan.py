@@ -478,9 +478,9 @@ class GPlan:
 					static_objs.append(obj)		
 		for obj in static_objs:
 			obj_area_arg = self.variableBindings.initial_positions[obj]
-			if not self.variableBindings.geometric_vb.can_intersect(var, obj_area_arg):
+			#if not self.variableBindings.geometric_vb.can_intersect(var, obj_area_arg):
 				# the areas do not overlap. No need to add an explicit disjunction.
-				continue
+			#	continue
 			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
 
 		# find the causal link that places the object at the goal location represented by var
@@ -491,7 +491,7 @@ class GPlan:
 			if other_var == var:
 				continue
 			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
-			if other_var in other_snk.Args: # and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
+			if other_var in other_snk.Args and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
 				continue
 			if other_var in other_snk.Args and other_src == self.dummy.init:
 				Warning("Adding arument of sink since the source is the initial state.")
@@ -500,9 +500,9 @@ class GPlan:
 			if self.OrderingGraph.isPath(sink, other_src) or self.OrderingGraph.isPath(other_snk, source):
 				# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
 				continue
-			if not self.variableBindings.geometric_vb.can_intersect(var, other_var):
+			#if not self.variableBindings.geometric_vb.can_intersect(var, other_var):
 				# the areas do not overlap. No need to add an explicit disjunction.
-				continue
+			#	continue
 			self.variableBindings.geometric_vb.add_disjunction(var, other_var)
 
 		#add disjunctions with paths which may occur simultaneously.
