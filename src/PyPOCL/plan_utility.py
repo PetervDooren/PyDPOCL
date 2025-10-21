@@ -173,6 +173,10 @@ def check_plan_execution(plan: GPlan) -> bool:
 
         # check if any of the open steps can be executed
         for step in open_list:
+            if step.schema != 'movemono':
+                # only movemono steps have geometric constraints to check
+                closed_list.append(step)
+                break
             obj = plan.variableBindings.symbolic_vb.get_const(step.Args[1])
             goal_arg = step.Args[3]
             if check_connection(step, state, plan):
