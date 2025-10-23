@@ -523,6 +523,10 @@ class GPlan:
 				continue
 			self.variableBindings.geometric_vb.add_disjunction(var, pathvar)
 		return True
+	
+	def clear_disjunctions(self, var):
+		for other_var in list(self.variableBindings.geometric_vb.disjunctions[var]):
+			self.variableBindings.geometric_vb.remove_disjunction(var, other_var)
 
 	def set_disjunctions_all(self):
 		"""

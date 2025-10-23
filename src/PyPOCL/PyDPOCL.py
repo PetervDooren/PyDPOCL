@@ -783,6 +783,7 @@ class POCLPlanner:
 			offending_areas = new_plan.variableBindings.geometric_vb.disjunctions[arg]
 			self.log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
 			new_new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
+			new_new_plan.clear_disjunctions(arg)
 			if new_new_plan.variableBindings.geometric_vb.resolve(arg):
 				moved_areas = []
 				for area in offending_areas:
