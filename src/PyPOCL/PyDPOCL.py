@@ -433,10 +433,13 @@ class POCLPlanner:
 			init_pos_effect = next((lit for lit in new_plan.init if lit.Args[0] == obj and lit.Args[1] == init_pos and lit.name == "within"))
 
 			# check that provided condition can be codesignated with the required(consumed) condition
-			if new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition):
-				self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
-				# insert mutated plan into frontier
-				self.insert(new_plan, plan, 'OPF: reuse init')
+			if not new_plan.resolve(new_plan_provider, new_plan_consumer, init_pos_effect, new_plan_precondition):
+				return
+			self.log_message(f'Ground {new_plan_precondition} of {consumer} in the initial state with effect {init_pos_effect}.')
+			# immediately ground the startarea of consumer
+			if consumer != new_plan.dummy.goal:
+				uggvflaw = UGGV(precondition.Args[1])
+				self.ground_geometric_variable(new_plan, uggvflaw)
 		else:
 			for candidate_action, effect_nr in choices:
 				new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
