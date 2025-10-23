@@ -22,6 +22,8 @@ class VariableBindings:
             return True
         if id in self.geometric_vb.variables:
             return True
+        if id in self.geometric_vb.path_variables:
+            return True
         else:
             return False
     

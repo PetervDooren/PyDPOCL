@@ -1,5 +1,5 @@
 (define (problem test-problem)
-  (:domain test)
+  (:domain manipulation)
   (:objects robot_0 robot_1  - robot
             box_0 box_1 box_2 box_3 box_4 - physical_item
             table - area
