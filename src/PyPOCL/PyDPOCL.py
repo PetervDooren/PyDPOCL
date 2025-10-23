@@ -273,11 +273,15 @@ class POCLPlanner:
 					self.log_message(f"could not ground symbolic arg {flaw.arg}. pruning")
 					leaves += 1
 			elif isinstance(flaw, UGGV):
-				if not self.ground_geometric_variable(plan, flaw):
+				successor_plans = self.ground_geometric_variable(plan, flaw)
+				if len(successor_plans) == 0:
 					if self.save_plangraph:
 						self.dot.node(f"{plan.ID}", f"leaf_{leaves}", style="filled", fillcolor=LEAF_NODE)
 					self.log_message(f"could not resolve geometric arg {flaw.arg}. pruning")
 					leaves += 1
+				else:
+					for sp in successor_plans:
+						self.insert(sp, plan, 'UGGV: ground')
 			elif isinstance(flaw, UGPV):
 				if not self.ground_path_variable(plan, flaw):
 					if self.save_plangraph:
@@ -439,7 +443,9 @@ class POCLPlanner:
 			# immediately ground the startarea of consumer
 			if consumer != new_plan.dummy.goal:
 				uggvflaw = UGGV(precondition.Args[1])
-				self.ground_geometric_variable(new_plan, uggvflaw)
+				successor_plans = self.ground_geometric_variable(new_plan, uggvflaw)
+				for sp in successor_plans:
+					self.insert(sp, plan, 'OPF: reuse init')
 		else:
 			for candidate_action, effect_nr in choices:
 				new_plan = plan.instantiate(str(self.plan_num) + '[r] ')
@@ -747,7 +753,7 @@ class POCLPlanner:
 			grounding_success = True
 		return grounding_success
 		
-	def ground_geometric_variable(self, plan: GPlan, flaw: UGSV) -> bool:
+	def ground_geometric_variable(self, plan: GPlan, flaw: UGSV) -> List[GPlan]:
 		""" create branch plans by grounding a geometric variable. Will create only one branch at most.
 
 		Args:
@@ -755,8 +761,9 @@ class POCLPlanner:
 			flaw (UGSV): _description_
 
 		Returns:
-			bool: True if at least one branch was made.
+			list of successor plans
 		"""
+		successor_plans = []
 		plan.name += '[uggv]'
 
 		# ground the geometric variable
@@ -764,14 +771,14 @@ class POCLPlanner:
 		if plan.variableBindings.geometric_vb.is_ground(arg):
 			self.log_message(f'Variable {arg} is already ground. This should not happen!')
 			new_plan = plan.instantiate(str(self.plan_num) + '[ag] ')
-			self.insert(new_plan, plan, 'UGGV: already ground')
-			return True
+			successor_plans.append(new_plan)
+			return successor_plans
 		new_plan = plan.instantiate(str(self.plan_num) + '[g] ')
 		new_plan.set_disjunctions(arg)
 		if new_plan.variableBindings.geometric_vb.resolve(arg):
 			self.log_message(f'Grounding variable {arg}.')
-			self.insert(new_plan, plan, 'UGGV: ground')
-			return True
+			successor_plans.append(new_plan)
+			return successor_plans
 		else:
 			offending_areas = new_plan.variableBindings.geometric_vb.disjunctions[arg]
 			self.log_message(f"could not ground variable {arg}, it conflicts with areas: {offending_areas}")
@@ -785,12 +792,12 @@ class POCLPlanner:
 							moved_areas.append(area)
 					elif new_new_plan.variableBindings.is_type(area, 'path'):
 						if new_new_plan.variableBindings.geometric_vb.intersect(area, arg):
-							return False # there is no way to resolve this
+							return [] # there is no way to resolve this
 
 				self.log_message(f"grounding variable {arg}. Moving areas {moved_areas}")
-				self.insert(new_new_plan, plan, 'UGGV: ground with threats')
-				return True
-			return False
+				successor_plans.append(new_new_plan)
+				return successor_plans
+			return []
 	
 	def ground_path_variable(self, plan: GPlan, flaw: UGPV):
 		""" create branch plans by grounding a path variable.
