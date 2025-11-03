@@ -149,7 +149,6 @@ class POCLPlanner:
 	def insert(self, plan: GPlan, parent_plan: GPlan=None, label=None) -> None:
 		# check if the plan is correct
 		if not check_plan_correctness(plan):
-			print("\n\n\nWarning: inserted plan is not correct\n\n\n")
 			if self.log:
 				plan.print()
 				print(f"plan.threats: {plan.flaws.threats}")
@@ -159,6 +158,7 @@ class POCLPlanner:
 					visualize_plan(plan, fig=self.geometry_fig)
 					plan_to_dot(plan)
 					plt.pause(0.001)
+					print("\n\n\nWarning: inserted plan is not correct\n\n\n")
 		plan.heuristic = self.h_plan(plan)
 		self.log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		if self.save_plangraph:
