@@ -214,7 +214,7 @@ def check_connection(step: Operator, state: dict, plan: GPlan) -> bool:
         else:
             area = plan.variableBindings.geometric_vb.get_assigned_area(area_arg)
         available_space = difference(available_space, area)
-    erosion_dist = 0.5*min(object_width, object_length)
+    erosion_dist = 0.5*min(object_width, object_length) - MARGIN_OF_ERROR
     eroded = available_space.buffer(-erosion_dist)
 
     # determine if both start and end lie in the available space
