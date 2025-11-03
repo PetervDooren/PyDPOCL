@@ -493,8 +493,9 @@ class POCLPlanner:
 		if hasattr(sink, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink.sibling, threat)
 		threat.update_choices(new_plan)
-		self.insert(new_plan, plan, 'TCLF: promote')
-		self.log_message('promote {} in front of {} in plan {}'.format(threat, sink, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'TCLF: promote')
+			self.log_message('promote {} in front of {} in plan {}'.format(threat, sink, new_plan.name))
 
 
 		# Demotion
@@ -507,8 +508,9 @@ class POCLPlanner:
 		if hasattr(source, 'sibling'):
 			new_plan.OrderingGraph.addEdge(source.sibling, threat)
 		threat.update_choices(new_plan)
-		self.insert(new_plan, plan, 'TCLF: demote')
-		self.log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'TCLF: demote')
+			self.log_message('demotion {} behind {} in plan {}'.format(threat, source, new_plan.name))
 	
 	def resolve_geometric_threat(self, plan: GPlan, gtf: GTF) -> None:
 		# find out if the threatening area is a static object or not.
@@ -600,8 +602,9 @@ class POCLPlanner:
 		if hasattr(sink_2, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
 		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
-		self.insert(new_plan, plan, 'GTF: promote')
-		self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'GTF: promote')
+			self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
 
 
 		# Demotion place 2 after 1
@@ -614,8 +617,9 @@ class POCLPlanner:
 		if hasattr(sink_1, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
 		sink_1.update_choices(new_plan) #TODO check if needed?
-		self.insert(new_plan, plan, 'GTF: demote')
-		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'GTF: demote')
+			self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def resolve_geometric_path_threat(self, plan: GPlan, gptf: GPTF) -> None:
 		# find out if the threatening area is a static object or not.
@@ -715,8 +719,9 @@ class POCLPlanner:
 		if hasattr(sink_2, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_2.sibling, source_1)
 		sink_2.update_choices(new_plan) # check if needed and/or if the same should be done for source_1
-		self.insert(new_plan, plan, 'GTF: promote')
-		self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'GTF: promote')
+			self.log_message('promote {} in front of {} in plan {}'.format(sink_2, source_1, new_plan.name))
 
 
 		# Demotion place 2 after 1
@@ -729,8 +734,9 @@ class POCLPlanner:
 		if hasattr(sink_1, 'sibling'):
 			new_plan.OrderingGraph.addEdge(sink_1.sibling, source_2)
 		sink_1.update_choices(new_plan) #TODO check if needed?
-		self.insert(new_plan, plan, 'GTF: demote')
-		self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
+		if new_plan.isInternallyConsistent():
+			self.insert(new_plan, plan, 'GTF: demote')
+			self.log_message('demotion {} behind {} in plan {}'.format(sink_1, source_2, new_plan.name))
 	
 	def ground_variable(self, plan: GPlan, flaw: UGSV):
 		""" create branch plans by grounding a symbolic variable.
