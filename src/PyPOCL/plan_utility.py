@@ -139,6 +139,45 @@ def check_plan(plan: GPlan) -> None:
             if overlaps(area, other_area):
                 print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
                 return False
+    # check that all paths are collision free
+    for pathvar in plan.variableBindings.geometric_vb.path_variables:
+        path_area = plan.variableBindings.geometric_vb.paths[pathvar].area_assigned
+        if path_area is None:
+            continue
+        
+        # check overlap with static items
+        for obj in static_objs:
+            other_area_arg = plan.variableBindings.initial_positions[obj]
+            other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
+            if overlaps(path_area, other_area):
+                print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                return False		
+
+        # find place of path in the plan
+        for step in plan.steps:
+            if pathvar in step.Args:
+                break
+        else:
+            print(f"path {pathvar} not found in plan!")
+
+        # check overlap with moving items
+        for causal_link in plan.CausalLinkGraph.edges:
+            if causal_link.label.source.name != "within":
+                continue
+            if plan.OrderingGraph.isPath(step, causal_link.source) or plan.OrderingGraph.isPath(causal_link.sink, step):
+                continue
+            sourceloc = causal_link.label.source.Args[1]
+
+            if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+                other_area = plan.variableBindings.geometric_vb.defined_areas[sourceloc]
+            else:
+                other_area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+                if other_area is None:
+                    continue
+            if overlaps(path_area, other_area):
+                print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
+                return False
+
     if not check_plan_execution(plan):
         return False	
     return True
@@ -426,6 +465,45 @@ def check_plan_correctness(plan: GPlan) -> bool:
                 continue
             if overlaps(area, other_area):
                 print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+                return False
+
+    # check that all paths are collision free
+    for pathvar in plan.variableBindings.geometric_vb.path_variables:
+        path_area = plan.variableBindings.geometric_vb.paths[pathvar].area_assigned
+        if path_area is None:
+            continue
+        
+        # check overlap with static items
+        for obj in static_objs:
+            other_area_arg = plan.variableBindings.initial_positions[obj]
+            other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
+            if overlaps(path_area, other_area):
+                print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                return False		
+
+        # find place of path in the plan
+        for step in plan.steps:
+            if pathvar in step.Args:
+                break
+        else:
+            print(f"path {pathvar} not found in plan!")
+
+        # check overlap with moving items
+        for causal_link in plan.CausalLinkGraph.edges:
+            if causal_link.label.source.name != "within":
+                continue
+            if plan.OrderingGraph.isPath(step, causal_link.source) or plan.OrderingGraph.isPath(causal_link.sink, step):
+                continue
+            sourceloc = causal_link.label.source.Args[1]
+
+            if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+                other_area = plan.variableBindings.geometric_vb.defined_areas[sourceloc]
+            else:
+                other_area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+                if other_area is None:
+                    continue
+            if overlaps(path_area, other_area):
+                print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
                 return False
 
     # no faults found with the plan. Assume it is correct.
