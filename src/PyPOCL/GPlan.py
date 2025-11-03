@@ -469,11 +469,11 @@ class GPlan:
 		static_objs = []
 		for obj in self.variableBindings.objects:
 			if self.variableBindings.is_type(obj, 'physical_item'):
-				for causal_link in self.CausalLinkGraph.edges:
-					if causal_link.label.source.name == "within":
-						if obj == causal_link.label.source.Args[0]:
-							if not (causal_link.source == self.dummy.init and causal_link.sink == self.dummy.goal):
-								break
+				for step in self.steps:
+					if step.schema == 'movemono':
+						objarg = step.Args[1]
+						if self.variableBindings.is_codesignated(obj, objarg):
+							break
 				else:
 					static_objs.append(obj)		
 		for obj in static_objs:
@@ -576,11 +576,11 @@ class GPlan:
 		static_objs = []
 		for obj in self.variableBindings.objects:
 			if self.variableBindings.is_type(obj, 'physical_item'):
-				for causal_link in self.CausalLinkGraph.edges:
-					if causal_link.label.source.name == "within":
-						if obj == causal_link.label.source.Args[0]:
-							if not (causal_link.source == self.dummy.init and causal_link.sink == self.dummy.goal):
-								break
+				for step in self.steps:
+					if step.schema == 'movemono':
+						objarg = step.Args[1]
+						if self.variableBindings.is_codesignated(obj, objarg):
+							break
 				else:
 					static_objs.append(obj)		
 		for obj in static_objs:

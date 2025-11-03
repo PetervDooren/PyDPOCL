@@ -418,9 +418,10 @@ def check_plan_correctness(plan: GPlan) -> bool:
     static_objs = []
     for obj in plan.variableBindings.objects:
         if plan.variableBindings.is_type(obj, 'physical_item'):
-            for causal_link in plan.CausalLinkGraph.edges:
-                if causal_link.label.source.name == "within":
-                    if obj == causal_link.label.source.Args[0]:
+            for step in plan.steps:
+                if step.schema == 'movemono':
+                    objarg = step.Args[1]
+                    if plan.variableBindings.is_codesignated(obj, objarg):
                         break
             else:
                 static_objs.append(obj)
