@@ -13,20 +13,17 @@ if __name__ == '__main__':
     batch_dir = "domains/manipulation-domain-batch/"
 
     problem_tuples = {}
-    for file in os.scandir(batch_dir):
-        if file.is_file():
-            testname = file.name[0:7] # should be like "test_0"
-            if testname[-1] == '_':
-                testname = testname[0:6]
-            if testname in problem_tuples: # problem is already found
-                continue
-            problem_file = os.path.join(batch_dir, testname+"_problem.pddl")
-            worldmodel_file = os.path.join(batch_dir, testname+"_worldmodel.json")
-            if not os.path.isfile(problem_file):
-                raise ValueError(f"file {problem_file} does not exist")
-            if not os.path.isfile(worldmodel_file):
-                raise ValueError(f"file {worldmodel_file} does not exist")
-            problem_tuples[testname] = Problem(problem_file, worldmodel_file)
+    testno = 0
+    while True:
+        testname = f"test_{testno}"
+        problem_file = os.path.join(batch_dir, testname+"_problem.pddl")
+        worldmodel_file = os.path.join(batch_dir, testname+"_worldmodel.json")
+        if not os.path.isfile(problem_file):
+            break
+        if not os.path.isfile(worldmodel_file):
+            break
+        problem_tuples[testname] = Problem(problem_file, worldmodel_file)
+        testno += 1
 
     domain_file = 'domains/manipulation-domain/manipulation-domain.pddl'
    
@@ -35,6 +32,8 @@ if __name__ == '__main__':
     faulty_plan_count = 0
     plan_not_found_count = 0
     error_count = 0
+
+    print(f"Going to run {testno} tests.")
 
     # Prepare CSV file
     csv_filename = "test_results/random_batch_test_results.csv"
