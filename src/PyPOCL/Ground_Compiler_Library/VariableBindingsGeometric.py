@@ -562,7 +562,7 @@ class VariableBindingsGeometric:
         return True
     
     def helper_show_resolve_step(self, disjunct_area_max=None, a_min=None, a_candidate=None):
-        plt.figure(1)
+        plt.figure(2)
         plt.cla()
         # plot base area
         base_polygon = self.defined_areas[self.base_area]
