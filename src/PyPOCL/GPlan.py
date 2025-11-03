@@ -516,8 +516,7 @@ class GPlan:
 			else:
 				print(f"path {pathvar} not found in plan!")
 			if step ==source or step ==sink: # this path belongs to the goal location.
-				print("Path of step {step} is grounded but its start or end is not! This should not happen")
-				continue
+				raise ValueError("Path of step {step} is grounded but its start or end is not! This should not happen")
 			if self.OrderingGraph.isPath(sink, step) or self.OrderingGraph.isPath(step, source):
 				# This step cannot occur at the same time as the place location
 				continue
