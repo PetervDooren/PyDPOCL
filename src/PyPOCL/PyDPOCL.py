@@ -6,6 +6,7 @@ from PyPOCL.Ground_Compiler_Library.find_moveable_obstacles import find_movable_
 from PyPOCL.Flaws import Flaw, OPF, TCLF, GTF, GPTF, UGSV, UGGV, UGPV
 from PyPOCL.worldmodel import Domain, Problem
 from PyPOCL.deterministic_uuid import duuid4
+from PyPOCL.plan_utility import check_plan_correctness
 import math
 import graphviz
 from heapq import heappush, heappop
@@ -146,6 +147,9 @@ class POCLPlanner:
 		return self._frontier.pop()
 
 	def insert(self, plan: GPlan, parent_plan: GPlan=None, label=None) -> None:
+		# check if the plan is correct
+		if not check_plan_correctness(plan):
+			print("\n\n\nWarning: inserted plan is not correct\n\n\n")
 		plan.heuristic = self.h_plan(plan)
 		self.log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		if self.save_plangraph:

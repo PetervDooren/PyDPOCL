@@ -315,6 +315,121 @@ def helper_show_state(step: Operator, state: dict, plan: GPlan, eroded: Polygon 
     plt.ylabel('Y')
     plt.show()
 
+def check_plan_correctness(plan: GPlan) -> bool:
+    """Check if the plan is correct. The plan may be incomplete."""
+    if not plan.isInternallyConsistent():
+        print("Plan is not internally consistent")
+        return False
+    if not plan.variableBindings.isInternallyConsistent():
+        print("Variable bindings are not internally consistent")
+        return False
+    # check that no causal links are threatened
+    for edge in plan.CausalLinkGraph.edges:
+        threatening_operators = [t[0] for t in  edge.sink.threat_map[edge.label.sink.ID]]
+        for step in plan.steps:
+            if not step.stepnum in threatening_operators:
+                continue
+            if step == edge.source or step == edge.sink:
+                # if the step is the source or sink of the causal link, it cannot threaten it
+                continue
+            if not plan.OrderingGraph.isPath(edge.source, step) or not plan.OrderingGraph.isPath(step, edge.sink):
+                # if the step is not in the path between source and sink, it cannot threaten the causal link
+                continue
+            for t in [t for t in edge.sink.threat_map[edge.label.sink.ID] if t[0] == step.stepnum]:
+                if plan.variableBindings.is_unified(edge.label.sink, step.effects[t[1]]):
+                    # if the edge is unified with the threatening effect, it threatens it
+                    print(f"Causal link {edge} is threatened by step {step.ID}")
+                    return False
+    # check that all causal links condition arguments are unified
+    #TODO is_unified checks the assigned area, which does not exist for an incomplete plan. 
+    #for edge in plan.CausalLinkGraph.edges:
+    #    # check that the effect of the edge is unified with the precondition of the edge
+    #    if not plan.variableBindings.is_unified(edge.label.source, edge.label.sink):
+    #        print(f"Causal link {edge} does not have unified effect: {edge.label.source} and precondition {edge.label.sink}")
+    #       return False
+
+    # check that place locations are large enough for the objects
+    for area_id in plan.variableBindings.geometric_vb.variables:
+        placeloc = plan.variableBindings.geometric_vb.placelocs[area_id]
+        area = placeloc.area_assigned
+        if area is None:
+            continue
+        # check that the object is defined
+        if placeloc.object_width == 0 or placeloc.object_length == 0:
+            continue
+        # check that the object fits within the assigned area
+        if area.area - placeloc.object_width * placeloc.object_length < -MARGIN_OF_ERROR:
+            print(f"Area {area_id} is too small for the object with width {placeloc.object_width} and length {placeloc.object_length}")
+            return False
+
+    # check that all reach constraints of steps are satisfied in the assigned area
+    for step in plan.steps:
+        for rc in step.reach_constraints:
+            # check that the reach constraint is satisfied in the assigned area
+            area = plan.variableBindings.geometric_vb.get_assigned_area(rc[0])
+            if area is None:
+                continue
+            robot_arg = plan.variableBindings.symbolic_vb.get_const(rc[1]) # robot arg should be ground if area is ground
+            reach_area_arg = plan.variableBindings.reach_areas[robot_arg]
+            reach_area = plan.variableBindings.geometric_vb.defined_areas[reach_area_arg]
+            if not within(area, reach_area):
+                print(f"Step {step.ID} has unsatisfied reach constraint {rc}")
+                return False
+    # check that all other areas that can occur simultaneously do not overlap
+    static_objs = []
+    for obj in plan.variableBindings.objects:
+        if plan.variableBindings.is_type(obj, 'physical_item'):
+            for causal_link in plan.CausalLinkGraph.edges:
+                if causal_link.label.source.name == "within":
+                    if obj == causal_link.label.source.Args[0]:
+                        break
+            else:
+                static_objs.append(obj)
+
+    for causal_link in plan.CausalLinkGraph.edges:
+        if causal_link.label.source.name != "within":
+            continue
+        object = causal_link.label.source.Args[0]
+        sourceloc = causal_link.label.source.Args[1]
+        if causal_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+            area = plan.variableBindings.geometric_vb.defined_areas[sourceloc]
+        else:
+            area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+            if area is None:
+                continue
+
+        # check overlap with static items
+        for obj in static_objs:
+            other_area_arg = plan.variableBindings.initial_positions[obj]
+            other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
+            if overlaps(area, other_area):
+                print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                return False		
+
+        # check overlap with moving items
+        for other_link in plan.CausalLinkGraph.edges:
+            if other_link.label.source.name != "within":
+                continue
+            other_object = other_link.label.source.Args[0]
+            if other_object == object:
+                continue
+            other_loc = other_link.label.source.Args[1]
+            if other_link.source.schema == 'dummy_init': # if the link is grounded in the initial condition, the source area is not a variable.
+                other_area = plan.variableBindings.geometric_vb.defined_areas[other_loc]
+            else:
+                other_area = plan.variableBindings.geometric_vb.get_assigned_area(other_loc)
+                if other_area is None:
+                    continue
+            # check if the causal links overlap.
+            if plan.OrderingGraph.isPath(causal_link.sink, other_link.source) or plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
+                # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
+                continue
+            if overlaps(area, other_area):
+                print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+                return False
+
+    # no faults found with the plan. Assume it is correct.
+    return True
 
 def plan_to_dot(plan: GPlan, filepath_dot: str = None, filepath_svg: str = None, show=True) -> None:
     """
