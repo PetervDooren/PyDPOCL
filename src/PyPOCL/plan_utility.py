@@ -443,8 +443,15 @@ def check_plan_correctness(plan: GPlan) -> bool:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
             if overlaps(area, other_area):
-                print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
-                return False		
+                # check if this overlap is recorded as a flaw
+                for flaw in plan.flaws.geometric_threats:
+                    if flaw.area == sourceloc and flaw.threat == other_area_arg:
+                        break
+                    if flaw.area == other_area_arg and flaw.threat == sourceloc:
+                        break
+                else:
+                    print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                    return False		
 
         # check overlap with moving items
         for other_link in plan.CausalLinkGraph.edges:
@@ -465,8 +472,15 @@ def check_plan_correctness(plan: GPlan) -> bool:
                 # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
                 continue
             if overlaps(area, other_area):
-                print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
-                return False
+                # check if this overlap is recorded as a flaw
+                for flaw in plan.flaws.geometric_threats:
+                    if flaw.area == sourceloc and flaw.threat == other_loc:
+                        break
+                    if flaw.area == other_loc and flaw.threat == sourceloc:
+                        break
+                else:
+                    print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+                    return False
 
     # check that all paths are collision free
     for pathvar in plan.variableBindings.geometric_vb.path_variables:
@@ -479,8 +493,13 @@ def check_plan_correctness(plan: GPlan) -> bool:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
             if overlaps(path_area, other_area):
-                print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
-                return False		
+                # check if this overlap is recorded as a flaw
+                for flaw in plan.flaws.path_threats:
+                    if flaw.path == pathvar and flaw.threat == other_area_arg:
+                        break
+                else:
+                    print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                    return False		
 
         # find place of path in the plan
         for step in plan.steps:
@@ -504,8 +523,13 @@ def check_plan_correctness(plan: GPlan) -> bool:
                 if other_area is None:
                     continue
             if overlaps(path_area, other_area):
-                print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
-                return False
+                # check if this overlap is recorded as a flaw
+                for flaw in plan.flaws.path_threats:
+                    if flaw.path == pathvar and flaw.threat == sourceloc:
+                        break
+                else:
+                    print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
+                    return False
 
     # no faults found with the plan. Assume it is correct.
     return True
