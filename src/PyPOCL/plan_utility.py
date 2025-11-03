@@ -438,11 +438,13 @@ def check_plan_correctness(plan: GPlan) -> bool:
             if area is None:
                 continue
 
+        buffered_area = area.buffer(-MARGIN_OF_ERROR)
+
         # check overlap with static items
         for obj in static_objs:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
-            if overlaps(area, other_area):
+            if overlaps(buffered_area, other_area):
                 # check if this overlap is recorded as a flaw
                 for flaw in plan.flaws.geometric_threats:
                     if flaw.area == sourceloc and flaw.threat == other_area_arg:
@@ -471,7 +473,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
             if plan.OrderingGraph.isPath(causal_link.sink, other_link.source) or plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
                 # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
                 continue
-            if overlaps(area, other_area):
+            if overlaps(buffered_area, other_area):
                 # check if this overlap is recorded as a flaw
                 for flaw in plan.flaws.geometric_threats:
                     if flaw.area == sourceloc and flaw.threat == other_loc:
@@ -487,12 +489,13 @@ def check_plan_correctness(plan: GPlan) -> bool:
         path_area = plan.variableBindings.geometric_vb.paths[pathvar].area_assigned
         if path_area is None:
             continue
+        buffered_area = path_area.buffer(-MARGIN_OF_ERROR)
         
         # check overlap with static items
         for obj in static_objs:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
-            if overlaps(path_area, other_area):
+            if overlaps(buffered_area, other_area):
                 # check if this overlap is recorded as a flaw
                 for flaw in plan.flaws.path_threats:
                     if flaw.path == pathvar and flaw.threat == other_area_arg:
@@ -522,7 +525,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                 other_area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
                 if other_area is None:
                     continue
-            if overlaps(path_area, other_area):
+            if overlaps(buffered_area, other_area):
                 # check if this overlap is recorded as a flaw
                 for flaw in plan.flaws.path_threats:
                     if flaw.path == pathvar and flaw.threat == sourceloc:
