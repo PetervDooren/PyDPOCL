@@ -150,6 +150,15 @@ class POCLPlanner:
 		# check if the plan is correct
 		if not check_plan_correctness(plan):
 			print("\n\n\nWarning: inserted plan is not correct\n\n\n")
+			if self.log:
+				plan.print()
+				print(f"plan.threats: {plan.flaws.threats}")
+				print(f"plan.geometric_threats: {plan.flaws.geometric_threats}")
+				print(f"plan.path_threats: {plan.flaws.path_threats}")
+				if VISUALIZE:
+					visualize_plan(plan, fig=self.geometry_fig)
+					plan_to_dot(plan)
+					plt.pause(0.001)
 		plan.heuristic = self.h_plan(plan)
 		self.log_message('>\tadd plan to frontier: {} with cost {} and heuristic {}\n'.format(plan.name, plan.cost, plan.heuristic))
 		if self.save_plangraph:
@@ -171,7 +180,7 @@ class POCLPlanner:
 		self.assumption_failed = 0
 
 		if self.log and VISUALIZE:
-			geometry_fig = plt.figure()
+			self.geometry_fig = plt.figure()
 
 		t0 = time.time()
 		t_report = time.time()
@@ -211,7 +220,7 @@ class POCLPlanner:
 				if self.log:
 					plan.print()
 					if VISUALIZE:
-						visualize_plan(plan, fig=geometry_fig)
+						visualize_plan(plan, fig=self.geometry_fig)
 						plan_to_dot(plan)
 						plt.pause(0.001)
 				leaves += 1
@@ -230,7 +239,7 @@ class POCLPlanner:
 			if self.log:
 				plan.print()
 				if VISUALIZE:
-					visualize_plan(plan, fig=geometry_fig)
+					visualize_plan(plan, fig=self.geometry_fig)
 					plan_to_dot(plan)
 					plt.pause(0.001)
 
