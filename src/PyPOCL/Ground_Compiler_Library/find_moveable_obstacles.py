@@ -127,10 +127,12 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
     closed_list = []
 
     while True:
+        if open_list == []:
+            break
         open_list.sort(key=lambda x: cost_dict[x], reverse=True)
         node = open_list.pop()
         closed_list.append(node)
-        if node == goal_arg:
+        if cost_dict[node] > cost_dict[goal_arg]: # cannot do "node == goal" arg because there may be nodes with equal cost and edges can have zero cost
             break
         node_cost = cost_dict[node]
         for connection in connections[node]:
@@ -143,6 +145,7 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
                     cost_dict[connection]=node_cost
                 elif node_cost == cost_dict[connection]:
                     predecessor_dict[connection].append(node)
+                #helper_visualize_moveable_obstacles(poly_args, obst_area_dict, connections, cost_dict, predecessor_dict)
                 continue
             # otherwise cost increases by 1
             else:
@@ -151,6 +154,7 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
                     cost_dict[connection]=node_cost + 1
                 elif node_cost + 1 == cost_dict[connection]:
                     predecessor_dict[connection].append(node)
+                #helper_visualize_moveable_obstacles(poly_args, obst_area_dict, connections, cost_dict, predecessor_dict)
                 continue
         #backtrace the objects that should be moved
     def recursive_backtrace(arg, connection_dict):
@@ -174,7 +178,10 @@ def find_movable_obstacles(plan: GPlan, pathvar: Argument) -> List[List[Argument
     return movable_object_sets
 
 def helper_visualize_moveable_obstacles(poly_args, obst_areas, connections, cost_list, predecessor_list, start=None, goal=None):
-    fig, ax = plt.subplots(figsize=(8, 6))
+    plt.figure(2)
+    fig = plt.gcf()  # get current figure
+    fig.clf()
+    ax = fig.gca()   # get current axes
 
     def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
         coords = list(area.exterior.coords)
