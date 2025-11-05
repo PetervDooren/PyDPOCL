@@ -12,7 +12,7 @@ import yaml
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon as MplPolygon
 
-MARGIN_OF_ERROR = 1e-7 # buffer for nummerical problems
+MARGIN_OF_ERROR = 1e-3 # buffer for nummerical problems
 
 def check_plan(plan: GPlan) -> None:
     """Check if the plan is complete and valid. Does not use the tracked flaws, but checks the plan structure directly."""
@@ -111,13 +111,15 @@ def check_plan(plan: GPlan) -> None:
             area = plan.variableBindings.geometric_vb.defined_areas[sourceloc]
         else:
             area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
+        buffered_area = area.buffer(-MARGIN_OF_ERROR)
         
         # check overlap with static items
         for obj in static_objs:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
-            if overlaps(area, other_area):
+            if overlaps(buffered_area, other_area):
                 print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                helper_show_overlap(buffered_area, other_area)
                 return False		
 
         # check overlap with moving items
@@ -136,20 +138,22 @@ def check_plan(plan: GPlan) -> None:
             if plan.OrderingGraph.isPath(causal_link.sink, other_link.source) or plan.OrderingGraph.isPath(other_link.sink, causal_link.source):
                 # One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
                 continue
-            if overlaps(area, other_area):
+            if overlaps(buffered_area, other_area):
                 print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+                helper_show_overlap(buffered_area, other_area)
                 return False
     # check that all paths are collision free
     for pathvar in plan.variableBindings.geometric_vb.path_variables:
         path_area = plan.variableBindings.geometric_vb.paths[pathvar].area_assigned
         if path_area is None:
             continue
+        buffered_area = path_area.buffer(-MARGIN_OF_ERROR)
         
         # check overlap with static items
         for obj in static_objs:
             other_area_arg = plan.variableBindings.initial_positions[obj]
             other_area = plan.variableBindings.geometric_vb.defined_areas[other_area_arg]
-            if overlaps(path_area, other_area):
+            if overlaps(buffered_area, other_area):
                 print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
                 return False		
 
@@ -174,13 +178,50 @@ def check_plan(plan: GPlan) -> None:
                 other_area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
                 if other_area is None:
                     continue
-            if overlaps(path_area, other_area):
+            if overlaps(buffered_area, other_area):
                 print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
+                helper_show_overlap(buffered_area, other_area)
                 return False
 
     if not check_plan_execution(plan):
         return False	
     return True
+
+def helper_show_overlap(area1: Polygon, area2: Polygon) -> None:
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Polygon as MplPolygon
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
+        coords = list(area.exterior.coords)
+        poly = MplPolygon(coords, closed=True, facecolor=color, edgecolor=edgecolor, alpha=alpha, fill=fill, label=label)
+        ax.add_patch(poly)
+        for hole in area.interiors:
+            hole_coords = list(hole.coords)
+            hole_poly = MplPolygon(hole_coords, closed=True, facecolor='white', edgecolor=edgecolor, alpha=1, fill=fill, label=label)
+            ax.add_patch(hole_poly)
+        if label:
+            # Place label at centroid
+            xs, ys = zip(*coords)
+            centroid = (sum(xs)/len(xs), sum(ys)/len(ys))
+            ax.text(centroid[0], centroid[1], label, ha='center', va='center', fontsize=8)
+    plot_area(ax, area1, color = 'green')
+    plot_area(ax, area2, color = 'blue')
+    overlap = area1.intersection(area2)
+    if type(overlap) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+        plot_area(ax, overlap, color = 'red')
+    elif type(overlap) == MultiPolygon:
+        for poly in overlap.geoms:
+            plot_area(ax, poly, color = 'red')
+    plot_area(ax, overlap, color = 'red')
+    ax.set_aspect('equal')
+    ax.autoscale()
+    ax.set_title(f'Connection Visualization')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.show()
+
 
 def check_plan_execution(plan: GPlan) -> bool:
     """Simulate an execution of a plan and check that it does not deadlock.
