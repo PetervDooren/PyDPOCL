@@ -191,7 +191,10 @@ def helper_show_overlap(area1: Polygon, area2: Polygon) -> None:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Polygon as MplPolygon
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+    plt.figure(2)
+    fig = plt.gcf()  # get current figure
+    fig.clf()
+    ax = fig.gca()   # get current axes
 
     def plot_area(ax, area: Polygon, color='lightgray', edgecolor='black', alpha=0.5, fill = True, label=None):
         coords = list(area.exterior.coords)
@@ -209,12 +212,13 @@ def helper_show_overlap(area1: Polygon, area2: Polygon) -> None:
     plot_area(ax, area1, color = 'green')
     plot_area(ax, area2, color = 'blue')
     overlap = area1.intersection(area2)
-    if type(overlap) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
+    if overlap.is_empty:
+        pass
+    elif type(overlap) == Polygon: # eroded space is not separated. therefore there is a path from start to goal
         plot_area(ax, overlap, color = 'red')
     elif type(overlap) == MultiPolygon:
         for poly in overlap.geoms:
             plot_area(ax, poly, color = 'red')
-    plot_area(ax, overlap, color = 'red')
     ax.set_aspect('equal')
     ax.autoscale()
     ax.set_title(f'Connection Visualization')
@@ -311,6 +315,7 @@ def check_connection(step: Operator, state: dict, plan: GPlan) -> bool:
         else:
             # no polygon contains both start and goal. Therefore they are separated in the reachable space
             is_connected = False
+            #helper_show_state(step, state, plan, eroded, is_connected)
     else: # eroded has an unexpected type
         print(f"eroded has an unexpected type: {type(eroded)}")
         is_connected = False
@@ -494,6 +499,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                         break
                 else:
                     print(f"area: {sourceloc}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                    #helper_show_overlap(buffered_area, other_area)
                     return False		
 
         # check overlap with moving items
@@ -523,6 +529,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                         break
                 else:
                     print(f"area: {sourceloc}, set by {causal_link.source} overlaps with area {other_loc}, set by {other_link.source}, both areas can be occupied at the same time.")
+                    #helper_show_overlap(buffered_area, other_area)
                     return False
 
     # check that all paths are collision free
@@ -543,6 +550,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                         break
                 else:
                     print(f"path: {pathvar}, set by {causal_link.source} overlaps with static object {obj}, at {other_area_arg}.")
+                    #helper_show_overlap(buffered_area, other_area)
                     return False		
 
         # find place of path in the plan
@@ -566,6 +574,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                 other_area = plan.variableBindings.geometric_vb.get_assigned_area(sourceloc)
                 if other_area is None:
                     continue
+            #helper_show_overlap(buffered_area, other_area)
             if overlaps(buffered_area, other_area):
                 # check if this overlap is recorded as a flaw
                 for flaw in plan.flaws.path_threats:
@@ -573,6 +582,7 @@ def check_plan_correctness(plan: GPlan) -> bool:
                         break
                 else:
                     print(f"path: {pathvar}, of action {step} overlaps with area {sourceloc}, set by {causal_link.source}")
+                    #helper_show_overlap(buffered_area, other_area)
                     return False
 
     # no faults found with the plan. Assume it is correct.
