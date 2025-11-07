@@ -662,26 +662,68 @@ class GPlan:
 		Raises:
 			LookupError: if the area_arg could not be found in the plan.
 		"""
-		source = plan.dummy.init
-		sink = plan.dummy.goal
-		for causal_link in plan.CausalLinkGraph.edges:
-			if causal_link.label.source.name == "within":
-				if area_arg == causal_link.label.source.Args[1] or area_arg == causal_link.label.sink.Args[1]:
-					source = causal_link.source
-					sink = causal_link.sink
-					return (source, sink)
-		# could not find area in causal links
-		for step in plan.steps:
-			if area_arg in step.Args:
-				# check wether the action creates or destroys the area. 
-				for effect in step.effects:
-					if effect.name == "within":
-						if effect.Args[1] == area_arg:
-							if effect.truth:
-								source = step
-							else:
-								sink = step
-		return (source, sink)
+
+		# check which object is being moved
+		if area_arg in plan.variableBindings.initial_positions.values():
+			for obj, area in plan.variableBindings.initial_positions.items():
+				if area_arg == area:
+					is_source = True
+					source = plan.dummy.init
+					sink = plan.dummy.goal
+					break
+			else:
+				print(f"warning: area {area_arg} found in initial positions but no matching object!")
+				raise LookupError(f"area {area_arg} found in initial positions but no matching object!")
+		else:
+			obj = plan.variableBindings.geometric_vb.placelocs[area_arg].object
+			if obj == None:
+				print(f"warning: area {area_arg} has no associated object!")
+			# find the step the area arg belongs to
+			for step in plan.steps:
+				if step.schema != "movemono":
+					continue
+				if area_arg in step.Args:
+					if area_arg == step.Args[3]:
+						# area is the goal location
+						source = step
+						sink = plan.dummy.goal
+						is_source = True
+					elif area_arg == step.Args[2]:
+						# area is the start location
+						source = plan.dummy.init
+						sink = step
+						is_source = False
+					else:
+						print(f"warning: area arg {area_arg} found in step {step} but not in start or goal location argument positions.")
+						raise
+					break
+		
+		# find the other side of the place in the plan
+		if is_source:
+			# find sink
+			for step in plan.steps:
+				if step.schema != "movemono":
+					continue
+				if step == source:
+					continue
+				if plan.variableBindings.is_codesignated(obj, step.Args[1]):
+					# this step moves the object
+					if plan.OrderingGraph.isPath(source, step) and plan.OrderingGraph.isPath(step, sink):
+						# This step is between the source and the current sink
+						sink = step
+		else: # area arg belongs to the sink
+			# find source
+			for step in plan.steps:
+				if step.schema != "movemono":
+					continue
+				if step == sink:
+					continue
+				if plan.variableBindings.is_codesignated(obj, step.Args[1]):
+					# this step moves the object
+					if plan.OrderingGraph.isPath(source, step) and plan.OrderingGraph.isPath(step, sink):
+						# This step is between the current source and the sink
+						source = step
+		return(source, sink)
 
 	def __lt__(self, other):
 		# if self.cost / (1 + math.log2(self.depth+1)) + self.heuristic != other.cost / (1 + math.log2(other.depth+1)) + other.heuristic:
