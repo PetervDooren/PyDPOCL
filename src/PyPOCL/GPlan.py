@@ -465,45 +465,30 @@ class GPlan:
 		"""
 		Add disjunctions to the geometric variable var representing a placement location such that they do not overlap.
 		"""
-		# Find all objects that are static
-		static_objs = []
-		for obj in self.variableBindings.objects:
-			if self.variableBindings.is_type(obj, 'physical_item'):
-				for step in self.steps:
-					if step.schema == 'movemono':
-						objarg = step.Args[1]
-						if self.variableBindings.is_codesignated(obj, objarg):
-							break
-				else:
-					static_objs.append(obj)		
-		for obj in static_objs:
-			obj_area_arg = self.variableBindings.initial_positions[obj]
-			if not self.variableBindings.geometric_vb.can_intersect(var, obj_area_arg):
-				# the areas do not overlap. No need to add an explicit disjunction.
+		# Make a list with all initial position areas and goal areas to check against.
+		area_list = []
+		for area_arg in self.variableBindings.initial_positions.values():
+			area_list.append(area_arg)
+		for step in self.steps:
+			if step.schema != 'movemono':
 				continue
-			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
-
-		# find the causal link that places the object at the goal location represented by var
-		source, sink = GPlan.find_place_in_plan(self, var)
+			area_arg = step.Args[3]
+			area_list.append(area_arg)
 		
-		# add disjunctions between var and moving object locations.
-		for other_var in self.variableBindings.geometric_vb.variables:
-			if other_var == var:
+		# find the place in the plan of var
+		source, sink = GPlan.find_place_in_plan(self, var)
+
+		for other_area_arg in area_list:
+			# find place in plan
+			source_i, sink_i = GPlan.find_place_in_plan(self, other_area_arg)
+			if source == source_i and sink == sink_i: # this is the exact same causal link. Just the other variable in it.
 				continue
-			other_src, other_snk = GPlan.find_place_in_plan(self, other_var)
-			if other_var in other_snk.Args and other_src != self.dummy.init: # only add one side of the locations to the disjunction list.
+			if self.OrderingGraph.isPath(sink, source_i) or self.OrderingGraph.isPath(sink_i, source):
 				continue
-			if other_var in other_snk.Args and other_src == self.dummy.init:
-				Warning("Adding arument of sink since the source is the initial state.")
-			if other_src ==source and other_snk ==sink: # this is the exact same causal link. Just the other variable in it.
-				continue
-			if self.OrderingGraph.isPath(sink, other_src) or self.OrderingGraph.isPath(other_snk, source):
-				# One causal link is stricly before another. Therefore the location described in it cannot be occupied at the same time.
-				continue
-			if not self.variableBindings.geometric_vb.can_intersect(var, other_var):
+			if not self.variableBindings.geometric_vb.can_intersect(var, other_area_arg):
 				# the areas do not overlap. No need to add an explicit disjunction.
 				continue
-			self.variableBindings.geometric_vb.add_disjunction(var, other_var)
+			self.variableBindings.geometric_vb.add_disjunction(var, other_area_arg)
 
 		#add disjunctions with paths which may occur simultaneously.
 		for pathvar in self.variableBindings.geometric_vb.path_variables:
@@ -572,37 +557,32 @@ class GPlan:
 		"""
 		Add disjunctions to the path variable var such that they do not overlap.
 		"""
-		# Find all objects that are static
-		static_objs = []
-		for obj in self.variableBindings.objects:
-			if self.variableBindings.is_type(obj, 'physical_item'):
-				for step in self.steps:
-					if step.schema == 'movemono':
-						objarg = step.Args[1]
-						if self.variableBindings.is_codesignated(obj, objarg):
-							break
-				else:
-					static_objs.append(obj)		
-		for obj in static_objs:
-			obj_area_arg = self.variableBindings.initial_positions[obj]
-			self.variableBindings.geometric_vb.add_disjunction(var, obj_area_arg)
-
 		# find the step the path belongs to
-		for step in self.steps:
-			if var in step.Args:
+		for pathstep in self.steps:
+			if var in pathstep.Args:
 				break
 		else:
 			print(f"could not find step belonging to path {var}")
 			raise
+
+		# Make a list with all initial position areas and goal areas to check against.
+		area_list = []
+		for area_arg in self.variableBindings.initial_positions.values():
+			area_list.append(area_arg)
+		for step in self.steps:
+			if step.schema != 'movemono':
+				continue
+			area_arg = step.Args[3]
+			area_list.append(area_arg)
 		
-		# add disjunctions between var and moving object locations
-		for causal_link in self.CausalLinkGraph.edges:
-			if causal_link.label.source.name != "within":
+		for other_area_arg in area_list:
+			# find place in plan
+			source, sink = GPlan.find_place_in_plan(self, other_area_arg)
+			if source == pathstep or sink == pathstep: # this area belongs to the same step as the path
 				continue
-			if self.OrderingGraph.isPath(step, causal_link.source) or self.OrderingGraph.isPath(causal_link.sink, step):
+			if self.OrderingGraph.isPath(sink, pathstep) or self.OrderingGraph.isPath(pathstep, source):
 				continue
-			sourceloc = causal_link.label.source.Args[1]
-			self.variableBindings.geometric_vb.add_disjunction(var, sourceloc)
+			self.variableBindings.geometric_vb.add_disjunction(var, other_area_arg)
 		return True
 	
 	def update_flaws(self):
