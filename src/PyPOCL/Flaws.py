@@ -411,27 +411,18 @@ class FlawLib:
 			# classic order
 			self.typs = FlawTypes([self.statics,
 								self.threats,
+								self.geometric_threats,
+								self.path_threats,
 								self.inits,
 								self.unsafe,
 								self.reusable,
 								self.nonreusable,
-								self.geometric_threats,
 								self.ungrounded_symbolic_variables,
 								self.ungrounded_geometric_variables,
 								self.ungrounded_path_variables])
 		
 		else: #order == 2
-			# ground early
-			self.typs = FlawTypes([self.statics,
-								self.threats,
-								self.ungrounded_symbolic_variables,
-								self.ungrounded_geometric_variables,
-								self.ungrounded_path_variables,
-								self.inits,
-								self.unsafe,
-								self.reusable,
-								self.nonreusable,
-								self.geometric_threats])
+			raise NotImplementedError("Flaw order not implemented.")
 
 	def __len__(self):
 		return sum(len(flaw_set) for flaw_set in self.typs)

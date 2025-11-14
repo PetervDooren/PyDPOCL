@@ -455,6 +455,8 @@ def check_plan_correctness(plan: GPlan) -> bool:
             if area is None:
                 continue
             robot_arg = plan.variableBindings.symbolic_vb.get_const(rc[1]) # robot arg should be ground if area is ground
+            if robot_arg is None:
+                continue
             reach_area_arg = plan.variableBindings.reach_areas[robot_arg]
             reach_area = plan.variableBindings.geometric_vb.defined_areas[reach_area_arg]
             if not within(area, reach_area):
