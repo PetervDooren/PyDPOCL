@@ -163,6 +163,19 @@ class VariableBindingsGeometric:
         print(f"Error [VariableBindingsGeometric]: Variable {var} is not registered in defined areas or in geometric variables")
         raise
 
+    def set_assigned_path(self, var: Argument, path: LineString, area: Polygon):
+        """set the path assigned to a path variable. Should only be used when loading a plan from a file. Otherwise use resolve_path() to set the path.
+
+        Args:
+            var (Argument): path variable to set the path for
+            path (LineString): path to assign to the variable
+        """
+        if var not in self.paths:
+            print(f"Variable {var} is not registered in the geometric variable bindings")
+            return
+        self.paths[var].path_assigned = path
+        self.paths[var].area_assigned = area
+
     def get_path(self, var:Argument) -> LineString:
         if var in self.paths:
             if self.paths[var].path_assigned is None:
@@ -238,6 +251,9 @@ class VariableBindingsGeometric:
     def is_fully_ground(self) -> bool:
         for var in self.variables:
             if not self.is_ground(var):
+                return False
+        for pathvar in self.path_variables:
+            if not self.is_ground(pathvar):
                 return False
         return True
     
