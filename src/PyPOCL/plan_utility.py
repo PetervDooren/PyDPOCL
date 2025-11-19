@@ -861,14 +861,63 @@ def plan_from_json(domain: Domain, problem: Problem, filepath: str) -> GPlan:
     id_map["effects"] = {}
     id_map["objects"] = {}
 
-    # get the IDs of the init and goal steps
-    id_map["steps"][plan_dict["init_state"]["ID"]] = plan.dummy.init.ID
-    for i in range(len(plan.dummy.init.effects)):
-        id_map["effects"][plan_dict["init_state"]["effects"][i]["ID"]] = plan.dummy.init.effects[i].ID
-    id_map["steps"][plan_dict["goal_state"]["ID"]] = plan.dummy.goal.ID
-    for i in range(len(plan.dummy.goal.preconds)):
-        id_map["preconds"][plan_dict["goal_state"]["preconds"][i]["ID"]] = plan.dummy.goal.preconds[i].ID
+    # get the object IDs
+    id_map["objects"] = plan_dict["variableBindings"]["symbolic"]
 
+    # get the IDs of the init and goal steps    
+    id_map["steps"][plan_dict["init_state"]["ID"]] = plan.dummy.init.ID
+    id_map["steps"][plan_dict["goal_state"]["ID"]] = plan.dummy.goal.ID
+    for i in range(len(plan.dummy.init.effects)):
+        # find the corresponding effect ID
+        for init_effect in plan_dict["init_state"]["effects"]:
+            if not init_effect["name"] == plan.dummy.init.effects[i].name:
+                continue
+            if not init_effect["trudom"] == plan.dummy.init.effects[i].truth:
+                continue
+            # check that the arguments match
+            objs = []
+            args_match = True
+            for arg in init_effect["Args"]:
+                objs.append(id_map["objects"][arg])
+            for arg in plan.dummy.init.effects[i].Args:
+                ground_obj = plan.variableBindings.symbolic_vb.get_const(arg)
+                if ground_obj.name not in objs:
+                    args_match = False
+                    break
+            if not args_match:
+                continue
+            # found the matching effect
+            id_map["effects"][init_effect["ID"]] = plan.dummy.init.effects[i].ID
+            break
+        else:
+            raise ValueError(f"Could not find matching effect for init effect {plan.dummy.init.effects[i]} in saved plan")
+    
+    # get the IDs of the init and goal steps
+    for i in range(len(plan.dummy.goal.preconds)):
+        # find the corresponding effect ID
+        for goal_cond in plan_dict["goal_state"]["preconds"]:
+            if not goal_cond["name"] == plan.dummy.goal.preconds[i].name:
+                continue
+            if not goal_cond["trudom"] == plan.dummy.goal.preconds[i].truth:
+                continue
+            # check that the arguments match
+            objs = []
+            args_match = True
+            for arg in goal_cond["Args"]:
+                objs.append(id_map["objects"][arg])
+            for arg in plan.dummy.goal.preconds[i].Args:
+                ground_obj = plan.variableBindings.symbolic_vb.get_const(arg)
+                if ground_obj.name not in objs:
+                    args_match = False
+                    break
+            if not args_match:
+                continue
+            # found the matching effect
+            id_map["preconds"][goal_cond["ID"]] = plan.dummy.goal.preconds[i].ID
+            break
+        else:
+            raise ValueError(f"Could not find matching effect for init effect {plan.dummy.init.effects[i]} in saved plan")
+    
     # Add steps to the plan
     for step_data in plan_dict["steps"]:
         if step_data["schema"] == "dummy_init" or step_data["schema"] == "dummy_goal":
@@ -889,9 +938,31 @@ def plan_from_json(domain: Domain, problem: Problem, filepath: str) -> GPlan:
             id_map["args"][step_data["Args"][i]] = step.Args[i].ID
         # map the precondition IDs
         for i in range(len(step_data["preconds"])):
-            id_map["preconds"][step_data["preconds"][i]["ID"]] = step.preconds[i].ID
+            precond = step_data["preconds"][i]
+            # find the corresponding precondition ID
+            for new_precond in step.preconds:
+                if not new_precond.name == precond["name"]:
+                    continue
+                if not new_precond.truth == precond["trudom"]:
+                    continue
+                # found the matching precondition
+                id_map["preconds"][precond["ID"]] = new_precond.ID
+                break
+            else:
+                raise ValueError(f"Could not find matching precondition for step {step.ID} precondition {precond} in saved plan")
         for i in range(len(step_data["effects"])):
-            id_map["effects"][step_data["effects"][i]["ID"]] = step.effects[i].ID
+            effect = step_data["effects"][i]
+            # find the corresponding precondition ID
+            for new_effect in step.effects:
+                if not new_effect.name == effect["name"]:
+                    continue
+                if not new_effect.truth == effect["trudom"]:
+                    continue
+                # found the matching precondition
+                id_map["effects"][effect["ID"]] = new_effect.ID
+                break
+            else:
+                raise ValueError(f"Could not find matching effect for step {step.ID} effect {effect} in saved plan")
     
     # add ordering constraints to the plan
     for edge_data in plan_dict["orderings"]:
@@ -924,7 +995,7 @@ def plan_from_json(domain: Domain, problem: Problem, filepath: str) -> GPlan:
         obj_arg = next((o for o in problem.objects if o.name == obj), None)
         if not obj_arg:
             raise ValueError(f"Object {obj} not found in problem {problem.name}")
-        plan.variableBindings.symbolic_vb.add_codesignation(var_arg, obj_arg)
+        plan.variableBindings.add_codesignation(var_arg, obj_arg)
     for var, area in plan_dict["variableBindings"]["geometric"].items():
         if var not in id_map["args"]:
             continue  # this is a constant, not a variable
